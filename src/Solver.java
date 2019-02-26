@@ -119,26 +119,7 @@ public class Solver {
 	 */
 	
 	public static double getAngle(Movement m1, Movement m2) {
-		Coordinates v1 = new Coordinates(m1.to.x - m1.from.x, m1.to.y - m1.from.y);
-		Coordinates v2 = new Coordinates(m2.to.x - m2.from.x, m2.to.y - m2.from.y);
-		
-		double scalarProduct = v1.x * v2.x + v1.y * v2.y;
-		double normV1 = m1.distance();
-		double normV2 = m2.distance();
-		
-		double cos = scalarProduct / (normV1 * normV2);
-		
-		/*
-		 * The approximation of floating point representation could make it 
-		 * possible.
-		 */
-		
-		if(cos < -1.0)
-			cos = -1.0;
-		if(cos > 1.0)
-			cos = 1.0;
-		
-		return Math.acos(cos);
+		return new Vector2D(m1).getAngle(new Vector2D(m2));
 	}
 	
 	/*
@@ -153,50 +134,13 @@ public class Solver {
 	 * 
 	 */
 	
-	private static double euclideanNorm(Coordinates c) {
-		return Math.sqrt(c.x * c.x + c.y * c.y);
-	}
-	
-	/*
-	 * 
-	 */
-	
-	private static void setLengthTo(Coordinates v, double length) {
-		double norm = euclideanNorm(v);
-		v.x /= norm / length;
-		v.y /= norm / length;
-	}
-	
-	/*
-	 * 
-	 */
-	
-	private static ArrayList <Coordinates> getVectorsByAngle(Coordinates v, double alpha, double length) {
-		Coordinates v1 = new Coordinates(v.x * Math.cos(alpha) + v.y * Math.sin(alpha), -v.x * Math.sin(alpha) + v.y * Math.cos(alpha));
-		Coordinates v2 = new Coordinates(v.x * Math.cos(-alpha) + v.y * Math.sin(-alpha), -v.x * Math.sin(-alpha) + v.y * Math.cos(-alpha));
-		
-		setLengthTo(v1, length);
-		setLengthTo(v2, length);
-		
-		ArrayList <Coordinates> vectors = new ArrayList <> ();
-		vectors.add(v1);
-		if(!v1.equals(v2))
-			vectors.add(v2);
-		
-		return vectors;
-	}
-	
-	/*
-	 * 
-	 */
-	
 	private Coordinates singleStopover(Movement m1, Movement m2) {
 		double angle = getAngle(m1, m2);
 		if(angle > 0.75 * Math.PI)
 			return null;
-		Coordinates v = new Coordinates(m2.to.x - m1.to.x, m2.to.y - m1.to.y);
-		for(Coordinates c : getVectorsByAngle(v, angle - Math.PI / 2, truck.minimumMove)) {
-			Coordinates s = new Coordinates(c.x + m1.to.x, c.y + m1.to.y);
+		Vector2D v = new Vector2D(m2);
+		for(Vector2D dir : v.getVectorsByAngle(angle - Math.PI / 2, truck.minimumMove)) {
+			Coordinates s = new Coordinates(m1.to, dir);
 			
 			if(!isOk(getAngle(m1, new Movement(m1.to, s)))) // turn on the other side
 				continue;
@@ -216,18 +160,16 @@ public class Solver {
 	
 	private ArrayList <Coordinates> twoStopovers(Movement m1, Movement m2) {
 		double angle = getAngle(m1, m2);
-		Coordinates v = new Coordinates(m2.to.x - m1.to.x, m2.to.y - m1.to.y);
-		for(Coordinates c1 : getVectorsByAngle(v, angle - Math.PI / 2, truck.minimumMove)) {
-			Coordinates s1 = new Coordinates(c1.x + m1.to.x, c1.y + m1.to.y);
+		Vector2D v = new Vector2D(m2);
+		for(Vector2D dir1 : v.getVectorsByAngle(angle - Math.PI / 2, truck.minimumMove)) {
+			Coordinates s1 = new Coordinates(m1.to, dir1);
 			
 			if(!isOk(getAngle(m1, new Movement(m1.to, s1)))) // turn on the other side
 				continue;
 			if(!field.contains(s1))
 				continue;
 
-			setLengthTo(v, truck.minimumMove);
-			
-			Coordinates s2 = new Coordinates(v.x + s1.x, v.y + s1.y);
+			Coordinates s2 = new Coordinates(s1, v.setLengthTo(truck.minimumMove));
 			
 			if(!isOk(getAngle(new Movement(s1, s2), new Movement(s2, m2.to)))) // truck.minimumMove too large
 				continue;
