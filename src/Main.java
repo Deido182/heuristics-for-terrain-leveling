@@ -1,0 +1,50 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Main {
+	public static void main(String[] args) throws IOException {
+		double[] capacities = new double[] {0.015, 0.025, 0.040};
+		
+		for(int inputCode = 1; inputCode <= 3; inputCode ++) {
+			for(double capacity : capacities) {
+				Field field = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt"))));
+				Field clone = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt")))); // just to be sure
+				
+				long start = System.currentTimeMillis();
+				
+				ArrayList <Movement> path = Solver.solve(field, capacity);
+				
+				long stop = System.currentTimeMillis();
+				
+				assert(field.isSmooth());
+				assert(!clone.isSmooth());
+				
+				double distance = 0.0;
+				for(Movement m : path) {
+					assert(field.contains(m.from) && field.contains(m.to));
+					assert(0.0 <= m.quantity && m.quantity <= capacity);
+					assert(m.distance() >= Solver.MOVE - Solver.ACCEPTED_ERROR);
+					
+					clone.update(m);
+					distance += m.distance();
+				}
+				
+				for(int i = 1; i < path.size(); i ++)
+					assert(path.get(i - 1).to.equals(path.get(i).from));
+
+				for(int i = 1; i < path.size(); i ++)
+					assert(Solver.isOk(Solver.getAngle(path.get(i - 1), path.get(i))));
+				
+				assert(clone.isSmooth());
+				
+				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.size() + "\nDistance: " + distance + "m");
+				System.out.println("Time: " + (stop - start) + "ms\n");
+			}
+			System.out.print("#############################\n\n");
+		}
+	}
+}
