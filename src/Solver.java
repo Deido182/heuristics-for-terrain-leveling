@@ -86,10 +86,6 @@ public class Solver {
 		return chainsOfHoles;
 	}
 	
-	/*
-	 * 
-	 */
-	
 	private void fixField() throws IOException {
 		double terrainToMove = field.terrainToMove();
 		double remainder = terrainToMove - Math.floor(terrainToMove / truck.capacity) * truck.capacity;
@@ -102,10 +98,6 @@ public class Solver {
 		truck.move(chainOfHoles);
 	}
 	
-	/*
-	 * 
-	 */
-	
 	private static double[][] buildMatrixOfDistances(ArrayList <ArrayList <Movement>> chainsOfPeaks, ArrayList <ArrayList <Movement>> chainsOfHoles) {
 		double[][] matrix = new double[chainsOfPeaks.size()][chainsOfHoles.size()];
 		for(int i = 0; i < chainsOfPeaks.size(); i ++) 
@@ -114,25 +106,17 @@ public class Solver {
 		return matrix;
 	}
 	
-	/*
-	 * 
-	 */
-	
 	public static double getAngle(Movement m1, Movement m2) {
 		return new Vector2D(m1).getAngle(new Vector2D(m2));
 	}
 	
-	/*
-	 * 
-	 */
+	public static double getAngle(Coordinates c1, Coordinates c2, Coordinates c3) {
+		return getAngle(new Movement(c1, c2), new Movement(c2, c3));
+	}
 	
 	public static boolean isOk(double angle) {
 		return angle <= Math.PI / 2 + ACCEPTED_ERROR;
 	}
-	
-	/*
-	 * 
-	 */
 	
 	private Coordinates singleStopover(Movement m1, Movement m2) {
 		double angle = getAngle(m1, m2);
@@ -142,9 +126,9 @@ public class Solver {
 		for(Vector2D dir : v.getVectorsByAngle(angle - Math.PI / 2, truck.minimumMove)) {
 			Coordinates s = new Coordinates(m1.to, dir);
 			
-			if(!isOk(getAngle(m1, new Movement(m1.to, s)))) // turn on the other side
+			if(!isOk(getAngle(m1.from, m1.to, s))) // turn on the other side
 				continue;
-			if(!isOk(getAngle(new Movement(m1.to, s), new Movement(s, m2.to)))) // truck.minimumMove too large
+			if(!isOk(getAngle(m1.to, s, m2.to))) // truck.minimumMove too large
 				continue;
 			if(!field.contains(s))
 				continue;
@@ -154,24 +138,20 @@ public class Solver {
 		return null;
 	}
 	
-	/*
-	 * 
-	 */
-	
 	private ArrayList <Coordinates> twoStopovers(Movement m1, Movement m2) {
 		double angle = getAngle(m1, m2);
 		Vector2D v = new Vector2D(m2);
 		for(Vector2D dir1 : v.getVectorsByAngle(angle - Math.PI / 2, truck.minimumMove)) {
 			Coordinates s1 = new Coordinates(m1.to, dir1);
 			
-			if(!isOk(getAngle(m1, new Movement(m1.to, s1)))) // turn on the other side
+			if(!isOk(getAngle(m1.from, m1.to, s1))) // turn on the other side
 				continue;
 			if(!field.contains(s1))
 				continue;
 
 			Coordinates s2 = new Coordinates(s1, v.setLengthTo(truck.minimumMove));
 			
-			if(!isOk(getAngle(new Movement(s1, s2), new Movement(s2, m2.to)))) // truck.minimumMove too large
+			if(!isOk(getAngle(s1, s2, m2.to))) // truck.minimumMove too large
 				continue;
 			if(!field.contains(s2))
 				continue;
@@ -183,10 +163,6 @@ public class Solver {
 		}
 		return null;
 	}
-	
-	/*
-	 * 
-	 */
 	
 	private void fixPath() throws IOException {
 		for(int i = 0; i < truck.path.size(); i ++)
@@ -212,10 +188,6 @@ public class Solver {
 		}
 	}
 	
-	/*
-	 * 
-	 */
-	
 	private static int getTheIndexOfTheNearest(Coordinates from, ArrayList <ArrayList <Movement>> chains, boolean[] done) {
 		int nearest = -1;
 		for(int i = 0; i < chains.size(); i ++)
@@ -227,10 +199,6 @@ public class Solver {
 			}
 		return nearest;
 	}
-	
-	/*
-	 * 
-	 */
 	
 	public ArrayList <Movement> solve() throws IOException {
 		fixField();
