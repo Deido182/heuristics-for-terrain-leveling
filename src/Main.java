@@ -20,6 +20,8 @@ public class Main {
 				
 				ArrayList <Movement> path = new Solver(field, truck).solve();
 				
+				new PathPrinter().print(path);
+				
 				long stop = System.currentTimeMillis();
 				
 				assert(field.isSmooth());
