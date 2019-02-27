@@ -20,7 +20,7 @@ public class Main {
 				
 				ArrayList <Movement> path = new Solver(field, truck).solve();
 				
-				new PathPrinter().print(path);
+				new PathPrinter().print(path, 3.0);
 				
 				long stop = System.currentTimeMillis();
 				

@@ -12,9 +12,11 @@ import javax.swing.JFrame;
 public class PathPrinter extends JFrame {
 	private class Printer extends JComponent {
 		ArrayList <Movement> path;
+		double multiplier;
 		
-		public Printer(ArrayList <Movement> path) {
+		public Printer(ArrayList <Movement> path, double scale) {
 			this.path = path;
+			this.multiplier = scale;
 		}
 		
 		@Override
@@ -25,18 +27,18 @@ public class PathPrinter extends JFrame {
 			g2D.setPaint(Color.BLACK);
 			
 			for(Movement m : path)
-				g2D.draw(new Line2D.Double(m.from.x, m.from.y, m.to.x, m.to.y));
+				g2D.draw(new Line2D.Double(m.from.x * multiplier, m.from.y * multiplier, m.to.x * multiplier, m.to.y * multiplier));
 		}
 	}
 	
 	public PathPrinter() {
 		setSize(1000, 1000);
 		setTitle("Truck movements");
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 	}
 	
-	public void print(ArrayList <Movement> path) {
+	public void print(ArrayList <Movement> path, double multiplier) {
 		setVisible(true);
-		add(new Printer(path));
+		add(new Printer(path, multiplier));
 	}
 }
