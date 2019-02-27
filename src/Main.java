@@ -20,7 +20,7 @@ public class Main {
 				
 				ArrayList <Movement> path = new Solver(field, truck).solve();
 				
-				new PathPrinter().print(path, 3.0);
+				new PathPrinter().print(path, 3.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				
 				long stop = System.currentTimeMillis();
 				
