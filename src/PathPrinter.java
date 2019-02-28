@@ -16,11 +16,12 @@ import javax.swing.JFrame;
 public class PathPrinter extends JFrame {
 	private class Printer extends JComponent {
 		ArrayList <Movement> path;
-		double multiplier;
+		double multiplierX, multiplierY;
 		
-		public Printer(ArrayList <Movement> path, double scale) {
+		public Printer(ArrayList <Movement> path, double multiplierX, double multiplierY) {
 			this.path = path;
-			this.multiplier = scale;
+			this.multiplierX = multiplierX;
+			this.multiplierY = multiplierY;
 		}
 		
 		@Override
@@ -31,7 +32,7 @@ public class PathPrinter extends JFrame {
 			g2D.setPaint(Color.BLACK);
 			
 			for(Movement m : path)
-				g2D.draw(new Line2D.Double(m.from.x * multiplier, m.from.y * multiplier, m.to.x * multiplier, m.to.y * multiplier));
+				g2D.draw(new Line2D.Double(m.from.x * multiplierX, m.from.y * multiplierY, m.to.x * multiplierX, m.to.y * multiplierY));
 		}
 	}
 	
@@ -41,14 +42,13 @@ public class PathPrinter extends JFrame {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 	}
 	
-	public void print(ArrayList <Movement> path, double multiplier) {
+	public void print(ArrayList <Movement> path, double multiplierX, double multiplierY) {
 		setVisible(true);
-		add(new Printer(path, multiplier));
+		add(new Printer(path, multiplierX, multiplierY));
 	}
 	
-	public void print(ArrayList <Movement> path, double multiplier, String fileName) throws IOException {
-		setVisible(true);
-		add(new Printer(path, multiplier));
+	public void print(ArrayList <Movement> path, double multiplierX, double multiplierY, String fileName) throws IOException {
+		print(path, multiplierX, multiplierY);
 		BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = img.createGraphics();
 		printAll(g2d);
