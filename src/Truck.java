@@ -1,6 +1,7 @@
 import java.io.IOException;
 
 public class Truck {
+	
 	double capacity;
 	double minimumMove;
 	Path path;

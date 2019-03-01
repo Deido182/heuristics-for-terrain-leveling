@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 
 public class PathPrinter extends JFrame {
 	private class Printer extends JComponent {
+		
 		Path path;
 		double multiplierX, multiplierY;
 		

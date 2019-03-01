@@ -1,5 +1,6 @@
 
 public class Coordinates extends Vector2D {
+	
 	public Coordinates(double x, double y) {
 		super(x, y);
 	}

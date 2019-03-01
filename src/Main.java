@@ -5,21 +5,22 @@ import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
-		double[] capacities = new double[] {0.015, 0.025, 0.040};
+		final double[] capacities = new double[] {0.015, 0.025, 0.040};
 		final double MINIMUM_MOVE = 1.5;
-		Coordinates TRUCK_STARTING_POINT = new Coordinates(0.0, 0.0);
+		final Coordinates TRUCK_STARTING_POINT = new Coordinates(0.0, 0.0);
+		final double INITIAL_CARGO = 0.0;
 		
 		for(int inputCode = 1; inputCode <= 3; inputCode ++) {
 			for(double capacity : capacities) {
 				Field field = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt"))));
 				Field clone = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt")))); // just to be sure
-				Truck truck = new Truck(capacity, MINIMUM_MOVE, TRUCK_STARTING_POINT, 0.0);
+				Truck truck = new Truck(capacity, MINIMUM_MOVE, TRUCK_STARTING_POINT, INITIAL_CARGO);
 				
 				long start = System.currentTimeMillis();
 				
 				Path path = new Solver(field, truck).solve();
 				
-				new PathPrinter().print(path, 3.0, 3.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
+				//new PathPrinter().print(path, 3.0, 3.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				
 				long stop = System.currentTimeMillis();
 				
@@ -27,7 +28,7 @@ public class Main {
 				assert(!clone.isSmooth());
 				
 				for(Stopover s : path.stopovers) {
-					assert(field.contains(s.coordinates) || s.coordinates.equals(TRUCK_STARTING_POINT));
+					assert(clone.contains(s.coordinates) || s.coordinates.equals(TRUCK_STARTING_POINT));
 					assert(0.0 <= s.quantityToBringIn && s.quantityToBringIn <= capacity);
 				}
 				

@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 class Stopover {
+	
 	Coordinates coordinates;
 	double quantityToBringIn;
 	
@@ -15,6 +16,7 @@ class Stopover {
 }
 
 public class Path {
+	
 	ArrayList <Stopover> stopovers;
 	
 	public Path() {
@@ -90,6 +92,7 @@ public class Path {
 		return distance;
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for(Stopover s : stopovers)

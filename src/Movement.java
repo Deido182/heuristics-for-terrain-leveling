@@ -13,6 +13,7 @@ public class Movement {
 		this(from, to, 0.0);
 	}
 	
+	@Override
 	public String toString() {
 		return from.toString() + " " + to.toString() + " " + quantity;
 	}

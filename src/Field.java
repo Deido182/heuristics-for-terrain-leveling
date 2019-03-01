@@ -5,7 +5,7 @@ import java.util.TreeMap;
 public class Field {
 	
 	/*
-	 * PROBLEM: try more PEAK_THRESHOLD value. The problem arise with "getChainOfPeaks" method.
+	 * PROBLEM: try more PEAK_THRESHOLD value. The problem arises with "getChainOfPeaks" method.
 	 * With a value too high we could find a "peak" and start a new chain when actually there is not enough terrain 
 	 * to complete it.
 	 * 
@@ -171,6 +171,7 @@ public class Field {
 		return pos1 <= 0 && pos2 <= 0 || pos1 >= 0 && pos2 >= 0;
 	}
 	
+	@Override
 	public String toString() {
 		TreeMap <Double, TreeMap <Double, Double>> grid = new TreeMap <> ();
 		for(Coordinates c : cells.keySet()) {

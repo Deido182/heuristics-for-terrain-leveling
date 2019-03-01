@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 public class Vector2D {
+	
 	public static final double MAX_ERROR_COOR = 1E-6;
 	double x, y;
 	
