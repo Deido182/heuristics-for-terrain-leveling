@@ -1,16 +1,20 @@
 import java.util.ArrayList;
 
-public class Path {
-	private class Stopover {
-		Coordinates coordinates;
-		double quantityToBringIn;
-		
-		public Stopover(Coordinates coordinates, double quantityToBringIn) {
-			this.coordinates = coordinates;
-			this.quantityToBringIn = quantityToBringIn;
-		}
+class Stopover {
+	Coordinates coordinates;
+	double quantityToBringIn;
+	
+	public Stopover(Coordinates coordinates, double quantityToBringIn) {
+		this.coordinates = coordinates;
+		this.quantityToBringIn = quantityToBringIn;
 	}
 	
+	public String toString() {
+		return "[ " + coordinates + " " + quantityToBringIn + " ]";
+	}
+}
+
+public class Path {
 	ArrayList <Stopover> stopovers;
 	
 	public Path() {
@@ -21,13 +25,14 @@ public class Path {
 		return stopovers.size();
 	}
 	
-	public Stopover remove(int i) {
+	public Stopover removeStopover(int i) {
 		return stopovers.remove(i);
 	}
 	
 	private void addStopover(int i, Stopover s) {
-		if(getCoordinates(i - 1).equals(s.coordinates))
-			return;
+		if(i > 0)
+			if(getCoordinates(i - 1).equals(s.coordinates))
+				return;
 		if(i < length())
 			if(s.coordinates.equals(getCoordinates(i)))
 				return;
@@ -46,15 +51,15 @@ public class Path {
 		addStopover(length(), c, q);
 	}
 	
-	public void addStopover(int i, Coordinates c) {
-		Stopover removed = remove(i + 1);
-		addStopover(i + 1, c, removed.quantityToBringIn);
-		addStopover(i + 2, removed);
+	public void rerouteOne(int after, Coordinates c) {
+		Stopover removed = removeStopover(after + 1);
+		addStopover(after + 1, c, removed.quantityToBringIn);
+		addStopover(after + 2, removed);
 	}
 	
-	public void addTwoStopovers(int i, Coordinates c1, Coordinates c2) {
-		addStopover(i, c1);
-		addStopover(i + 1, c2);
+	public void rerouteTwo(int after, Coordinates c1, Coordinates c2) {
+		rerouteOne(after, c1);
+		rerouteOne(after + 1, c2);
 	}
 	
 	public void append(Path p) {
@@ -83,5 +88,12 @@ public class Path {
 		for(int i = 1; i < length(); i ++)
 			distance += getCoordinates(i - 1).distance(getCoordinates(i));
 		return distance;
+	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(Stopover s : stopovers)
+			sb.append(s.toString() + " -> ");
+		return sb.substring(0, sb.length() - 4).toString();
 	}
 }

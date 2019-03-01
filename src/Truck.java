@@ -1,16 +1,15 @@
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class Truck {
 	double capacity;
 	double minimumMove;
 	Path path;
 	
-	public Truck(double capacity, double minimumMove, Coordinates from) {
+	public Truck(double capacity, double minimumMove, Coordinates from, double initialCargo) {
 		this.capacity = capacity;
 		this.minimumMove = minimumMove;
 		this.path = new Path();
-		path.addStopover(from, 0.0);
+		path.addStopover(from, initialCargo);
 	}
 	
 	public Coordinates getCurrentPosition() {
@@ -35,9 +34,5 @@ public class Truck {
 	
 	public Movement getLastMovement() {
 		return getMovement(path.length() - 2);
-	}
-	
-	public void removeMovement(int i) {
-		path.remove(i + 1);
 	}
 }

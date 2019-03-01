@@ -6,7 +6,6 @@ import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -15,10 +14,10 @@ import javax.swing.JFrame;
 
 public class PathPrinter extends JFrame {
 	private class Printer extends JComponent {
-		ArrayList <Movement> path;
+		Path path;
 		double multiplierX, multiplierY;
 		
-		public Printer(ArrayList <Movement> path, double multiplierX, double multiplierY) {
+		public Printer(Path path, double multiplierX, double multiplierY) {
 			this.path = path;
 			this.multiplierX = multiplierX;
 			this.multiplierY = multiplierY;
@@ -31,8 +30,8 @@ public class PathPrinter extends JFrame {
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2D.setPaint(Color.BLACK);
 			
-			for(Movement m : path)
-				g2D.draw(new Line2D.Double(m.from.x * multiplierX, m.from.y * multiplierY, m.to.x * multiplierX, m.to.y * multiplierY));
+			for(int i = 1; i < path.length(); i ++)
+				g2D.draw(new Line2D.Double(path.getCoordinates(i - 1).x * multiplierX, path.getCoordinates(i - 1).y * multiplierY, path.getCoordinates(i).x * multiplierX, path.getCoordinates(i).y * multiplierY));
 		}
 	}
 	
@@ -42,12 +41,12 @@ public class PathPrinter extends JFrame {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 	}
 	
-	public void print(ArrayList <Movement> path, double multiplierX, double multiplierY) {
+	public void print(Path path, double multiplierX, double multiplierY) {
 		setVisible(true);
 		add(new Printer(path, multiplierX, multiplierY));
 	}
 	
-	public void print(ArrayList <Movement> path, double multiplierX, double multiplierY, String fileName) throws IOException {
+	public void print(Path path, double multiplierX, double multiplierY, String fileName) throws IOException {
 		print(path, multiplierX, multiplierY);
 		BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = img.createGraphics();

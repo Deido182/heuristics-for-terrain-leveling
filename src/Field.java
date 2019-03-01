@@ -3,8 +3,19 @@ import java.util.Scanner;
 import java.util.TreeMap;
 
 public class Field {
+	
+	/*
+	 * PROBLEM: try more PEAK_THRESHOLD value. The problem arise with "getChainOfPeaks" method.
+	 * With a value too high we could find a "peak" and start a new chain when actually there is not enough terrain 
+	 * to complete it.
+	 * 
+	 * Two way to solve it: try with another constant or add an if to the method to check if 
+	 * the available terrain is "around" (Math.abs(... - truck.capacity) <= 1E-...) the required quantity.
+	 */
+	
 	public HashMap <Coordinates, Double> cells;
 	public final double MAX_ERROR = 1E-3; 
+	public final double PEAK_THRESHOLD = MAX_ERROR / 20;
 	public double deltaX, deltaY;
 	
 	public Field(Scanner scanner) {
@@ -68,11 +79,11 @@ public class Field {
 	}
 	
 	public boolean isAnHole(Coordinates c) {
-		return cells.get(c) <= -MAX_ERROR / 10;
+		return cells.get(c) <= -PEAK_THRESHOLD;
 	}
 	
 	public boolean isAPeak(Coordinates c) {
-		return cells.get(c) >= MAX_ERROR / 10;
+		return cells.get(c) >= PEAK_THRESHOLD;
 	}
 	
 	public Coordinates getTheNearestHole(Coordinates from) {

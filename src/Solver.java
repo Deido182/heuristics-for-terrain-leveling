@@ -1,7 +1,5 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.concurrent.CountDownLatch;
 
 public class Solver {
 	
@@ -20,7 +18,7 @@ public class Solver {
 	 */
 	
 	private Path getChainOfPeaks(Coordinates from, double quantity) throws IOException {
-		Truck newTruck = new Truck(quantity, truck.minimumMove, field.getTheNearestPeak(from));
+		Truck newTruck = new Truck(quantity, truck.minimumMove, field.getTheNearestPeak(from), 0.0);
 		newTruck.move(newTruck.getCurrentPosition()); // just to add at least a movement
 		while(true) {
 			if(field.getQuantity(newTruck.getCurrentPosition()) >= newTruck.capacity)
@@ -56,14 +54,12 @@ public class Solver {
 	 */
 	
 	private Path getChainOfHoles(Coordinates from, double quantity) throws IOException {
-		Truck newTruck = new Truck(quantity, truck.minimumMove, field.getTheNearestHole(from));
-		
 		/*
 		 * PAY ATTENTION: the truck has to bring in the first cell "quantity" units of terrain 
 		 * to fill the chain of holes.
 		 */
 		
-		newTruck.move(newTruck.getCurrentPosition(), quantity); // just to add at least a movement
+		Truck newTruck = new Truck(quantity, truck.minimumMove, field.getTheNearestHole(from), quantity);
 		field.increment(newTruck.getCurrentPosition(), newTruck.capacity);
 		while(true) {
 			if(field.getQuantity(newTruck.getCurrentPosition()) <= 0)
@@ -111,29 +107,25 @@ public class Solver {
 		return matrix;
 	}
 	
-	public static double getAngle(Movement m1, Movement m2) {
-		return new Vector2D(m1).getAngle(new Vector2D(m2));
-	}
-	
 	public static double getAngle(Coordinates c1, Coordinates c2, Coordinates c3) {
-		return getAngle(new Movement(c1, c2), new Movement(c2, c3));
+		return c2.subtract(c1).getAngle(c3.subtract(c2));
 	}
 	
 	public static boolean isOk(double angle) {
 		return angle <= Math.PI / 2 + ACCEPTED_ERROR;
 	}
 	
-	private Coordinates singleStopover(Movement m1, Movement m2) {
-		double angle = getAngle(m1, m2);
+	private Coordinates singleStopover(Coordinates c1, Coordinates c2, Coordinates c3) {
+		double angle = getAngle(c1, c2, c3);
 		if(angle > 0.75 * Math.PI)
 			return null;
-		Vector2D v = new Vector2D(m2);
+		Vector2D v = c3.subtract(c2);
 		for(Vector2D dir : v.getVectorsByAngle(angle - Math.PI / 2, truck.minimumMove)) {
-			Coordinates s = new Coordinates(m1.to, dir);
+			Coordinates s = new Coordinates(c2, dir);
 			
-			if(!isOk(getAngle(m1.from, m1.to, s))) // turn on the other side
+			if(!isOk(getAngle(c1, c2, s))) // turn on the other side
 				continue;
-			if(!isOk(getAngle(m1.to, s, m2.to))) // truck.minimumMove too large
+			if(!isOk(getAngle(c2, s, c3))) // truck.minimumMove too large
 				continue;
 			if(!field.contains(s))
 				continue;
@@ -143,20 +135,20 @@ public class Solver {
 		return null;
 	}
 	
-	private ArrayList <Coordinates> twoStopovers(Movement m1, Movement m2) {
-		double angle = getAngle(m1, m2);
-		Vector2D v = new Vector2D(m2);
+	private ArrayList <Coordinates> twoStopovers(Coordinates c1, Coordinates c2, Coordinates c3) {
+		double angle = getAngle(c1, c2, c3);
+		Vector2D v = c3.subtract(c2);
 		for(Vector2D dir1 : v.getVectorsByAngle(angle - Math.PI / 2, truck.minimumMove)) {
-			Coordinates s1 = new Coordinates(m1.to, dir1);
+			Coordinates s1 = new Coordinates(c2, dir1);
 			
-			if(!isOk(getAngle(m1.from, m1.to, s1))) // turn on the other side
+			if(!isOk(getAngle(c1, c2, s1))) // turn on the other side
 				continue;
 			if(!field.contains(s1))
 				continue;
 
 			Coordinates s2 = new Coordinates(s1, v.setLengthTo(truck.minimumMove));
 			
-			if(!isOk(getAngle(s1, s2, m2.to))) // truck.minimumMove too large
+			if(!isOk(getAngle(s1, s2, c3))) // truck.minimumMove too large
 				continue;
 			if(!field.contains(s2))
 				continue;
@@ -170,22 +162,22 @@ public class Solver {
 	}
 	
 	private void fixPath() throws IOException {
-		for(int i = 1; i < truck.path.length(); i ++) {
-			double angle = getAngle(truck.getMovement(i - 1), truck.getMovement(i));
+		for(int i = 2; i < truck.path.length(); i ++) {
+			double angle = getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i));
 			
 			if(isOk(angle))
 				continue;
 			
-			Coordinates stopover = singleStopover(truck.getMovement(i - 1), truck.getMovement(i));
+			Coordinates stopover = singleStopover(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i));
 			if(stopover != null) {
-				truck.path.addStopover(i - 1, stopover);
+				truck.path.rerouteOne(i - 1, stopover);
 				continue;
 			}
 			
-			ArrayList <Coordinates> stopovers = twoStopovers(truck.getMovement(i - 1), truck.getMovement(i));
+			ArrayList <Coordinates> stopovers = twoStopovers(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i));
 			if(stopovers == null) 
 				throw new IOException("Unable to fix");
-			truck.path.addTwoStopovers(i - 1, stopovers.get(0), stopovers.get(1));
+			truck.path.rerouteTwo(i - 1, stopovers.get(0), stopovers.get(1));
 		}
 	}
 	
