@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -39,10 +38,6 @@ public class Field {
 					deltaY = Math.min(deltaY, c1.distance(c2));
 	}
 	
-	public void reset(Coordinates c) {
-		cells.put(c, 0.0);
-	}
-	
 	public double getQuantity(Coordinates c) {
 		return cells.get(c);
 	}
@@ -63,24 +58,6 @@ public class Field {
 	
 	public void update(Movement m) {
 		update(m.from, m.to, m.quantity);
-	}
-	
-	public void update(ArrayList <Movement> path) {
-		for(Movement m : path)
-			update(m);
-	}
-	
-	public void rollback(Coordinates from, Coordinates to, double q) {
-		update(to, from, q);
-	}
-	
-	public void rollback(Movement m) {
-		rollback(m.from, m.to, m.quantity);
-	}
-	
-	public void rollback(ArrayList <Movement> path) {
-		for(Movement m : path)
-			rollback(m);
 	}
 	
 	public boolean isSmooth() {
@@ -130,20 +107,6 @@ public class Field {
 		Coordinates nearest = getTheNearestPeak(from);
 		increment(thisOne, q);
 		return nearest;
-	}
-	
-	public Coordinates getAnHole() {
-		for(Coordinates c : cells.keySet())
-			if(isAnHole(c))
-				return c;
-		return null;
-	}
-	
-	public Coordinates getAPeak() {
-		for(Coordinates c : cells.keySet())
-			if(isAPeak(c))
-				return c;
-		return null;
 	}
 	
 	public double terrainToMove() {

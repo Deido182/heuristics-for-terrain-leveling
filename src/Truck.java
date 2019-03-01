@@ -13,6 +13,10 @@ public class Truck {
 		path.addStopover(from, 0.0);
 	}
 	
+	public Coordinates getCurrentPosition() {
+		return path.getLastCoordinates();
+	}
+	
 	public void move(Coordinates to, double quantity) throws IOException {
 		path.addStopover(to, quantity);
 	}
@@ -23,5 +27,17 @@ public class Truck {
 	
 	public void move(Path p) {
 		path.append(p);
+	}
+	
+	public Movement getMovement(int i) {
+		return new Movement(path.getCoordinates(i), path.getCoordinates(i + 1), path.getQuantityToBringIn(i + 1));
+	}
+	
+	public Movement getLastMovement() {
+		return getMovement(path.length() - 2);
+	}
+	
+	public void removeMovement(int i) {
+		path.remove(i + 1);
 	}
 }

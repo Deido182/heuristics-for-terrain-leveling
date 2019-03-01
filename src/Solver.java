@@ -19,19 +19,19 @@ public class Solver {
 	 * nearest neighbor strategy. 
 	 */
 	
-	private ArrayList <Movement> getChainOfPeaks(Coordinates from, double quantity) throws IOException {
+	private Path getChainOfPeaks(Coordinates from, double quantity) throws IOException {
 		Truck newTruck = new Truck(quantity, truck.minimumMove, field.getTheNearestPeak(from));
-		newTruck.move(newTruck.currentPosition); // just to add at least a movement
-		while(newTruck.currentPosition != null) {
-			if(field.getQuantity(newTruck.currentPosition) >= newTruck.capacity)
+		newTruck.move(newTruck.getCurrentPosition()); // just to add at least a movement
+		while(true) {
+			if(field.getQuantity(newTruck.getCurrentPosition()) >= newTruck.capacity)
 				break;
-			Coordinates nextPeak = field.getTheNearestPeakDifferentFromThisOne(newTruck.currentPosition, newTruck.currentPosition);
+			Coordinates nextPeak = field.getTheNearestPeakDifferentFromThisOne(newTruck.getCurrentPosition(), newTruck.getCurrentPosition());
 			if(nextPeak == null)
 				break;
-			newTruck.move(nextPeak, field.getQuantity(newTruck.currentPosition));
+			newTruck.move(nextPeak, field.getQuantity(newTruck.getCurrentPosition()));
 			field.update(newTruck.getLastMovement());
 		}
-		field.decrement(newTruck.currentPosition, newTruck.capacity);
+		field.decrement(newTruck.getCurrentPosition(), newTruck.capacity);
 		return newTruck.path;
 	}
 	
@@ -39,13 +39,13 @@ public class Solver {
 	 * Get all the chains of peaks.
 	 */
 	
-	private ArrayList <ArrayList <Movement>> getAllChainsOfPeaks() throws IOException {
-		ArrayList <ArrayList <Movement>> chainsOfPeaks = new ArrayList <> ();
-		Coordinates nextPeak = field.getAPeak();
+	private ArrayList <Path> getAllChainsOfPeaks(Coordinates from) throws IOException {
+		ArrayList <Path> chainsOfPeaks = new ArrayList <> ();
+		Coordinates nextPeak = field.getTheNearestHole(from);
 		while(nextPeak != null) {
-			ArrayList <Movement> chain = getChainOfPeaks(nextPeak, truck.capacity);
+			Path chain = getChainOfPeaks(nextPeak, truck.capacity);
 			chainsOfPeaks.add(chain);
-			nextPeak = field.getTheNearestPeak(chain.get(chain.size() - 1).to);
+			nextPeak = field.getTheNearestPeak(chain.getLastCoordinates());
 		}
 		return chainsOfPeaks;
 	}
@@ -55,17 +55,23 @@ public class Solver {
 	 * nearest neighbor strategy. 
 	 */
 	
-	private ArrayList <Movement> getChainOfHoles(Coordinates from, double quantity) throws IOException {
+	private Path getChainOfHoles(Coordinates from, double quantity) throws IOException {
 		Truck newTruck = new Truck(quantity, truck.minimumMove, field.getTheNearestHole(from));
-		newTruck.move(newTruck.currentPosition); // just to add at least a movement
-		field.increment(newTruck.currentPosition, newTruck.capacity);
-		while(newTruck.currentPosition != null) {
-			if(field.getQuantity(newTruck.currentPosition) <= 0)
+		
+		/*
+		 * PAY ATTENTION: the truck has to bring in the first cell "quantity" units of terrain 
+		 * to fill the chain of holes.
+		 */
+		
+		newTruck.move(newTruck.getCurrentPosition(), quantity); // just to add at least a movement
+		field.increment(newTruck.getCurrentPosition(), newTruck.capacity);
+		while(true) {
+			if(field.getQuantity(newTruck.getCurrentPosition()) <= 0)
 				break;
-			Coordinates nextHole = field.getTheNearestHole(newTruck.currentPosition);
+			Coordinates nextHole = field.getTheNearestHole(newTruck.getCurrentPosition());
 			if(nextHole == null)
 				break;
-			newTruck.move(nextHole, field.getQuantity(newTruck.currentPosition));
+			newTruck.move(nextHole, field.getQuantity(newTruck.getCurrentPosition()));
 			field.update(newTruck.getLastMovement());
 		}
 		return newTruck.path;
@@ -75,13 +81,13 @@ public class Solver {
 	 * Get all the chains of holes.
 	 */
 	
-	private ArrayList <ArrayList <Movement>> getAllChainsOfHoles() throws IOException {
-		ArrayList <ArrayList <Movement>> chainsOfHoles = new ArrayList <> ();
-		Coordinates nextHole = field.getAnHole();
+	private ArrayList <Path> getAllChainsOfHoles(Coordinates from) throws IOException {
+		ArrayList <Path> chainsOfHoles = new ArrayList <> ();
+		Coordinates nextHole = field.getTheNearestHole(from);
 		while(nextHole != null) {
-			ArrayList <Movement> chain = getChainOfHoles(nextHole, truck.capacity);
+			Path chain = getChainOfHoles(nextHole, truck.capacity);
 			chainsOfHoles.add(chain);
-			nextHole = field.getTheNearestHole(chain.get(chain.size() - 1).to);
+			nextHole = field.getTheNearestHole(chain.getLastCoordinates());
 		}
 		return chainsOfHoles;
 	}
@@ -91,18 +97,17 @@ public class Solver {
 		double remainder = terrainToMove - Math.floor(terrainToMove / truck.capacity) * truck.capacity;
 		if(remainder < field.MAX_ERROR)
 			return;
-		ArrayList <Movement> chainOfPeaks = getChainOfPeaks(field.getAPeak(), remainder);
-		ArrayList <Movement> chainOfHoles = getChainOfHoles(chainOfPeaks.get(chainOfPeaks.size() - 1).to, remainder);
+		Path chainOfPeaks = getChainOfPeaks(truck.getCurrentPosition(), remainder);
+		Path chainOfHoles = getChainOfHoles(chainOfPeaks.getLastCoordinates(), remainder);
 		truck.move(chainOfPeaks);
-		truck.move(chainOfHoles.get(0).from, remainder);
 		truck.move(chainOfHoles);
 	}
 	
-	private static double[][] buildMatrixOfDistances(ArrayList <ArrayList <Movement>> chainsOfPeaks, ArrayList <ArrayList <Movement>> chainsOfHoles) {
+	private static double[][] buildMatrixOfDistances(ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles) {
 		double[][] matrix = new double[chainsOfPeaks.size()][chainsOfHoles.size()];
 		for(int i = 0; i < chainsOfPeaks.size(); i ++) 
 			for(int j = 0; j < chainsOfHoles.size(); j ++)
-				matrix[i][j] = chainsOfPeaks.get(i).get(chainsOfPeaks.get(i).size() - 1).to.distance(chainsOfHoles.get(j).get(0).from);
+				matrix[i][j] = chainsOfPeaks.get(i).getLastCoordinates().distance(chainsOfHoles.get(j).getFirstCoordinates());
 		return matrix;
 	}
 	
@@ -165,11 +170,7 @@ public class Solver {
 	}
 	
 	private void fixPath() throws IOException {
-		for(int i = 0; i < truck.path.size(); i ++)
-			if(truck.getMovement(i).from.equals(truck.getMovement(i).to))
-					truck.removeMovement(i --);
-		
-		for(int i = 1; i < truck.path.size(); i ++) {
+		for(int i = 1; i < truck.path.length(); i ++) {
 			double angle = getAngle(truck.getMovement(i - 1), truck.getMovement(i));
 			
 			if(isOk(angle))
@@ -177,44 +178,43 @@ public class Solver {
 			
 			Coordinates stopover = singleStopover(truck.getMovement(i - 1), truck.getMovement(i));
 			if(stopover != null) {
-				truck.addStopoverAfter(stopover, i - 1);
+				truck.path.addStopover(i - 1, stopover);
 				continue;
 			}
 			
 			ArrayList <Coordinates> stopovers = twoStopovers(truck.getMovement(i - 1), truck.getMovement(i));
 			if(stopovers == null) 
 				throw new IOException("Unable to fix");
-			truck.addStopoversAfter(stopovers, i - 1);
+			truck.path.addTwoStopovers(i - 1, stopovers.get(0), stopovers.get(1));
 		}
 	}
 	
-	private static int getTheIndexOfTheNearest(Coordinates from, ArrayList <ArrayList <Movement>> chains, boolean[] done) {
+	private static int getTheIndexOfTheNearest(Coordinates from, ArrayList <Path> chains, boolean[] done) {
 		int nearest = -1;
 		for(int i = 0; i < chains.size(); i ++)
 			if(!done[i]) {
 				if(nearest == -1)
 					nearest = i;
-				else if(from.distance(chains.get(i).get(0).from) < from.distance(chains.get(nearest).get(0).from))
+				else if(from.distance(chains.get(i).getFirstCoordinates()) < from.distance(chains.get(nearest).getFirstCoordinates()))
 					nearest = i;
 			}
 		return nearest;
 	}
 	
-	public ArrayList <Movement> solve() throws IOException {
+	public Path solve() throws IOException {
 		fixField();
-		ArrayList <ArrayList <Movement>> chainsOfPeaks = getAllChainsOfPeaks();
-		ArrayList <ArrayList <Movement>> chainsOfHoles = getAllChainsOfHoles();
+		ArrayList <Path> chainsOfPeaks = getAllChainsOfPeaks(truck.getCurrentPosition());
+		ArrayList <Path> chainsOfHoles = getAllChainsOfHoles(truck.getCurrentPosition());
 		int[] assignment = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
 		boolean[] done = new boolean[chainsOfPeaks.size()];
 		while(true) {
-			int nearest = getTheIndexOfTheNearest(truck.currentPosition == null ? field.getAPeak() : truck.currentPosition, chainsOfPeaks, done);
+			int nearest = getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, done);
 			if(nearest == -1)
 				break;
 			done[nearest] = true;
-			ArrayList <Movement> chainOfPeaks = chainsOfPeaks.get(nearest);
-			ArrayList <Movement> chainOfHoles = chainsOfHoles.get(assignment[nearest]);
+			Path chainOfPeaks = chainsOfPeaks.get(nearest);
+			Path chainOfHoles = chainsOfHoles.get(assignment[nearest]);
 			truck.move(chainOfPeaks);
-			truck.move(chainOfHoles.get(0).from, truck.capacity);
 			truck.move(chainOfHoles);
 		}
 		fixPath();

@@ -14,11 +14,11 @@ public class Main {
 			for(double capacity : capacities) {
 				Field field = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt"))));
 				Field clone = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt")))); // just to be sure
-				Truck truck = new Truck(capacity, MINIMUM_MOVE, null);
+				Truck truck = new Truck(capacity, MINIMUM_MOVE, new Coordinates(0.0, 0.0));
 				
 				long start = System.currentTimeMillis();
 				
-				ArrayList <Movement> path = new Solver(field, truck).solve();
+				Path path = new Solver(field, truck).solve();
 				
 				//new PathPrinter().print(path, 3.0, 3.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				

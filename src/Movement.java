@@ -13,10 +13,6 @@ public class Movement {
 		this(from, to, 0.0);
 	}
 	
-	public double distance() {
-		return from.distance(to);
-	}
-	
 	public String toString() {
 		return from.toString() + " " + to.toString() + " " + quantity;
 	}

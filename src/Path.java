@@ -26,6 +26,11 @@ public class Path {
 	}
 	
 	private void addStopover(int i, Stopover s) {
+		if(getCoordinates(i - 1).equals(s.coordinates))
+			return;
+		if(i < length())
+			if(s.coordinates.equals(getCoordinates(i)))
+				return;
 		stopovers.add(i, s);
 	}
 	
@@ -57,11 +62,26 @@ public class Path {
 			addStopover(s);
 	}
 	
-	public Movement getMovement(int i) {
-		return new Movement(stopovers.get(i).coordinates, stopovers.get(i + 1).coordinates, stopovers.get(i + 1).quantityToBringIn);
+	public Coordinates getCoordinates(int i) {
+		return stopovers.get(i).coordinates;
 	}
 	
-	public Movement getLastMovement() {
-		return getMovement(length() - 2);
+	public Coordinates getLastCoordinates() {
+		return getCoordinates(length() - 1);
+	}
+	
+	public Coordinates getFirstCoordinates() {
+		return getCoordinates(0);
+	}
+	
+	public double getQuantityToBringIn(int i) {
+		return stopovers.get(i).quantityToBringIn;
+	}
+	
+	public double distance() {
+		double distance = 0.0;
+		for(int i = 1; i < length(); i ++)
+			distance += getCoordinates(i - 1).distance(getCoordinates(i));
+		return distance;
 	}
 }
