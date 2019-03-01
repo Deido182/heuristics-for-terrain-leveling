@@ -2,6 +2,12 @@ import java.util.ArrayList;
 
 class Stopover {
 	
+	/*
+	 * We NEED the quantityToBringIn attribute for fixPath. 
+	 * Otherwise we could assume that every time the truck moves 
+	 * as much terrain as possible.
+	 */
+	
 	Coordinates coordinates;
 	double quantityToBringIn;
 	
