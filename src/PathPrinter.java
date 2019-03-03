@@ -16,12 +16,14 @@ public class PathPrinter extends JFrame {
 	private class Printer extends JComponent {
 		
 		Path path;
-		double multiplierX, multiplierY;
+		double multiplierX, multiplierY, shiftX, shiftY;
 		
-		public Printer(Path path, double multiplierX, double multiplierY) {
+		public Printer(Path path, double multiplierX, double multiplierY, double shiftX, double shiftY) {
 			this.path = path;
 			this.multiplierX = multiplierX;
 			this.multiplierY = multiplierY;
+			this.shiftX = shiftX;
+			this.shiftY = shiftY;
 		}
 		
 		@Override
@@ -32,7 +34,10 @@ public class PathPrinter extends JFrame {
 			g2D.setPaint(Color.BLACK);
 			
 			for(int i = 1; i < path.length(); i ++)
-				g2D.draw(new Line2D.Double(path.getCoordinates(i - 1).x * multiplierX, path.getCoordinates(i - 1).y * multiplierY, path.getCoordinates(i).x * multiplierX, path.getCoordinates(i).y * multiplierY));
+				g2D.draw(new Line2D.Double(path.getCoordinates(i - 1).x * multiplierX + shiftX, 
+											path.getCoordinates(i - 1).y * multiplierY + shiftY, 
+											path.getCoordinates(i).x * multiplierX + shiftX, 
+											path.getCoordinates(i).y * multiplierY + shiftY));
 		}
 	}
 	
@@ -42,13 +47,13 @@ public class PathPrinter extends JFrame {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 	}
 	
-	public void print(Path path, double multiplierX, double multiplierY) {
+	public void print(Path path, double multiplierX, double multiplierY, double shiftX, double shiftY) {
 		setVisible(true);
-		add(new Printer(path, multiplierX, multiplierY));
+		add(new Printer(path, multiplierX, multiplierY, shiftX, shiftY));
 	}
 	
-	public void print(Path path, double multiplierX, double multiplierY, String fileName) throws IOException {
-		print(path, multiplierX, multiplierY);
+	public void print(Path path, double multiplierX, double multiplierY, double shiftX, double shiftY, String fileName) throws IOException {
+		print(path, multiplierX, multiplierY, shiftX, shiftY);
 		BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = img.createGraphics();
 		printAll(g2d);

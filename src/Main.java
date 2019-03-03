@@ -19,8 +19,8 @@ public class Main {
 				
 				Path path = new Solver(field, truck).solve();
 				
-				//new PathPrinter().print(path, 3.0, 3.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
-				new PathPrinter().print(path, 3.0, 3.0);
+				//new PathPrinter().print(path, 2.3, 2.3, 50.0, 50.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
+				//new PathPrinter().print(path, 2.3, 2.3, 50.0, 50.0);
 				
 				long stop = System.currentTimeMillis();
 				
