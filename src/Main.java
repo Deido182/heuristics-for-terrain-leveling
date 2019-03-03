@@ -6,7 +6,6 @@ import java.util.Scanner;
 public class Main {
 	public static void main(String[] args) throws IOException {
 		final double[] capacities = new double[] {0.015, 0.025, 0.040};
-		final double MINIMUM_MOVE = 1.5;
 		final Coordinates TRUCK_STARTING_POINT = new Coordinates(0.0, 0.0);
 		final double INITIAL_CARGO = 0.0;
 		
@@ -14,26 +13,22 @@ public class Main {
 			for(double capacity : capacities) {
 				Field field = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt"))));
 				Field clone = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt")))); // just to be sure
-				Truck truck = new Truck(capacity, MINIMUM_MOVE, TRUCK_STARTING_POINT, INITIAL_CARGO);
+				Truck truck = new Truck(capacity, TRUCK_STARTING_POINT, INITIAL_CARGO);
 				
 				long start = System.currentTimeMillis();
 				
 				Path path = new Solver(field, truck).solve();
 				
 				//new PathPrinter().print(path, 3.0, 3.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
+				new PathPrinter().print(path, 3.0, 3.0);
 				
 				long stop = System.currentTimeMillis();
 				
 				assert(field.isSmooth());
 				assert(!clone.isSmooth());
 				
-				for(Stopover s : path.stopovers) {
-					assert(clone.contains(s.coordinates) || s.coordinates.equals(TRUCK_STARTING_POINT));
+				for(Stopover s : path.stopovers) 
 					assert(0.0 <= s.quantityToBringIn && s.quantityToBringIn <= capacity);
-				}
-				
-				for(int i = 1; i < path.length(); i ++) 
-					assert(path.getCoordinates(i - 1).distance(path.getCoordinates(i)) >= truck.minimumMove - Solver.ACCEPTED_ERROR);
 				
 				for(int i = 0; i < path.length() - 1; i ++)
 					clone.update(truck.getMovement(i));

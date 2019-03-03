@@ -128,49 +128,6 @@ public class Field {
 		return sum;
 	}
 	
-	public boolean contains(Coordinates p) {
-		/*
-		 * c.y is the center, not the border, so +- deltaY / 2
-		 */
-		
-		double yLowerB = Long.MIN_VALUE;
-		for(Coordinates c : cells.keySet()) 
-			if(c.y - deltaY / 2 <= p.y)
-				yLowerB = Math.max(yLowerB, c.y - deltaY / 2);
-		
-		double yUpperB = Long.MAX_VALUE;
-		for(Coordinates c : cells.keySet()) 
-			if(c.y + deltaY / 2 >= p.y)
-				yUpperB = Math.min(yUpperB, c.y + deltaY / 2);
-		
-		/*
-		 * Integer.MIN_VALUE is just a limit to check if yLowerB has been changed.
-		 * Otherwise find a way for checking "yLowerB == Double.MIN_VALUE".
-		 */
-		
-		if(yLowerB < Integer.MIN_VALUE || yUpperB > Integer.MAX_VALUE)
-			return false;
-		
-		double minXLowerB = Double.MAX_VALUE, maxXLowerB = Double.MIN_VALUE;
-		for(Coordinates c : cells.keySet())
-			if(c.hasY(yLowerB + deltaY / 2)) {
-				minXLowerB = Math.min(minXLowerB, c.x - deltaX / 2);
-				maxXLowerB = Math.max(maxXLowerB, c.x + deltaX / 2);
-			}
-		
-		double minXUpperB = Double.MAX_VALUE, maxXUpperB = Double.MIN_VALUE;
-		for(Coordinates c : cells.keySet())
-			if(c.hasY(yUpperB - deltaY / 2)) {
-				minXUpperB = Math.min(minXUpperB, c.x - deltaX / 2);
-				maxXUpperB = Math.max(maxXUpperB, c.x + deltaX / 2);
-			}
-		
-		double pos1 = (p.x - minXLowerB) * (yUpperB - yLowerB) - (p.y - yLowerB) * (minXUpperB - minXLowerB);
-		double pos2 = (p.x - maxXUpperB) * (yLowerB - yUpperB) - (p.y - yUpperB) * (maxXLowerB - maxXUpperB);
-		
-		return pos1 <= 0 && pos2 <= 0 || pos1 >= 0 && pos2 >= 0;
-	}
-	
 	@Override
 	public String toString() {
 		TreeMap <Double, TreeMap <Double, Double>> grid = new TreeMap <> ();

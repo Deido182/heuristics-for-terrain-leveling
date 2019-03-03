@@ -3,12 +3,10 @@ import java.io.IOException;
 public class Truck {
 	
 	double capacity;
-	double minimumMove;
 	Path path;
 	
-	public Truck(double capacity, double minimumMove, Coordinates from, double initialCargo) {
+	public Truck(double capacity, Coordinates from, double initialCargo) {
 		this.capacity = capacity;
-		this.minimumMove = minimumMove;
 		this.path = new Path();
 		path.addStopover(from, initialCargo);
 	}

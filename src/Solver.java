@@ -18,7 +18,7 @@ public class Solver {
 	 */
 	
 	private Path getChainOfPeaks(Coordinates from, double quantity) throws IOException {
-		Truck newTruck = new Truck(quantity, truck.minimumMove, field.getTheNearestPeak(from), 0.0);
+		Truck newTruck = new Truck(quantity, field.getTheNearestPeak(from), 0.0);
 		newTruck.move(newTruck.getCurrentPosition()); // just to add at least a movement
 		while(true) {
 			if(field.getQuantity(newTruck.getCurrentPosition()) >= newTruck.capacity)
@@ -59,7 +59,7 @@ public class Solver {
 		 * to fill the chain of holes.
 		 */
 		
-		Truck newTruck = new Truck(quantity, truck.minimumMove, field.getTheNearestHole(from), quantity);
+		Truck newTruck = new Truck(quantity, field.getTheNearestHole(from), quantity);
 		field.increment(newTruck.getCurrentPosition(), newTruck.capacity);
 		while(true) {
 			if(field.getQuantity(newTruck.getCurrentPosition()) <= 0)
@@ -115,19 +115,38 @@ public class Solver {
 		return angle <= Math.PI / 2 + ACCEPTED_ERROR;
 	}
 	
+	/*
+	 * With this LENGTH we do not need to check if the chosen stopover 
+	 * is contained into the field. Indeed we are assuming the field is 
+	 * a convex polygon. This means that for each c1, c2 into the field the segment 
+	 * which connects them has to be part of the field.
+	 * 
+	 * Let's consider the worst case can arise: getAngle(c1, c2, c3) = 135°
+	 * This means a primary turn of 45° followed by one of 90°. c2.distance(s2) = sqrt(2)LENGTH.
+	 * 
+	 * However...
+	 * 
+	 * c3  ?
+	 * c1 c2
+	 * 
+	 * The UP-RIGHT corner of c2 and c3 have to be connected by a segment which traverses the 
+	 * center of '?' cell (which contains s2 of course). 
+	 * Now because sqrt(2)LENGTH <= 2LENGTH <= c2.distance(?) we know that s2 has to be 
+	 * part of the field.
+	 */
+	
 	private Coordinates singleStopover(Coordinates c1, Coordinates c2, Coordinates c3) {
+		final double LENGTH = Math.min(field.deltaX, field.deltaY) / 2;
 		double angle = getAngle(c1, c2, c3);
 		if(angle > 0.75 * Math.PI)
 			return null;
 		Vector2D v = c3.subtract(c2);
-		for(Vector2D dir : v.getVectorsByAngle(angle - Math.PI / 2, truck.minimumMove)) {
+		for(Vector2D dir : v.getVectorsByAngle(angle - Math.PI / 2, LENGTH)) {
 			Coordinates s = new Coordinates(c2, dir);
 			
 			if(!isOk(getAngle(c1, c2, s))) // turn on the other side
 				continue;
 			if(!isOk(getAngle(c2, s, c3))) // truck.minimumMove too large
-				continue;
-			if(!field.contains(s))
 				continue;
 			
 			return s;
@@ -136,21 +155,18 @@ public class Solver {
 	}
 	
 	private ArrayList <Coordinates> twoStopovers(Coordinates c1, Coordinates c2, Coordinates c3) {
+		final double LENGTH = Math.min(field.deltaX, field.deltaY) / 2;
 		double angle = getAngle(c1, c2, c3);
 		Vector2D v = c3.subtract(c2);
-		for(Vector2D dir1 : v.getVectorsByAngle(angle - Math.PI / 2, truck.minimumMove)) {
+		for(Vector2D dir1 : v.getVectorsByAngle(angle - Math.PI / 2, LENGTH)) {
 			Coordinates s1 = new Coordinates(c2, dir1);
 			
 			if(!isOk(getAngle(c1, c2, s1))) // turn on the other side
 				continue;
-			if(!field.contains(s1))
-				continue;
-
-			Coordinates s2 = new Coordinates(s1, v.setLengthTo(truck.minimumMove));
+			
+			Coordinates s2 = new Coordinates(s1, v.setLengthTo(LENGTH));
 			
 			if(!isOk(getAngle(s1, s2, c3))) // truck.minimumMove too large
-				continue;
-			if(!field.contains(s2))
 				continue;
 			
 			ArrayList <Coordinates> stopovers = new ArrayList <> ();
@@ -175,8 +191,6 @@ public class Solver {
 			}
 			
 			ArrayList <Coordinates> stopovers = twoStopovers(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i));
-			if(stopovers == null) 
-				throw new IOException("Unable to fix");
 			truck.path.rerouteTwo(i - 1, stopovers.get(0), stopovers.get(1));
 		}
 	}
