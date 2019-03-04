@@ -9,7 +9,7 @@ public class Main {
 		final Coordinates TRUCK_STARTING_POINT = new Coordinates(0.0, 0.0);
 		final double INITIAL_CARGO = 0.0;
 		
-		for(int inputCode = 1; inputCode <= 3; inputCode ++) {
+		for(int inputCode = 1; inputCode <= 4; inputCode ++) {
 			for(double capacity : capacities) {
 				Field field = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt"))));
 				Field clone = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt")))); // just to be sure
@@ -19,7 +19,7 @@ public class Main {
 				
 				Path path = new Solver(field, truck).solve();
 				
-				new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
+				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
 				
 				long stop = System.currentTimeMillis();

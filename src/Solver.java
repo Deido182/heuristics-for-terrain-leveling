@@ -211,17 +211,20 @@ public class Solver {
 		fixField();
 		ArrayList <Path> chainsOfPeaks = getAllChainsOfPeaks(truck.getCurrentPosition());
 		ArrayList <Path> chainsOfHoles = getAllChainsOfHoles(truck.getCurrentPosition());
-		int[] assignment = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
-		boolean[] done = new boolean[chainsOfPeaks.size()];
-		while(true) {
-			int nearest = getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, done);
-			if(nearest == -1)
-				break;
-			done[nearest] = true;
-			Path chainOfPeaks = chainsOfPeaks.get(nearest);
-			Path chainOfHoles = chainsOfHoles.get(assignment[nearest]);
-			truck.move(chainOfPeaks);
-			truck.move(chainOfHoles);
+		assert(chainsOfPeaks.size() == chainsOfHoles.size());
+		if(chainsOfPeaks.size() > 0) {
+			int[] assignment = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
+			boolean[] done = new boolean[chainsOfPeaks.size()];
+			while(true) {
+				int nearest = getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, done);
+				if(nearest == -1)
+					break;
+				done[nearest] = true;
+				Path chainOfPeaks = chainsOfPeaks.get(nearest);
+				Path chainOfHoles = chainsOfHoles.get(assignment[nearest]);
+				truck.move(chainOfPeaks);
+				truck.move(chainOfHoles);
+			}
 		}
 		fixPath();
 		return truck.path;
