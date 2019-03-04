@@ -29,7 +29,7 @@ public class PathPrinter extends JFrame {
 			this.shiftY = shiftY;
 		}
 		
-		public void field(Graphics2D g2D) {
+		public void grid(Graphics2D g2D) {
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2D.setPaint(Color.RED);
 			
@@ -81,7 +81,13 @@ public class PathPrinter extends JFrame {
 												(coordinates.get(j).y + field.deltaY / 2) * multiplierY + shiftY));
 				}
 			}
+		}
+		
+		public void hull(Graphics2D g2D) {
+			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2D.setPaint(Color.BLUE);
 			
+			ArrayList <Coordinates> coordinates = new ArrayList <> ();
 			for(Coordinates c : field.cells.keySet()) {
 				Coordinates c1 = new Coordinates(c.x - field.deltaX / 2, c.y - field.deltaY / 2);
 				if(!coordinates.contains(c1))
@@ -107,6 +113,11 @@ public class PathPrinter extends JFrame {
 			}
 		}
 		
+		public void field(Graphics2D g2D) {
+			grid(g2D);
+			hull(g2D);
+		}
+		
 		public void path(Graphics2D g2D) {
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2D.setPaint(Color.BLACK);
@@ -122,7 +133,7 @@ public class PathPrinter extends JFrame {
 		public void paint(Graphics g) {
 			Graphics2D g2D = (Graphics2D) g;
 			field(g2D);
-			//path(g2D);
+			path(g2D);
 		}
 	}
 	

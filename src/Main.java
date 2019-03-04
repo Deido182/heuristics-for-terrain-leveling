@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
-		final double[] capacities = new double[] {0.015, 0.025, 0.040};
+		final double[] capacities = new double[] {0.015, 0.025, 0.040, 0.080};
 		final Coordinates TRUCK_STARTING_POINT = new Coordinates(0.0, 0.0);
 		final double INITIAL_CARGO = 0.0;
 		
@@ -19,8 +19,8 @@ public class Main {
 				
 				Path path = new Solver(field, truck).solve();
 				
-				//new PathPrinter().print(field, path, 2.3, 2.3, 50.0, 50.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
-				new PathPrinter().print(field, path, 2.3, 2.3, 50.0, 50.0);
+				new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
+				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
 				
 				long stop = System.currentTimeMillis();
 				
