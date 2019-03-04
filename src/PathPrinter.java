@@ -81,6 +81,9 @@ public class PathPrinter extends JFrame {
 												coordinates.get(j).y * multiplierY + shiftY + field.deltaY / 2));
 				}
 			}
+			
+			ArrayList <Coordinates> hull = ConvexHull.build(coordinates);
+			System.out.println(hull.size());
 		}
 		
 		public void path(Graphics2D g2D) {
