@@ -58,6 +58,29 @@ public class PathPrinter extends JFrame {
 												coordinates.get(j).y * multiplierY + shiftY + field.deltaY / 2));
 				}
 			}
+			
+			coordinates.sort((Coordinates c1, Coordinates c2) -> {
+				if(c1.y < c2.y)
+					return -1;
+				if(c1.y > c2.y)
+					return 1;
+				return Double.compare(c1.x, c2.x);
+			});
+			
+			for(int i = 0; i < coordinates.size(); i ++) {
+				for(int j = i + 1; j < coordinates.size(); j ++, i ++) {
+					if(!coordinates.get(j).sameY(coordinates.get(j - 1)))
+						break;
+					g2D.draw(new Line2D.Double(coordinates.get(j - 1).x * multiplierX + shiftX - field.deltaX / 2, 
+												coordinates.get(j - 1).y * multiplierY + shiftY - field.deltaY / 2, 
+												coordinates.get(j).x * multiplierX + shiftX - field.deltaX / 2, 
+												coordinates.get(j).y * multiplierY + shiftY - field.deltaY / 2));
+					g2D.draw(new Line2D.Double(coordinates.get(j - 1).x * multiplierX + shiftX + field.deltaX / 2, 
+												coordinates.get(j - 1).y * multiplierY + shiftY + field.deltaY / 2, 
+												coordinates.get(j).x * multiplierX + shiftX + field.deltaX / 2, 
+												coordinates.get(j).y * multiplierY + shiftY + field.deltaY / 2));
+				}
+			}
 		}
 		
 		public void path(Graphics2D g2D) {
