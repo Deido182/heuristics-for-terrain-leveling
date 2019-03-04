@@ -6,6 +6,7 @@ import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -32,6 +33,31 @@ public class PathPrinter extends JFrame {
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2D.setPaint(Color.RED);
 			
+			ArrayList <Coordinates> coordinates = new ArrayList <> ();
+			coordinates.addAll(field.cells.keySet());
+			
+			coordinates.sort((Coordinates c1, Coordinates c2) -> {
+				if(c1.x < c2.x)
+					return -1;
+				if(c1.x > c2.x)
+					return 1;
+				return Double.compare(c1.y, c2.y);
+			});
+			
+			for(int i = 0; i < coordinates.size(); i ++) {
+				for(int j = i + 1; j < coordinates.size(); j ++, i ++) {
+					if(!coordinates.get(j).sameX(coordinates.get(j - 1)))
+						break;
+					g2D.draw(new Line2D.Double(coordinates.get(j - 1).x * multiplierX + shiftX - field.deltaX / 2, 
+												coordinates.get(j - 1).y * multiplierY + shiftY - field.deltaY / 2, 
+												coordinates.get(j).x * multiplierX + shiftX - field.deltaX / 2, 
+												coordinates.get(j).y * multiplierY + shiftY - field.deltaY / 2));
+					g2D.draw(new Line2D.Double(coordinates.get(j - 1).x * multiplierX + shiftX + field.deltaX / 2, 
+												coordinates.get(j - 1).y * multiplierY + shiftY + field.deltaY / 2, 
+												coordinates.get(j).x * multiplierX + shiftX + field.deltaX / 2, 
+												coordinates.get(j).y * multiplierY + shiftY + field.deltaY / 2));
+				}
+			}
 		}
 		
 		public void path(Graphics2D g2D) {
