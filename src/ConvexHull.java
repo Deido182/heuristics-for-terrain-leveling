@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 public class ConvexHull {
@@ -31,21 +30,30 @@ public class ConvexHull {
 		
 		Coordinates bottomLeft = pullBottomLeft(coordinates);
 		coordinates.sort((Coordinates c1, Coordinates c2) -> {
-			if(bottomLeft.getAngle(c1.subtract(bottomLeft)) < bottomLeft.getAngle(c2.subtract(bottomLeft)))
-				return -1;
-			if(bottomLeft.getAngle(c1.subtract(bottomLeft)) > bottomLeft.getAngle(c2.subtract(bottomLeft)))
-				return 1;
-			return Double.compare(bottomLeft.distance(c1), bottomLeft.distance(c2));
+			int o = orientation(bottomLeft, c1, c2); 
+			if (o == 0)
+				return Double.compare(bottomLeft.distance(c1), bottomLeft.distance(c2));
+			return (o == 2) ? -1 : 1;
 		});
+		
+		ArrayList <Coordinates> newCoordinates = new ArrayList <> ();
+		newCoordinates.add(bottomLeft);
+		for(int i = 1; i < coordinates.size(); i ++) { 
+			while (i < coordinates.size() - 1) {
+				if(orientation(bottomLeft, coordinates.get(i), coordinates.get(i + 1)) != 0)
+					break;
+				i ++;
+		    }
+			newCoordinates.add(coordinates.get(i));
+		}
+		coordinates = newCoordinates;
 		
 		LinkedList <Coordinates> stack = new LinkedList <> (); 
 		stack.push(coordinates.get(0)); 
 		stack.push(coordinates.get(1)); 
 		stack.push(coordinates.get(2)); 
-		  
-		for (int i = 3; i < coordinates.size(); i++) {
-			if(orientation(stack.get(1), stack.get(0), coordinates.get(i)) == 0) 
-				continue;
+		
+		for(int i = 3; i < coordinates.size(); i++) {
 			while(orientation(stack.get(1), stack.get(0), coordinates.get(i)) != 2) 
 				stack.pop(); 
 			stack.push(coordinates.get(i));
