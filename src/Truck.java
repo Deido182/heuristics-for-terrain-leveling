@@ -1,4 +1,3 @@
-import java.io.IOException;
 
 public class Truck {
 	
@@ -15,11 +14,11 @@ public class Truck {
 		return path.getLastCoordinates();
 	}
 	
-	public void move(Coordinates to, double quantity) throws IOException {
+	public void move(Coordinates to, double quantity) {
 		path.addStopover(to, quantity);
 	}
 	
-	public void move(Coordinates to) throws IOException {
+	public void move(Coordinates to) {
 		move(to, 0.0);
 	}
 	

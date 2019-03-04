@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Solver {
@@ -17,7 +16,7 @@ public class Solver {
 	 * nearest neighbor strategy. 
 	 */
 	
-	private Path getChainOfPeaks(Coordinates from, double quantity) throws IOException {
+	private Path getChainOfPeaks(Coordinates from, double quantity) {
 		Truck newTruck = new Truck(quantity, field.getTheNearestPeak(from), 0.0);
 		newTruck.move(newTruck.getCurrentPosition()); // just to add at least a movement
 		while(true) {
@@ -37,7 +36,7 @@ public class Solver {
 	 * Get all the chains of peaks.
 	 */
 	
-	private ArrayList <Path> getAllChainsOfPeaks(Coordinates from) throws IOException {
+	private ArrayList <Path> getAllChainsOfPeaks(Coordinates from) {
 		ArrayList <Path> chainsOfPeaks = new ArrayList <> ();
 		Coordinates nextPeak = field.getTheNearestHole(from);
 		while(nextPeak != null) {
@@ -53,7 +52,7 @@ public class Solver {
 	 * nearest neighbor strategy. 
 	 */
 	
-	private Path getChainOfHoles(Coordinates from, double quantity) throws IOException {
+	private Path getChainOfHoles(Coordinates from, double quantity) {
 		/*
 		 * PAY ATTENTION: the truck has to bring in the first cell "quantity" units of terrain 
 		 * to fill the chain of holes.
@@ -77,7 +76,7 @@ public class Solver {
 	 * Get all the chains of holes.
 	 */
 	
-	private ArrayList <Path> getAllChainsOfHoles(Coordinates from) throws IOException {
+	private ArrayList <Path> getAllChainsOfHoles(Coordinates from) {
 		ArrayList <Path> chainsOfHoles = new ArrayList <> ();
 		Coordinates nextHole = field.getTheNearestHole(from);
 		while(nextHole != null) {
@@ -88,7 +87,7 @@ public class Solver {
 		return chainsOfHoles;
 	}
 	
-	private void fixField() throws IOException {
+	private void fixField() {
 		double terrainToMove = field.terrainToMove();
 		double remainder = terrainToMove - Math.floor(terrainToMove / truck.capacity) * truck.capacity;
 		if(remainder < field.MAX_ERROR)
@@ -177,7 +176,7 @@ public class Solver {
 		return null;
 	}
 	
-	private void fixPath() throws IOException {
+	private void fixPath() {
 		for(int i = 2; i < truck.path.length(); i ++) {
 			double angle = getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i));
 			
@@ -207,7 +206,7 @@ public class Solver {
 		return nearest;
 	}
 	
-	public Path solve() throws IOException {
+	public Path solve() {
 		fixField();
 		ArrayList <Path> chainsOfPeaks = getAllChainsOfPeaks(truck.getCurrentPosition());
 		ArrayList <Path> chainsOfHoles = getAllChainsOfHoles(truck.getCurrentPosition());
