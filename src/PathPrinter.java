@@ -14,11 +14,13 @@ import javax.swing.JFrame;
 
 public class PathPrinter extends JFrame {
 	private class Printer extends JComponent {
-		
+
+		Field field;
 		Path path;
 		double multiplierX, multiplierY, shiftX, shiftY;
 		
-		public Printer(Path path, double multiplierX, double multiplierY, double shiftX, double shiftY) {
+		public Printer(Field field, Path path, double multiplierX, double multiplierY, double shiftX, double shiftY) {
+			this.field = field;
 			this.path = path;
 			this.multiplierX = multiplierX;
 			this.multiplierY = multiplierY;
@@ -26,10 +28,13 @@ public class PathPrinter extends JFrame {
 			this.shiftY = shiftY;
 		}
 		
-		@Override
-		public void paint(Graphics g) {
-			Graphics2D g2D = (Graphics2D) g;
+		public void field(Graphics2D g2D) {
+			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2D.setPaint(Color.RED);
 			
+		}
+		
+		public void path(Graphics2D g2D) {
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2D.setPaint(Color.BLACK);
 			
@@ -39,6 +44,13 @@ public class PathPrinter extends JFrame {
 											path.getCoordinates(i).x * multiplierX + shiftX, 
 											path.getCoordinates(i).y * multiplierY + shiftY));
 		}
+		
+		@Override
+		public void paint(Graphics g) {
+			Graphics2D g2D = (Graphics2D) g;
+			field(g2D);
+			path(g2D);
+		}
 	}
 	
 	public PathPrinter() {
@@ -47,13 +59,13 @@ public class PathPrinter extends JFrame {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 	}
 	
-	public void print(Path path, double multiplierX, double multiplierY, double shiftX, double shiftY) {
+	public void print(Field field, Path path, double multiplierX, double multiplierY, double shiftX, double shiftY) {
 		setVisible(true);
-		add(new Printer(path, multiplierX, multiplierY, shiftX, shiftY));
+		add(new Printer(field, path, multiplierX, multiplierY, shiftX, shiftY));
 	}
 	
-	public void print(Path path, double multiplierX, double multiplierY, double shiftX, double shiftY, String fileName) throws IOException {
-		print(path, multiplierX, multiplierY, shiftX, shiftY);
+	public void print(Field field, Path path, double multiplierX, double multiplierY, double shiftX, double shiftY, String fileName) throws IOException {
+		print(field, path, multiplierX, multiplierY, shiftX, shiftY);
 		BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = img.createGraphics();
 		printAll(g2d);
