@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Solver {
@@ -212,6 +213,12 @@ public class Solver {
 		ArrayList <Path> chainsOfHoles = getAllChainsOfHoles(truck.getCurrentPosition());
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
 		if(chainsOfPeaks.size() > 0) {
+			try {
+				LKH_Manager.run(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			int[] assignment = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
 			boolean[] done = new boolean[chainsOfPeaks.size()];
 			while(true) {
