@@ -1,7 +1,11 @@
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class LKH_Manager {
 	private static final String TOUR_FILE = "TOUR_FILE";
@@ -52,9 +56,25 @@ public class LKH_Manager {
 		Runtime.getRuntime().exec("LKH.exe " + PARAMETER_FILE);
 	}
 	
-	public static void run(double[][] distances) throws IOException {
+	public static ArrayList <Integer> readAnswer() throws FileNotFoundException {
+		Scanner in = new Scanner(new FileReader(new File(TOUR_FILE)));
+		ArrayList <Integer> permutation = new ArrayList <> ();
+		while(true) 
+			if(in.next().equals("TOUR_SECTION"))
+				break;
+		while(true) {
+			int pi = Integer.parseInt(in.next());
+			if(pi == -1)
+				break;
+			permutation.add(pi);
+		}
+		return permutation;
+	}
+	
+	public static ArrayList <Integer> getPermutation(double[][] distances) throws IOException {
 		writePARAMETER_FILE();
 		writePROBLEM_FILE(distances);
 		execute();
+		return readAnswer();
 	}
 }

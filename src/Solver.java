@@ -214,7 +214,7 @@ public class Solver {
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
 		if(chainsOfPeaks.size() > 0) {
 			try {
-				LKH_Manager.run(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles));
+				LKH_Manager.getPermutation(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
