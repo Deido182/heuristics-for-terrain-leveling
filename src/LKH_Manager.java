@@ -11,6 +11,7 @@ public class LKH_Manager {
 	private static final String PROBLEM_FILE = "LKH\\PROBLEM_FILE";
 	private static final String PARAMETER_FILE = "LKH\\PARAMETER_FILE";
 	private static final String LKH_BIN = "LKH\\LKH.exe";
+	private static final int RUNS = 1;
 	private static final int PRECISION = (int)1E1;
 	
 	public static int[][] fix(double[][] distances) {
@@ -26,6 +27,7 @@ public class LKH_Manager {
 		
 		out.println("PROBLEM_FILE = " + PROBLEM_FILE);
 		out.println("TOUR_FILE = " + TOUR_FILE);
+		out.println("RUNS = " + RUNS);
 		
 		out.close();
 	}
