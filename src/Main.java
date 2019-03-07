@@ -9,8 +9,10 @@ public class Main {
 		final Coordinates TRUCK_STARTING_POINT = new Coordinates(0.0, 0.0);
 		final double INITIAL_CARGO = 0.0;
 		
-		for(int inputCode = 1; inputCode <= 4; inputCode ++) {
-			for(double capacity : capacities) {
+		for(int inputCode = 1; inputCode <= 1; inputCode ++) {
+			for(int j = 0; j <= 0; j ++) {
+				double capacity = capacities[j];
+				
 				Field field = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt"))));
 				Field clone = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt")))); // just to be sure
 				Truck truck = new Truck(capacity, TRUCK_STARTING_POINT, INITIAL_CARGO);
@@ -43,6 +45,12 @@ public class Main {
 				
 				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
+				
+				/*
+				 * (Obviously) TO REMOVE
+				 */
+				
+				break;
 			}
 			System.out.print("#############################\n\n");
 		}

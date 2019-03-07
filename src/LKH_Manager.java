@@ -1,5 +1,4 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -53,21 +52,35 @@ public class LKH_Manager {
 	}
 	
 	public static void execute() throws IOException {
-		Runtime.getRuntime().exec("LKH.exe " + PARAMETER_FILE);
+		Process p = Runtime.getRuntime().exec("LKH.exe " + PARAMETER_FILE);
+		while(!new File(TOUR_FILE).exists());
+		
+		/*
+		 * A bit of delay for synchronization... 
+		 */
+		
+		long time = System.currentTimeMillis();
+		while(System.currentTimeMillis() - time <= 1000);
 	}
 	
-	public static ArrayList <Integer> readAnswer() throws FileNotFoundException {
+	public static ArrayList <Integer> readAnswerAndRemoveTOUR_FILE() throws IOException {
 		Scanner in = new Scanner(new FileReader(new File(TOUR_FILE)));
 		ArrayList <Integer> permutation = new ArrayList <> ();
 		while(true) 
-			if(in.next().equals("TOUR_SECTION"))
+			if(in.nextLine().equals("TOUR_SECTION"))
 				break;
 		while(true) {
 			int pi = Integer.parseInt(in.next());
 			if(pi == -1)
 				break;
-			permutation.add(pi);
+			
+			/*
+			 * The answer is 1-indexed
+			 */
+			
+			permutation.add(pi - 1);
 		}
+		//Runtime.getRuntime().exec("del " + TOUR_FILE);
 		return permutation;
 	}
 	
@@ -75,6 +88,6 @@ public class LKH_Manager {
 		writePARAMETER_FILE();
 		writePROBLEM_FILE(distances);
 		execute();
-		return readAnswer();
+		return readAnswerAndRemoveTOUR_FILE();
 	}
 }

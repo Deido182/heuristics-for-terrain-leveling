@@ -207,30 +207,23 @@ public class Solver {
 		return nearest;
 	}
 	
-	public Path solve() {
+	public Path solve() throws IOException {
 		fixField();
 		ArrayList <Path> chainsOfPeaks = getAllChainsOfPeaks(truck.getCurrentPosition());
 		ArrayList <Path> chainsOfHoles = getAllChainsOfHoles(truck.getCurrentPosition());
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
 		if(chainsOfPeaks.size() > 0) {
-			try {
-				LKH_Manager.getPermutation(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			int[] assignment = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
-			boolean[] done = new boolean[chainsOfPeaks.size()];
-			while(true) {
-				int nearest = getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, done);
-				if(nearest == -1)
-					break;
-				done[nearest] = true;
-				Path chainOfPeaks = chainsOfPeaks.get(nearest);
-				Path chainOfHoles = chainsOfHoles.get(assignment[nearest]);
-				truck.move(chainOfPeaks);
-				truck.move(chainOfHoles);
+			ArrayList <Path> chains = new ArrayList <> ();
+			for(int i = 0; i < chainsOfPeaks.size(); i ++) {
+				chainsOfPeaks.get(i).append(chainsOfHoles.get(assignment[i]));
+				chains.add(chainsOfPeaks.get(i));
 			}
+			ArrayList <Integer> permutation = LKH_Manager.getPermutation(buildMatrixOfDistances(chains, chains));
+			assert(chainsOfPeaks.size() == permutation.size());
+			//System.out.println(chainsOfPeaks.size() + " " + permutation.size());
+			for(int pi : permutation)
+				truck.move(chains.get(pi));
 		}
 		fixPath();
 		return truck.path;
