@@ -5,12 +5,12 @@ import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) throws IOException, InterruptedException {
-		final double[] capacities = new double[] {0.015, 0.025, 0.040, 0.080};
+		final double[] capacities = new double[] {0.015, 0.025, 0.040};
 		final Coordinates TRUCK_STARTING_POINT = new Coordinates(0.0, 0.0);
 		final double INITIAL_CARGO = 0.0;
 		
-		for(int inputCode = 3; inputCode <= 3; inputCode ++) {
-			for(int j = 2; j <= 2; j ++) {
+		for(int inputCode = 1; inputCode <= 4; inputCode ++) {
+			for(int j = 0; j < capacities.length; j ++) {
 				double capacity = capacities[j];
 				
 				Field field = new Field(new Scanner(new FileReader(new File("Input\\cellplot" + inputCode + "b.txt"))));
@@ -19,7 +19,8 @@ public class Main {
 				
 				long start = System.currentTimeMillis();
 				
-				Path path = new Solver(field, truck).solve();
+				//Path path = new Solver(field, truck).solveWithLKH();
+				Path path = new Solver(field, truck).solveWithNearestNeighbourStrategy();
 				
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
@@ -45,12 +46,6 @@ public class Main {
 				
 				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
-				
-				/*
-				 * (Obviously) TO REMOVE
-				 */
-				
-				break;
 			}
 			System.out.print("#############################\n\n");
 		}

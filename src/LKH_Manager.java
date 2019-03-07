@@ -11,7 +11,7 @@ public class LKH_Manager {
 	private static final String PROBLEM_FILE = "LKH\\PROBLEM_FILE";
 	private static final String PARAMETER_FILE = "LKH\\PARAMETER_FILE";
 	private static final String LKH_BIN = "LKH\\LKH.exe";
-	private static final int PRECISION = (int)1E3;
+	private static final int PRECISION = (int)1E1;
 	
 	public static int[][] fix(double[][] distances) {
 		int[][] fixedDistances = new int[distances.length][distances.length];

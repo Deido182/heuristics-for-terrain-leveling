@@ -207,22 +207,45 @@ public class Solver {
 		return nearest;
 	}
 	
-	public Path solve() throws IOException, InterruptedException {
+	public Path solveWithLKH() throws IOException, InterruptedException {
 		fixField();
 		ArrayList <Path> chainsOfPeaks = getAllChainsOfPeaks(truck.getCurrentPosition());
 		ArrayList <Path> chainsOfHoles = getAllChainsOfHoles(truck.getCurrentPosition());
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
 		if(chainsOfPeaks.size() > 0) {
 			int[] assignment = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
-			ArrayList <Path> chains = new ArrayList <> ();
-			for(int i = 0; i < chainsOfPeaks.size(); i ++) {
+			
+			/*
+			 * Let's use chainsOfPeaks as chains (by appending holes).
+			 */
+			
+			for(int i = 0; i < chainsOfPeaks.size(); i ++) 
 				chainsOfPeaks.get(i).append(chainsOfHoles.get(assignment[i]));
-				chains.add(chainsOfPeaks.get(i));
+			for(int pi : LKH_Manager.getPermutation(buildMatrixOfDistances(chainsOfPeaks, chainsOfPeaks)))
+				truck.move(chainsOfPeaks.get(pi));
+		}
+		fixPath();
+		return truck.path;
+	}
+	
+	public Path solveWithNearestNeighbourStrategy() {
+		fixField();
+		ArrayList <Path> chainsOfPeaks = getAllChainsOfPeaks(truck.getCurrentPosition());
+		ArrayList <Path> chainsOfHoles = getAllChainsOfHoles(truck.getCurrentPosition());
+		assert(chainsOfPeaks.size() == chainsOfHoles.size());
+		if(chainsOfPeaks.size() > 0) {
+			int[] assignment = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
+			boolean[] done = new boolean[chainsOfPeaks.size()];
+			while(true) {
+				int nearest = getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, done);
+				if(nearest == -1)
+					break;
+				done[nearest] = true;
+				Path chainOfPeaks = chainsOfPeaks.get(nearest);
+				Path chainOfHoles = chainsOfHoles.get(assignment[nearest]);
+				truck.move(chainOfPeaks);
+				truck.move(chainOfHoles);
 			}
-			ArrayList <Integer> permutation = LKH_Manager.getPermutation(buildMatrixOfDistances(chains, chains));
-			assert(chainsOfPeaks.size() == permutation.size());
-			for(int pi : permutation)
-				truck.move(chains.get(pi));
 		}
 		fixPath();
 		return truck.path;
