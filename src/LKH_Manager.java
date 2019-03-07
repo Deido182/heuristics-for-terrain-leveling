@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class LKH_Manager {
-	private static final String TOUR_FILE = "TOUR_FILE";
-	private static final String PROBLEM_FILE = "PROBLEM_FILE";
-	private static final String PARAMETER_FILE = "PARAMETER_FILE";
+	private static final String TOUR_FILE = "LKH\\TOUR_FILE";
+	private static final String PROBLEM_FILE = "LKH\\PROBLEM_FILE";
+	private static final String PARAMETER_FILE = "LKH\\PARAMETER_FILE";
+	private static final String LKH_BIN = "LKH\\LKH.exe";
 	private static final int PRECISION = (int)1E4;
 	
 	public static int[][] fix(double[][] distances) {
@@ -51,16 +52,10 @@ public class LKH_Manager {
 		out.close();
 	}
 	
-	public static void execute() throws IOException {
-		Process p = Runtime.getRuntime().exec("LKH.exe " + PARAMETER_FILE);
-		while(!new File(TOUR_FILE).exists());
-		
-		/*
-		 * A bit of delay for synchronization... 
-		 */
-		
-		long time = System.currentTimeMillis();
-		while(System.currentTimeMillis() - time <= 1000);
+	public static void execute() throws IOException, InterruptedException {
+		ProcessBuilder pb = new ProcessBuilder(LKH_BIN, PARAMETER_FILE);
+		pb.inheritIO();
+		pb.start().waitFor();
 	}
 	
 	public static ArrayList <Integer> readAnswer() throws IOException {
@@ -95,7 +90,7 @@ public class LKH_Manager {
 		new File(TOUR_FILE).delete();
 	}
 	
-	public static ArrayList <Integer> getPermutation(double[][] distances) throws IOException {
+	public static ArrayList <Integer> getPermutation(double[][] distances) throws IOException, InterruptedException {
 		clean();
 		writePARAMETER_FILE();
 		writePROBLEM_FILE(distances);

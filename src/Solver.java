@@ -207,7 +207,7 @@ public class Solver {
 		return nearest;
 	}
 	
-	public Path solve() throws IOException {
+	public Path solve() throws IOException, InterruptedException {
 		fixField();
 		ArrayList <Path> chainsOfPeaks = getAllChainsOfPeaks(truck.getCurrentPosition());
 		ArrayList <Path> chainsOfHoles = getAllChainsOfHoles(truck.getCurrentPosition());
@@ -221,7 +221,6 @@ public class Solver {
 			}
 			ArrayList <Integer> permutation = LKH_Manager.getPermutation(buildMatrixOfDistances(chains, chains));
 			assert(chainsOfPeaks.size() == permutation.size());
-			//System.out.println(chainsOfPeaks.size() + " " + permutation.size());
 			for(int pi : permutation)
 				truck.move(chains.get(pi));
 		}

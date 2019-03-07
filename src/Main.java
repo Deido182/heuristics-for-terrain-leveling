@@ -4,17 +4,17 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		final double[] capacities = new double[] {0.015, 0.025, 0.040, 0.080};
 		final Coordinates TRUCK_STARTING_POINT = new Coordinates(0.0, 0.0);
 		final double INITIAL_CARGO = 0.0;
 		
-		for(int inputCode = 1; inputCode <= 1; inputCode ++) {
+		for(int inputCode = 3; inputCode <= 3; inputCode ++) {
 			for(int j = 2; j <= 2; j ++) {
 				double capacity = capacities[j];
 				
-				Field field = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt"))));
-				Field clone = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt")))); // just to be sure
+				Field field = new Field(new Scanner(new FileReader(new File("Input\\cellplot" + inputCode + "b.txt"))));
+				Field clone = new Field(new Scanner(new FileReader(new File("Input\\cellplot" + inputCode + "b.txt")))); // just to be sure
 				Truck truck = new Truck(capacity, TRUCK_STARTING_POINT, INITIAL_CARGO);
 				
 				long start = System.currentTimeMillis();
