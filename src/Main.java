@@ -10,7 +10,7 @@ public class Main {
 		final double INITIAL_CARGO = 0.0;
 		
 		for(int inputCode = 1; inputCode <= 1; inputCode ++) {
-			for(int j = 0; j <= 0; j ++) {
+			for(int j = 2; j <= 2; j ++) {
 				double capacity = capacities[j];
 				
 				Field field = new Field(new Scanner(new FileReader(new File("cellplot" + inputCode + "b.txt"))));

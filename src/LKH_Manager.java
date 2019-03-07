@@ -63,7 +63,7 @@ public class LKH_Manager {
 		while(System.currentTimeMillis() - time <= 1000);
 	}
 	
-	public static ArrayList <Integer> readAnswerAndRemoveTOUR_FILE() throws IOException {
+	public static ArrayList <Integer> readAnswer() throws IOException {
 		Scanner in = new Scanner(new FileReader(new File(TOUR_FILE)));
 		ArrayList <Integer> permutation = new ArrayList <> ();
 		while(true) 
@@ -80,14 +80,26 @@ public class LKH_Manager {
 			
 			permutation.add(pi - 1);
 		}
-		//Runtime.getRuntime().exec("del " + TOUR_FILE);
+		
+		/*
+		 * REMEMBER TO CLOSE IT!
+		 */
+		
+		in.close();
 		return permutation;
 	}
 	
+	public static void clean() {
+		new File(PARAMETER_FILE).delete();
+		new File(PROBLEM_FILE).delete();
+		new File(TOUR_FILE).delete();
+	}
+	
 	public static ArrayList <Integer> getPermutation(double[][] distances) throws IOException {
+		clean();
 		writePARAMETER_FILE();
 		writePROBLEM_FILE(distances);
 		execute();
-		return readAnswerAndRemoveTOUR_FILE();
+		return readAnswer();
 	}
 }
