@@ -20,9 +20,7 @@ public class Solver {
 	private Path getChainOfPeaks(Coordinates from, double quantity) {
 		Truck newTruck = new Truck(quantity, field.getTheNearestPeak(from), 0.0);
 		newTruck.move(newTruck.getCurrentPosition()); // just to add at least a movement
-		while(true) {
-			if(field.getQuantity(newTruck.getCurrentPosition()) >= newTruck.capacity)
-				break;
+		while(field.getQuantity(newTruck.getCurrentPosition()) < newTruck.capacity) {
 			Coordinates nextPeak = field.getTheNearestPeakDifferentFromThisOne(newTruck.getCurrentPosition(), newTruck.getCurrentPosition());
 			if(nextPeak == null)
 				break;
@@ -61,9 +59,7 @@ public class Solver {
 		
 		Truck newTruck = new Truck(quantity, field.getTheNearestHole(from), quantity);
 		field.increment(newTruck.getCurrentPosition(), newTruck.capacity);
-		while(true) {
-			if(field.getQuantity(newTruck.getCurrentPosition()) <= 0)
-				break;
+		while(field.getQuantity(newTruck.getCurrentPosition()) > 0) {
 			Coordinates nextHole = field.getTheNearestHole(newTruck.getCurrentPosition());
 			if(nextHole == null)
 				break;
@@ -108,19 +104,19 @@ public class Solver {
 	}
 	
 
-	private static double[][] buildMatrixOfDistances(ArrayList <Path> chains, int limit) {
+	private static double[][] buildMatrixOfDistances(ArrayList <Path> chains, int threshold) {
 		/*
 		 * Bipartite graph
 		 */
 		
 		final double INF = 1E6;
 		double[][] matrix = new double[chains.size()][chains.size()];
-		for(int i = 0; i < limit; i ++) 
+		for(int i = 0; i < threshold; i ++) 
 			for(int j = 0; j < chains.size(); j ++)
-				matrix[i][j] = j >= limit ? chains.get(i).getLastCoordinates().distance(chains.get(j).getFirstCoordinates()) : INF;
-		for(int i = limit; i < chains.size(); i ++) 
+				matrix[i][j] = j >= threshold ? chains.get(i).getLastCoordinates().distance(chains.get(j).getFirstCoordinates()) : INF;
+		for(int i = threshold; i < chains.size(); i ++) 
 			for(int j = 0; j < chains.size(); j ++)
-				matrix[i][j] = j < limit ? chains.get(i).getLastCoordinates().distance(chains.get(j).getFirstCoordinates()) : INF;
+				matrix[i][j] = j < threshold ? chains.get(i).getLastCoordinates().distance(chains.get(j).getFirstCoordinates()) : INF;
 		return matrix;
 	}
 	
@@ -164,7 +160,7 @@ public class Solver {
 			
 			if(!isOk(getAngle(c1, c2, s))) // turn on the other side
 				continue;
-			if(!isOk(getAngle(c2, s, c3))) // truck.minimumMove too large
+			if(!isOk(getAngle(c2, s, c3))) 
 				continue;
 			
 			return s;
@@ -184,7 +180,7 @@ public class Solver {
 			
 			Coordinates s2 = new Coordinates(s1, v.setLengthTo(LENGTH));
 			
-			if(!isOk(getAngle(s1, s2, c3))) // truck.minimumMove too large
+			if(!isOk(getAngle(s1, s2, c3))) 
 				continue;
 			
 			ArrayList <Coordinates> stopovers = new ArrayList <> ();
@@ -225,11 +221,40 @@ public class Solver {
 		return nearest;
 	}
 	
-	public static double[][] fix(int[] assignment, double[][] distances) {
+	public static double[][] eraseLinks(int[] assignment, double[][] distances) {
 		final double INF = 1E6;
 		for(int i = 0; i < assignment.length; i ++)
 			distances[assignment[i]][i] = INF;
 		return distances;
+	}
+	
+	private static double getLowerBoundHC(ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles, int[] assignmentPH, int[] assignmentHP) {
+		boolean[] doneP = new boolean[chainsOfPeaks.size()];
+		double lb = 0.0;
+		for(int i = 0; i < chainsOfPeaks.size(); i ++) {
+			int j = i;
+			while(!doneP[j]) {
+				doneP[j] = true;
+				lb += chainsOfPeaks.get(j).getLastCoordinates().distance(chainsOfHoles.get(assignmentPH[j]).getFirstCoordinates());
+				lb += chainsOfHoles.get(assignmentPH[j]).getLastCoordinates().distance(chainsOfPeaks.get(assignmentHP[assignmentPH[j]]).getFirstCoordinates());
+				j = assignmentHP[assignmentPH[j]];
+			}
+		}
+		return lb;
+	}
+	
+	private static double getCurrentHC(ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles, int first, Path p) {
+		double current = p.distance();
+		
+		current -= p.prefix(first + 1).distance();
+		for(Path chain : chainsOfPeaks)
+			current -= chain.distance();
+		for(Path chain : chainsOfHoles)
+			current -= chain.distance();
+		
+		current += p.getLastCoordinates().distance(p.getCoordinates(first));
+		
+		return current;
 	}
 	
 	public Path solveWithLKH() throws IOException, InterruptedException {
@@ -253,49 +278,25 @@ public class Solver {
 		ArrayList <Path> chainsOfPeaks = getAllChainsOfPeaks(truck.getCurrentPosition());
 		ArrayList <Path> chainsOfHoles = getAllChainsOfHoles(truck.getCurrentPosition());
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
-		//System.out.println(chainsOfPeaks.size());
 		if(chainsOfPeaks.size() > 0) {
 			int[] assignmentPH = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
-			int[] assignmentHP = new HungarianAlgorithm(fix(assignmentPH, buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks))).execute();
+			int[] assignmentHP = new HungarianAlgorithm(eraseLinks(assignmentPH, buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks))).execute();
 			boolean[] doneP = new boolean[chainsOfPeaks.size()];
 			
-			double best = 0.0;
-			for(int i = 0; i < chainsOfPeaks.size(); i ++) {
-				int j = i;
-				while(!doneP[j]) {
-					doneP[j] = true;
-					best += chainsOfPeaks.get(j).getLastCoordinates().distance(chainsOfHoles.get(assignmentPH[j]).getFirstCoordinates());
-					best += chainsOfHoles.get(assignmentPH[j]).getLastCoordinates().distance(chainsOfPeaks.get(assignmentHP[assignmentPH[j]]).getFirstCoordinates());
-					j = assignmentHP[assignmentPH[j]];
-				}
-			}
-			doneP = new boolean[chainsOfPeaks.size()];
-			
-			boolean first = true;
-			double curr = 0.0;
-			Coordinates firstPos = truck.getCurrentPosition();
-			
+			int first = truck.path.length();
 			int next = getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, doneP);
-			while(true) {
-				if(next == -1)
-					break;
-				if(!first)
-					curr += truck.getCurrentPosition().distance(chainsOfPeaks.get(next).getFirstCoordinates());
+			while(next != -1) {
 				doneP[next] = true;
-				Path chainOfPeaks = chainsOfPeaks.get(next);
-				Path chainOfHoles = chainsOfHoles.get(assignmentPH[next]);
-				truck.move(chainOfPeaks);
-				curr += truck.getCurrentPosition().distance(chainOfHoles.getFirstCoordinates());
-				truck.move(chainOfHoles);
+				truck.move(chainsOfPeaks.get(next));
+				truck.move(chainsOfHoles.get(assignmentPH[next]));
 				next = doneP[assignmentHP[assignmentPH[next]]] ? getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, doneP) :
 						assignmentHP[assignmentPH[next]];
-				first = false;
 			}
-			curr += truck.getCurrentPosition().distance(firstPos);
 			
-			System.out.println("LOWER BOUND BEST: " + best + " CURR: " + curr + " ERROR: " + (((curr - best) / best) * 100) + "%");
-			double avg = (truck.path.distance() - curr) / (chainsOfPeaks.size() + chainsOfHoles.size());
-			System.out.println("AVG(chains length) " + avg + ", so at most " + (avg / Math.min(field.deltaX, field.deltaY)) + " cells");
+			double lowerBoundHC = getLowerBoundHC(chainsOfPeaks, chainsOfHoles, assignmentPH, assignmentHP);
+			double currentHC = getCurrentHC(chainsOfPeaks, chainsOfHoles, first, truck.path);
+			
+			System.out.println("LOWER_BOUND_HC: " + lowerBoundHC + " CURRENT_HC: " + currentHC + " ERROR: " + (((currentHC - lowerBoundHC) / lowerBoundHC) * 100) + "%");
 		}
 		fixPath();
 		return truck.path;

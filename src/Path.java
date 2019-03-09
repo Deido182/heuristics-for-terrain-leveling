@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 class Stopover {
 	
@@ -29,6 +30,11 @@ public class Path {
 		stopovers = new ArrayList <> ();
 	}
 	
+	public Path(List<Stopover> stopovers) {
+		this.stopovers = new ArrayList <> ();
+		this.stopovers.addAll(stopovers);
+	}
+	
 	public int length() {
 		return stopovers.size();
 	}
@@ -36,6 +42,7 @@ public class Path {
 	public Stopover removeStopover(int i) {
 		return stopovers.remove(i);
 	}
+	
 	
 	private void addStopover(int i, Stopover s) {
 		if(i > 0)
@@ -96,6 +103,10 @@ public class Path {
 		for(int i = 1; i < length(); i ++)
 			distance += getCoordinates(i - 1).distance(getCoordinates(i));
 		return distance;
+	}
+	
+	public Path prefix(int firstToExclude) {
+		return new Path(stopovers.subList(0, firstToExclude));
 	}
 	
 	@Override
