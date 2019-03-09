@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class LKH_Manager {
-	private static final String TYPE = "TSP";
+	private static final String TYPE = "ATSP";
 	private static final String TOUR_FILE = "LKH\\TOUR_FILE";
 	private static final String PROBLEM_FILE = "LKH\\PROBLEM_FILE";
 	private static final String PARAMETER_FILE = "LKH\\PARAMETER_FILE";

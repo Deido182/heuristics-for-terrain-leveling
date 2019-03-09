@@ -253,6 +253,7 @@ public class Solver {
 		ArrayList <Path> chainsOfPeaks = getAllChainsOfPeaks(truck.getCurrentPosition());
 		ArrayList <Path> chainsOfHoles = getAllChainsOfHoles(truck.getCurrentPosition());
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
+		//System.out.println(chainsOfPeaks.size());
 		if(chainsOfPeaks.size() > 0) {
 			int[] assignmentPH = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
 			int[] assignmentHP = new HungarianAlgorithm(fix(assignmentPH, buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks))).execute();
@@ -272,6 +273,7 @@ public class Solver {
 			
 			boolean first = true;
 			double curr = 0.0;
+			Coordinates firstPos = truck.getCurrentPosition();
 			
 			int next = getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, doneP);
 			while(true) {
@@ -289,8 +291,11 @@ public class Solver {
 						assignmentHP[assignmentPH[next]];
 				first = false;
 			}
+			curr += truck.getCurrentPosition().distance(firstPos);
 			
 			System.out.println("LOWER BOUND BEST: " + best + " CURR: " + curr + " ERROR: " + (((curr - best) / best) * 100) + "%");
+			double avg = (truck.path.distance() - curr) / (chainsOfPeaks.size() + chainsOfHoles.size());
+			System.out.println("AVG(chains length) " + avg + ", so at most " + (avg / Math.min(field.deltaX, field.deltaY)) + " cells");
 		}
 		fixPath();
 		return truck.path;
