@@ -5,8 +5,8 @@ public class Coordinates extends Vector2D {
 		super(x, y);
 	}
 	
-	public Coordinates(Coordinates c, Vector2D dir) {
-		super(c.add(dir));
+	public Coordinates(Coordinates c, Vector2D direction) {
+		super(c.add(direction));
 	}
 	
 	/*
@@ -16,8 +16,7 @@ public class Coordinates extends Vector2D {
 	 */
 	
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		double tmp = (y + ((long)(x + 1) / 2));
 		return (int)(x + (tmp * tmp));
 	}
