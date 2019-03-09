@@ -225,6 +225,13 @@ public class Solver {
 		return nearest;
 	}
 	
+	public static double[][] fix(int[] assignment, double[][] distances) {
+		final double INF = 1E6;
+		for(int i = 0; i < assignment.length; i ++)
+			distances[assignment[i]][i] = INF;
+		return distances;
+	}
+	
 	public Path solveWithLKH() throws IOException, InterruptedException {
 		fixField();
 		ArrayList <Path> chainsOfPeaks = getAllChainsOfPeaks(truck.getCurrentPosition());
@@ -248,20 +255,42 @@ public class Solver {
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
 		if(chainsOfPeaks.size() > 0) {
 			int[] assignmentPH = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
-			int[] assignmentHP = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks)).execute();
+			int[] assignmentHP = new HungarianAlgorithm(fix(assignmentPH, buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks))).execute();
 			boolean[] doneP = new boolean[chainsOfPeaks.size()];
+			
+			double best = 0.0;
+			for(int i = 0; i < chainsOfPeaks.size(); i ++) {
+				int j = i;
+				while(!doneP[j]) {
+					doneP[j] = true;
+					best += chainsOfPeaks.get(j).getLastCoordinates().distance(chainsOfHoles.get(assignmentPH[j]).getFirstCoordinates());
+					best += chainsOfHoles.get(assignmentPH[j]).getLastCoordinates().distance(chainsOfPeaks.get(assignmentHP[assignmentPH[j]]).getFirstCoordinates());
+					j = assignmentHP[assignmentPH[j]];
+				}
+			}
+			doneP = new boolean[chainsOfPeaks.size()];
+			
+			boolean first = true;
+			double curr = 0.0;
+			
 			int next = getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, doneP);
 			while(true) {
 				if(next == -1)
 					break;
+				if(!first)
+					curr += truck.getCurrentPosition().distance(chainsOfPeaks.get(next).getFirstCoordinates());
 				doneP[next] = true;
 				Path chainOfPeaks = chainsOfPeaks.get(next);
 				Path chainOfHoles = chainsOfHoles.get(assignmentPH[next]);
 				truck.move(chainOfPeaks);
+				curr += truck.getCurrentPosition().distance(chainOfHoles.getFirstCoordinates());
 				truck.move(chainOfHoles);
 				next = doneP[assignmentHP[assignmentPH[next]]] ? getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, doneP) :
 						assignmentHP[assignmentPH[next]];
+				first = false;
 			}
+			
+			System.out.println("LOWER BOUND BEST: " + best + " CURR: " + curr + " ERROR: " + (((curr - best) / best) * 100) + "%");
 		}
 		fixPath();
 		return truck.path;
