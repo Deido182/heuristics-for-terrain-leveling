@@ -7,11 +7,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class LKH_Manager {
+	private static final String TYPE = "TSP";
 	private static final String TOUR_FILE = "LKH\\TOUR_FILE";
 	private static final String PROBLEM_FILE = "LKH\\PROBLEM_FILE";
 	private static final String PARAMETER_FILE = "LKH\\PARAMETER_FILE";
 	private static final String LKH_BIN = "LKH\\LKH.exe";
-	private static final int RUNS = 1;
+	private static final int RUNS = 3;
 	private static final int PRECISION = (int)1E1;
 	
 	public static int[][] fix(double[][] distances) {
@@ -35,8 +36,8 @@ public class LKH_Manager {
 	public static void writePROBLEM_FILE(double[][] distances) throws IOException {
 		PrintWriter out = new PrintWriter(new FileWriter(new File(PROBLEM_FILE)));
 		
-		out.println("NAME: ATSP_between_chains");
-		out.println("TYPE: ATSP");
+		out.println("NAME: " + TYPE + "_between_chains");
+		out.println("TYPE: " + TYPE);
 		out.println("DIMENSION: " + distances.length);
 		out.println("EDGE_WEIGHT_TYPE: EXPLICIT");
 		out.println("EDGE_WEIGHT_FORMAT: FULL_MATRIX");

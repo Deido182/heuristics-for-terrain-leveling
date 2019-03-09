@@ -107,6 +107,24 @@ public class Solver {
 		return matrix;
 	}
 	
+
+	private static double[][] buildMatrixOfDistances(ArrayList <Path> chains, int limit) {
+		/*
+		 * Bipartite graph
+		 */
+		
+		final double INF = 1E6;
+		double[][] matrix = new double[chains.size()][chains.size()];
+		for(int i = 0; i < limit; i ++) 
+			for(int j = 0; j < chains.size(); j ++)
+				matrix[i][j] = j >= limit ? chains.get(i).getLastCoordinates().distance(chains.get(j).getFirstCoordinates()) : INF;
+		for(int i = limit; i < chains.size(); i ++) 
+			for(int j = 0; j < chains.size(); j ++)
+				matrix[i][j] = j < limit ? chains.get(i).getLastCoordinates().distance(chains.get(j).getFirstCoordinates()) : INF;
+		return matrix;
+	}
+	
+	
 	public static double getAngle(Coordinates c1, Coordinates c2, Coordinates c3) {
 		return c2.subtract(c1).getAngle(c3.subtract(c2));
 	}
@@ -213,16 +231,11 @@ public class Solver {
 		ArrayList <Path> chainsOfHoles = getAllChainsOfHoles(truck.getCurrentPosition());
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
 		if(chainsOfPeaks.size() > 0) {
-			int[] assignment = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
-			
-			/*
-			 * Let's use chainsOfPeaks as chains (by appending holes).
-			 */
-			
-			for(int i = 0; i < chainsOfPeaks.size(); i ++) 
-				chainsOfPeaks.get(i).append(chainsOfHoles.get(assignment[i]));
-			for(int pi : LKH_Manager.getPermutation(buildMatrixOfDistances(chainsOfPeaks, chainsOfPeaks)))
-				truck.move(chainsOfPeaks.get(pi));
+			ArrayList <Path> chains = new ArrayList <> ();
+			chains.addAll(chainsOfPeaks);
+			chains.addAll(chainsOfHoles);
+			for(int pi : LKH_Manager.getPermutation(buildMatrixOfDistances(chains, chainsOfPeaks.size())))
+				truck.move(chains.get(pi));
 		}
 		fixPath();
 		return truck.path;
