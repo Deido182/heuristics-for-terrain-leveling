@@ -9,8 +9,8 @@ public class Main {
 		final Coordinates TRUCK_STARTING_POINT = new Coordinates(0.0, 0.0);
 		final double INITIAL_CARGO = 0.0;
 		
-		for(int inputCode = 3; inputCode <= 4; inputCode ++) {
-			for(int j = 2; j < capacities.length; j ++) {
+		for(int inputCode = 1; inputCode <= 4; inputCode ++) {
+			for(int j = 0; j < capacities.length; j ++) {
 				double capacity = capacities[j];
 				
 				Field field = new Field(new Scanner(new FileReader(new File("Input\\cellplot" + inputCode + "b.txt"))));
@@ -19,8 +19,8 @@ public class Main {
 				
 				long start = System.currentTimeMillis();
 				
-				Path path = new Solver(field, truck).solveWithLKH();
-				//Path path = new Solver(field, truck).solveWithNearestNeighbourStrategy();
+				//Path path = new Solver(field, truck).solveWithLKH();
+				Path path = new Solver(field, truck).solveWithNearestNeighbourStrategy();
 				
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
