@@ -221,12 +221,14 @@ public class Solver {
 		return nearest;
 	}
 	
+	/*
 	public static double[][] eraseLinks(int[] assignment, double[][] distances) {
 		final double INF = 1E6;
 		for(int i = 0; i < assignment.length; i ++)
 			distances[assignment[i]][i] = INF;
 		return distances;
 	}
+	*/
 	
 	private static double getLowerBoundHC(ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles, int[] assignmentPH, int[] assignmentHP) {
 		boolean[] doneP = new boolean[chainsOfPeaks.size()];
@@ -280,7 +282,8 @@ public class Solver {
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
 		if(chainsOfPeaks.size() > 0) {
 			int[] assignmentPH = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
-			int[] assignmentHP = new HungarianAlgorithm(eraseLinks(assignmentPH, buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks))).execute();
+			int[] assignmentHP = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks)).execute();
+			//int[] assignmentHP = new HungarianAlgorithm(eraseLinks(assignmentPH, buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks))).execute();
 			boolean[] doneP = new boolean[chainsOfPeaks.size()];
 			
 			int first = truck.path.length();
