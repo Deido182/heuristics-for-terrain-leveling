@@ -38,7 +38,7 @@ public class Solver {
 	private ArrayList <Path> getAllChainsOfPeaks(Coordinates from) {
 		ArrayList <Path> chainsOfPeaks = new ArrayList <> ();
 		Coordinates nextPeak = field.getTheNearestHole(from);
-		while(nextPeak != null) {
+		while(nextPeak != null && !field.isSmooth()) {
 			Path chain = getChainOfPeaks(nextPeak, truck.capacity);
 			chainsOfPeaks.add(chain);
 			nextPeak = field.getTheNearestPeak(chain.getLastCoordinates());
@@ -76,7 +76,7 @@ public class Solver {
 	private ArrayList <Path> getAllChainsOfHoles(Coordinates from) {
 		ArrayList <Path> chainsOfHoles = new ArrayList <> ();
 		Coordinates nextHole = field.getTheNearestHole(from);
-		while(nextHole != null) {
+		while(nextHole != null && !field.isSmooth()) {
 			Path chain = getChainOfHoles(nextHole, truck.capacity);
 			chainsOfHoles.add(chain);
 			nextHole = field.getTheNearestHole(chain.getLastCoordinates());

@@ -37,16 +37,15 @@ public class Field {
 			cells.put(c, cells.get(c) - mean);
 		
 		deltaX = Double.MAX_VALUE;
-		for(Coordinates c1 : cells.keySet())
-			for(Coordinates c2 : cells.keySet())
+		deltaY = Double.MAX_VALUE;
+		for(Coordinates c1 : cells.keySet()) {
+			for(Coordinates c2 : cells.keySet()) {
 				if(!c1.equals(c2) && c1.sameY(c2))
 					deltaX = Math.min(deltaX, c1.distance(c2));
-		
-		deltaY = Double.MAX_VALUE;
-		for(Coordinates c1 : cells.keySet())
-			for(Coordinates c2 : cells.keySet())
 				if(!c1.equals(c2) && c1.sameX(c2))
 					deltaY = Math.min(deltaY, c1.distance(c2));
+			}
+		}
 	}
 	
 	public double getQuantity(Coordinates c) {
