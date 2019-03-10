@@ -5,7 +5,7 @@ import java.util.TreeMap;
 public class Field {
 	
 	/*
-	 * PROBLEM: try more PEAK_THRESHOLD value. The problem arises with "getChainOfPeaks" method.
+	 * PROBLEM: try more THRESHOLD value. The problem arises with "getChainOfPeaks" method.
 	 * With a value too high we could find a "peak" and start a new chain when actually there is not enough terrain 
 	 * to complete it.
 	 * 
@@ -14,9 +14,9 @@ public class Field {
 	 */
 	
 	public HashMap <Coordinates, Double> cells;
-	public final double MAX_ERROR = 1E-3; 
-	public final double PEAK_THRESHOLD = MAX_ERROR / 20;
 	public double deltaX, deltaY;
+	public static final double MAX_ERROR = 1E-3; 
+	public static final double THRESHOLD = MAX_ERROR / 20;
 	
 	public Field(Scanner scanner) {
 		cells = new HashMap <> ();
@@ -78,11 +78,11 @@ public class Field {
 	}
 	
 	public boolean isAnHole(Coordinates c) {
-		return cells.get(c) <= -PEAK_THRESHOLD;
+		return cells.get(c) <= -THRESHOLD;
 	}
 	
 	public boolean isAPeak(Coordinates c) {
-		return cells.get(c) >= PEAK_THRESHOLD;
+		return cells.get(c) >= THRESHOLD;
 	}
 	
 	public Coordinates getTheNearestHole(Coordinates from) {
