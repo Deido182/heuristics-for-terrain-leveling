@@ -21,8 +21,6 @@ public class InputBuilder {
 	}
 	
 	private Integer getNumber() {
-		if(!new File(path).exists())
-			return null;
 		Integer number = 1;
 		while(new File(path + number).exists())
 			number ++;
@@ -43,8 +41,7 @@ public class InputBuilder {
 	
 	public void build(int n) throws IOException {
 		while(n -- > 0) {
-			Integer number = getNumber();
-			PrintWriter out = new PrintWriter(new FileWriter(new File(path + (number != null ? number : ""))));
+			PrintWriter out = new PrintWriter(new FileWriter(new File(path + getNumber())));
 			
 			out.println(rows * columns);
 			for(int i = 0; i < rows; i ++)
