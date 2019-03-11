@@ -4,37 +4,42 @@ import java.util.TreeMap;
 
 public class Field {
 	
-	/*
-	 * PROBLEM: try more THRESHOLD value. The problem arises with "getChainOfPeaks" method.
-	 * With a value too high we could find a "peak" and start a new chain when actually there is not enough terrain 
-	 * to complete it.
-	 * 
-	 * Two ways to solve it: try with another constant or add an if to the method to check if 
-	 * the available terrain is "around" (Math.abs(... - truck.capacity) <= 1E-...) the required quantity.
-	 */
-	
-	public HashMap <Coordinates, Double> cells;
+	public HashMap <Coordinates, Long> cells;
 	public double deltaX, deltaY;
-	public static final double MAX_ERROR = 1E-3; 
-	public static final double THRESHOLD = MAX_ERROR / 20;
+	public static final long PRECISION = (int)1E4;
 	
 	public Field(Scanner scanner) {
 		cells = new HashMap <> ();
-		double mean = 0.0;
+		long sum = 0;
 		int numberOfCells = Integer.parseInt(scanner.next());
 		for(int i = 0; i < numberOfCells; i ++) {
 			double x = Double.parseDouble(scanner.next());
 			double y = Double.parseDouble(scanner.next()); 
-			double q = Double.parseDouble(scanner.next());
+			long q = (long)(Double.parseDouble(scanner.next()) * PRECISION);
 			
 			cells.put(new Coordinates(x, y), q);
 			
-			mean += q;
+			sum += q;
 		}
-		mean /= numberOfCells;
 		
+		long mean = sum / numberOfCells;
+		long remainder = sum % numberOfCells;
 		for(Coordinates c : cells.keySet())
 			cells.put(c, cells.get(c) - mean);
+		
+		/*
+		 * FIX
+		 * 
+		 * The error is not relevant so just increment by one some "random" cells 
+		 * until we have a sum = 0 over the field.
+		 */
+		
+		for(Coordinates c : cells.keySet()) {
+			if(remainder == 0)
+				break;
+			cells.put(c, cells.get(c) + 1);
+			remainder --;
+		}
 		
 		deltaX = Double.MAX_VALUE;
 		deltaY = Double.MAX_VALUE;
@@ -48,20 +53,20 @@ public class Field {
 		}
 	}
 	
-	public double getQuantity(Coordinates c) {
+	public long getQuantity(Coordinates c) {
 		return cells.get(c);
 	}
 	
-	public void increment(Coordinates c, double q) {
+	public void increment(Coordinates c, long q) {
 		if(cells.containsKey(c))
 			cells.put(c, cells.get(c) + q);
 	}
 	
-	public void decrement(Coordinates c, double q) {
+	public void decrement(Coordinates c, long q) {
 		increment(c, -q);
 	}
 	
-	public void update(Coordinates from, Coordinates to, double q) {
+	public void update(Coordinates from, Coordinates to, long q) {
 		decrement(from, q);
 		increment(to, q);
 	}
@@ -71,10 +76,10 @@ public class Field {
 	}
 	
 	public boolean isSmooth() {
-		double max = 0.0;
 		for(Coordinates c : cells.keySet())
-			max = Math.max(max, Math.abs(cells.get(c)));
-		return max < MAX_ERROR;
+			if(getQuantity(c) != 0)
+				return false;
+		return true;
 	}
 	
 	public static interface CellProperty {
@@ -82,11 +87,11 @@ public class Field {
 	}
 	
 	public boolean isAnHole(Coordinates c) {
-		return cells.get(c) <= -THRESHOLD;
+		return getQuantity(c) < 0;
 	}
 	
 	public boolean isAPeak(Coordinates c) {
-		return cells.get(c) >= THRESHOLD;
+		return getQuantity(c) > 0;
 	}
 	
 	public Coordinates getTheNearest(Coordinates from, CellProperty p) {
@@ -111,7 +116,7 @@ public class Field {
 	}
 	
 	public Coordinates getTheNearestPeakDifferentFromThisOne(Coordinates from, Coordinates thisOne) {
-		double q = getQuantity(thisOne);
+		long q = getQuantity(thisOne);
 		decrement(thisOne, q);
 		Coordinates nearest = getTheNearestPeak(from);
 		increment(thisOne, q);
@@ -119,7 +124,7 @@ public class Field {
 	}
 	
 	public double terrainToMove() {
-		double sum = 0.0;
+		long sum = 0;
 		for(Coordinates c : cells.keySet())
 			if(isAPeak(c))
 				sum += getQuantity(c);
