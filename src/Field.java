@@ -126,24 +126,4 @@ public class Field {
 				sum += getQuantity(c);
 		return sum;
 	}
-	
-	@Override
-	public String toString() {
-		TreeMap <Double, TreeMap <Double, Double>> grid = new TreeMap <> ();
-		for(Coordinates c : cells.keySet()) {
-			if(!grid.containsKey(c.y))
-				grid.put(c.y, new TreeMap <Double, Double> ());
-			grid.get(c.y).put(c.x, getQuantity(c));
-		}
-		
-		StringBuilder field = new StringBuilder();
-		for(double y : grid.keySet()) {
-			for(double x : grid.get(y).keySet()) {
-				Coordinates c = new Coordinates(x, y);
-				field.append(String.format("%.3f ", getQuantity(c)));
-			}
-			field.append("\n");
-		}
-		return field.toString();
-	}
 }

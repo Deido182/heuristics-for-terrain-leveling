@@ -10,9 +10,15 @@ public class Coordinates extends Vector2D {
 	}
 	
 	/*
-	 * Without overriding the hashCode the toString() of field will not work.
-	 * This because with the hashCode of Object it checks for equals Objects and NOT for 
-	 * equals Coordinates.
+	 * When using HashMaps is always better override hashCode() to speed up 
+	 * queries.
+	 * 
+	 * Moreover... 
+	 * 
+	 * HashMap <Coordinates> map = new HashMap <> ();
+	 * map.add(new Coordinates(x, y), q);
+	 * map.containsKey(new Coordinates(x, y)) will return false because the two 
+	 * Objects are different (but the coordinates are not).
 	 */
 	
 	@Override
