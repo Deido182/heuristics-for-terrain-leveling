@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,6 +15,23 @@ public class Main {
 		out.close();
 	}
 	
+	public static void oneMoreCheck(String input, String output) throws FileNotFoundException {
+		Field field = new Field(new Scanner(new FileReader(new File(input))));
+		Scanner scanner = new Scanner(new FileReader(new File(output)));
+		String[] tok = scanner.nextLine().split(" ");
+		Coordinates last = new Coordinates(Double.parseDouble(tok[0]), Double.parseDouble(tok[1]));
+		Double.parseDouble(tok[2]); // discard the first quantity
+		while(scanner.hasNextLine()) {
+			tok = scanner.nextLine().split(" ");
+			Coordinates curr = new Coordinates(Double.parseDouble(tok[0]), Double.parseDouble(tok[1]));
+			double quantityToBringIn = Double.parseDouble(tok[2]);
+			field.decrement(last, quantityToBringIn);
+			field.increment(curr, quantityToBringIn);
+			last = curr;
+		}
+		assert(field.isSmooth());
+	}
+	
 	public static void main(String[] args) throws IOException, InterruptedException {
 		final double[] capacities = new double[] {0.015, 0.025, 0.040};
 		final Coordinates TRUCK_STARTING_POINT = new Coordinates(0.0, 0.0);
@@ -27,8 +45,11 @@ public class Main {
 			for(int j = 0; j < capacities.length; j ++) {
 				double capacity = capacities[j];
 				
-				Field field = new Field(new Scanner(new FileReader(new File("Input\\cellplot" + inputCode + "b.txt"))));
-				Field clone = new Field(new Scanner(new FileReader(new File("Input\\cellplot" + inputCode + "b.txt")))); // just to be sure
+				final String INPUT = "Input\\cellplot" + inputCode + "b.txt";
+				final String OUTPUT = "Output\\cellplot" + inputCode + "b.path";
+				
+				Field field = new Field(new Scanner(new FileReader(new File(INPUT))));
+				Field clone = new Field(new Scanner(new FileReader(new File(INPUT)))); // just to be sure
 				Truck truck = new Truck(capacity, TRUCK_STARTING_POINT, INITIAL_CARGO);
 				
 				long start = System.currentTimeMillis();
@@ -61,7 +82,8 @@ public class Main {
 				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
 				
-				print(path, "Output//cellplot" + inputCode + "b.path");
+				print(path, OUTPUT);
+				oneMoreCheck(INPUT, OUTPUT);
 			}
 			System.out.print("#############################\n\n");
 		}
@@ -76,8 +98,11 @@ public class Main {
 			for(int j = 2; j < capacities.length; j ++) {
 				double capacity = capacities[j];
 				
-				Field field = new Field(new Scanner(new FileReader(new File("Input\\in" + inputCode))));
-				Field clone = new Field(new Scanner(new FileReader(new File("Input\\in" + inputCode)))); // just to be sure
+				final String INPUT = "Input\\in" + inputCode;
+				final String OUTPUT = "Output\\in" + inputCode + ".path";
+				
+				Field field = new Field(new Scanner(new FileReader(new File(INPUT))));
+				Field clone = new Field(new Scanner(new FileReader(new File(INPUT)))); // just to be sure
 				Truck truck = new Truck(capacity, TRUCK_STARTING_POINT, INITIAL_CARGO);
 				
 				long start = System.currentTimeMillis();
@@ -110,7 +135,8 @@ public class Main {
 				System.out.println("in" + inputCode + " / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
 				
-				print(path, "Output//in" + inputCode + ".path");
+				print(path, OUTPUT);
+				oneMoreCheck(INPUT, OUTPUT);
 			}
 			System.out.print("#############################\n\n");
 		}
