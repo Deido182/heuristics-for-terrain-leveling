@@ -77,6 +77,10 @@ public class Field {
 		return max < MAX_ERROR;
 	}
 	
+	public static interface CellProperty {
+		public boolean is(Coordinates c);
+	}
+	
 	public boolean isAnHole(Coordinates c) {
 		return cells.get(c) <= -THRESHOLD;
 	}
@@ -85,30 +89,25 @@ public class Field {
 		return cells.get(c) >= THRESHOLD;
 	}
 	
-	public Coordinates getTheNearestHole(Coordinates from) {
-		Coordinates nearestHole = null;
+	public Coordinates getTheNearest(Coordinates from, CellProperty p) {
+		Coordinates nearest = null;
 		for(Coordinates c : cells.keySet()) {
-			if(!isAnHole(c))
+			if(!p.is(c))
 				continue;
-			if(nearestHole == null)
-				nearestHole = c;
-			else if(from.distance(c) < from.distance(nearestHole))
-				nearestHole = c;
+			if(nearest == null)
+				nearest = c;
+			else if(from.distance(c) < from.distance(nearest))
+				nearest = c;
 		}
-		return nearestHole;
+		return nearest;
+	}
+	
+	public Coordinates getTheNearestHole(Coordinates from) {
+		return getTheNearest(from, (Coordinates c) -> isAnHole(c));
 	}
 	
 	public Coordinates getTheNearestPeak(Coordinates from) {
-		Coordinates nearestPeak = null;
-		for(Coordinates c : cells.keySet()) {
-			if(!isAPeak(c))
-				continue;
-			if(nearestPeak == null)
-				nearestPeak = c;
-			else if(from.distance(c) < from.distance(nearestPeak))
-				nearestPeak = c;
-		}
-		return nearestPeak;
+		return getTheNearest(from, (Coordinates c) -> isAPeak(c));
 	}
 	
 	public Coordinates getTheNearestPeakDifferentFromThisOne(Coordinates from, Coordinates thisOne) {
