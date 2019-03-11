@@ -9,7 +9,7 @@ public class Field {
 	 * With a value too high we could find a "peak" and start a new chain when actually there is not enough terrain 
 	 * to complete it.
 	 * 
-	 * Two way to solve it: try with another constant or add an if to the method to check if 
+	 * Two ways to solve it: try with another constant or add an if to the method to check if 
 	 * the available terrain is "around" (Math.abs(... - truck.capacity) <= 1E-...) the required quantity.
 	 */
 	

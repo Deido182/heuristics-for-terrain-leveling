@@ -1,9 +1,19 @@
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class Main {
+	
+	public static void print(Path p, String filePath) throws IOException {
+		PrintWriter out = new PrintWriter(new FileWriter(new File(filePath)));
+		for(Stopover s : p.stopovers)
+			out.println(s.coordinates.x + " " + s.coordinates.y + " " + s.quantityToBringIn);
+		out.close();
+	}
+	
 	public static void main(String[] args) throws IOException, InterruptedException {
 		final double[] capacities = new double[] {0.015, 0.025, 0.040};
 		final Coordinates TRUCK_STARTING_POINT = new Coordinates(0.0, 0.0);
@@ -50,6 +60,8 @@ public class Main {
 				
 				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
+				
+				print(path, "Output//cellplot" + inputCode + "b.path");
 			}
 			System.out.print("#############################\n\n");
 		}
@@ -97,6 +109,8 @@ public class Main {
 				
 				System.out.println("in" + inputCode + " / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
+				
+				print(path, "Output//in" + inputCode + ".path");
 			}
 			System.out.print("#############################\n\n");
 		}
