@@ -10,9 +10,9 @@ class Stopover {
 	 */
 	
 	Coordinates coordinates;
-	double quantityToBringIn;
+	long quantityToBringIn;
 	
-	public Stopover(Coordinates coordinates, double quantityToBringIn) {
+	public Stopover(Coordinates coordinates, long quantityToBringIn) {
 		this.coordinates = coordinates;
 		this.quantityToBringIn = quantityToBringIn;
 	}
@@ -58,11 +58,11 @@ public class Path {
 		addStopover(length(), s);
 	}
 	
-	public void addStopover(int i, Coordinates c, double q) {
+	public void addStopover(int i, Coordinates c, long q) {
 		addStopover(i, new Stopover(c, q));
 	}
 	
-	public void addStopover(Coordinates c, double q) {
+	public void addStopover(Coordinates c, long q) {
 		addStopover(length(), c, q);
 	}
 	
@@ -94,7 +94,7 @@ public class Path {
 		return getCoordinates(0);
 	}
 	
-	public double getQuantityToBringIn(int i) {
+	public long getQuantityToBringIn(int i) {
 		return stopovers.get(i).quantityToBringIn;
 	}
 	

@@ -24,7 +24,7 @@ public class Main {
 		while(scanner.hasNextLine()) {
 			tok = scanner.nextLine().split(" ");
 			Coordinates curr = new Coordinates(Double.parseDouble(tok[0]), Double.parseDouble(tok[1]));
-			double quantityToBringIn = Double.parseDouble(tok[2]);
+			long quantityToBringIn = Long.parseLong(tok[2]);
 			field.decrement(last, quantityToBringIn);
 			field.increment(curr, quantityToBringIn);
 			last = curr;
@@ -33,9 +33,9 @@ public class Main {
 	}
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
-		final double[] capacities = new double[] {0.015, 0.025, 0.040};
+		final long[] capacities = new long[] {150, 250, 400}; // REMEMBER Field.PRECISION = 10000 (NOT 1000)
 		final Coordinates TRUCK_STARTING_POINT = new Coordinates(0.0, 0.0);
-		final double INITIAL_CARGO = 0.0;
+		final long INITIAL_CARGO = 0;
 		
 		/*
 		 * OFFICIAL
@@ -43,7 +43,7 @@ public class Main {
 		
 		for(int inputCode = 1; inputCode <= 4; inputCode ++) {
 			for(int j = 0; j < capacities.length; j ++) {
-				double capacity = capacities[j];
+				long capacity = capacities[j];
 				
 				final String INPUT = "Input\\cellplot" + inputCode + "b.txt";
 				final String OUTPUT = "Output\\cellplot" + inputCode + "b.path";
@@ -96,7 +96,7 @@ public class Main {
 		
 		for(int inputCode = 1; inputCode <= 5; inputCode ++) {
 			for(int j = 2; j < capacities.length; j ++) {
-				double capacity = capacities[j];
+				long capacity = capacities[j];
 				
 				final String INPUT = "Input\\in" + inputCode;
 				final String OUTPUT = "Output\\in" + inputCode + ".path";

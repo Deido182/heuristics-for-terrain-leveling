@@ -23,22 +23,23 @@ public class Field {
 		}
 		
 		long mean = sum / numberOfCells;
-		long remainder = sum % numberOfCells;
 		for(Coordinates c : cells.keySet())
 			cells.put(c, cells.get(c) - mean);
 		
 		/*
 		 * FIX
 		 * 
-		 * The error is not relevant so just increment by one some "random" cells 
+		 * The error is not relevant so just increment / decrement by one some "random" cells 
 		 * until we have a sum = 0 over the field.
 		 */
 		
+		long remainder = sum % numberOfCells;
+		long inc = Long.signum(remainder);
 		for(Coordinates c : cells.keySet()) {
 			if(remainder == 0)
 				break;
-			cells.put(c, cells.get(c) + 1);
-			remainder --;
+			cells.put(c, cells.get(c) - inc);
+			remainder -= inc;
 		}
 		
 		deltaX = Double.MAX_VALUE;
@@ -123,7 +124,7 @@ public class Field {
 		return nearest;
 	}
 	
-	public double terrainToMove() {
+	public long terrainToMove() {
 		long sum = 0;
 		for(Coordinates c : cells.keySet())
 			if(isAPeak(c))

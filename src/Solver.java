@@ -20,8 +20,8 @@ public class Solver {
 	 * @return the path.
 	 */
 	
-	private Path getChainOfPeaks(Coordinates from, double quantity) {
-		Truck newTruck = new Truck(quantity, field.getTheNearestPeak(from), 0.0);
+	private Path getChainOfPeaks(Coordinates from, long quantity) {
+		Truck newTruck = new Truck(quantity, field.getTheNearestPeak(from), 0);
 		newTruck.move(newTruck.getCurrentPosition()); // just to add at least a movement
 		while(field.getQuantity(newTruck.getCurrentPosition()) < newTruck.capacity) {
 			Coordinates nextPeak = field.getTheNearestPeakDifferentFromThisOne(newTruck.getCurrentPosition(), newTruck.getCurrentPosition());
@@ -44,7 +44,7 @@ public class Solver {
 	private ArrayList <Path> getAllChainsOfPeaks(Coordinates from) {
 		ArrayList <Path> chainsOfPeaks = new ArrayList <> ();
 		Coordinates nextPeak = field.getTheNearestHole(from);
-		while(nextPeak != null && !field.isSmooth()) {
+		while(nextPeak != null) {
 			Path chain = getChainOfPeaks(nextPeak, truck.capacity);
 			chainsOfPeaks.add(chain);
 			nextPeak = field.getTheNearestPeak(chain.getLastCoordinates());
@@ -60,7 +60,7 @@ public class Solver {
 	 * @return the path.
 	 */
 	
-	private Path getChainOfHoles(Coordinates from, double quantity) {
+	private Path getChainOfHoles(Coordinates from, long quantity) {
 		/*
 		 * PAY ATTENTION: the truck has to bring in the first cell "quantity" units of terrain 
 		 * to fill the chain of holes.
@@ -88,7 +88,7 @@ public class Solver {
 	private ArrayList <Path> getAllChainsOfHoles(Coordinates from) {
 		ArrayList <Path> chainsOfHoles = new ArrayList <> ();
 		Coordinates nextHole = field.getTheNearestHole(from);
-		while(nextHole != null && !field.isSmooth()) {
+		while(nextHole != null) {
 			Path chain = getChainOfHoles(nextHole, truck.capacity);
 			chainsOfHoles.add(chain);
 			nextHole = field.getTheNearestHole(chain.getLastCoordinates());
@@ -102,9 +102,8 @@ public class Solver {
 	 */
 	
 	private void fixField() {
-		double terrainToMove = field.terrainToMove();
-		double remainder = terrainToMove - Math.floor(terrainToMove / truck.capacity) * truck.capacity;
-		if(remainder < Field.MAX_ERROR)
+		long remainder = field.terrainToMove() % truck.capacity;
+		if(remainder == 0)
 			return;
 		Path chainOfPeaks = getChainOfPeaks(truck.getCurrentPosition(), remainder);
 		Path chainOfHoles = getChainOfHoles(chainOfPeaks.getLastCoordinates(), remainder);

@@ -1,10 +1,10 @@
 
 public class Truck {
 	
-	double capacity;
+	long capacity;
 	Path path;
 	
-	public Truck(double capacity, Coordinates from, double initialCargo) {
+	public Truck(long capacity, Coordinates from, long initialCargo) {
 		this.capacity = capacity;
 		this.path = new Path();
 		path.addStopover(from, initialCargo);
@@ -14,12 +14,12 @@ public class Truck {
 		return path.getLastCoordinates();
 	}
 	
-	public void move(Coordinates to, double quantity) {
+	public void move(Coordinates to, long quantity) {
 		path.addStopover(to, quantity);
 	}
 	
 	public void move(Coordinates to) {
-		move(to, 0.0);
+		move(to, 0);
 	}
 	
 	public void move(Path p) {
