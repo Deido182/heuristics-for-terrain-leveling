@@ -74,7 +74,7 @@ public class Main {
 				Path path = new Solver(field, truck).solveWithNearestNeighbourStrategy();
 				
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
-				new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
+				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
 				
 				long stop = System.currentTimeMillis();
 				

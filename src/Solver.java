@@ -12,9 +12,12 @@ public class Solver {
 		this.truck = truck;
 	}
 	
-	/*
-	 * Build a chain of peaks from "from" coordinates by using a 
-	 * nearest neighbor strategy. 
+	/**
+	 * Creates a path of peaks to collect the required quantity of terrain.
+	 * 
+	 * @param from the coordinates from which search the first peak.
+	 * @param quantity the quantity of terrain we want to leave at the end of the chain.
+	 * @return the path.
 	 */
 	
 	private Path getChainOfPeaks(Coordinates from, double quantity) {
@@ -31,8 +34,11 @@ public class Solver {
 		return newTruck.path;
 	}
 	
-	/*
-	 * Get all the chains of peaks.
+	/**
+	 * Gets all the chains of peaks.
+	 * 
+	 * @param from the coordinates from which search the first chain of peaks.
+	 * @return an ArrayList of paths
 	 */
 	
 	private ArrayList <Path> getAllChainsOfPeaks(Coordinates from) {
@@ -46,9 +52,12 @@ public class Solver {
 		return chainsOfPeaks;
 	}
 	
-	/*
-	 * Build a chain of holes from "from" coordinates by using a 
-	 * nearest neighbor strategy. 
+	/**
+	 * Creates a path of holes to spread the required quantity of terrain.
+	 * 
+	 * @param from the coordinates from which search the first hole.
+	 * @param quantity the quantity of terrain we want to spread along the chain.
+	 * @return the path.
 	 */
 	
 	private Path getChainOfHoles(Coordinates from, double quantity) {
@@ -69,8 +78,11 @@ public class Solver {
 		return newTruck.path;
 	}
 	
-	/*
-	 * Get all the chains of holes.
+	/**
+	 * Gets all the chains of peaks.
+	 * 
+	 * @param from the coordinates from which search the first chain of peaks.
+	 * @return an ArrayList of paths.
 	 */
 	
 	private ArrayList <Path> getAllChainsOfHoles(Coordinates from) {
@@ -84,16 +96,30 @@ public class Solver {
 		return chainsOfHoles;
 	}
 	
+	/**
+	 * Moves the minimum quantity of terrain necessary to have 
+	 * "field.terrainToMove()" multiple of "truck.capacity".
+	 */
+	
 	private void fixField() {
 		double terrainToMove = field.terrainToMove();
 		double remainder = terrainToMove - Math.floor(terrainToMove / truck.capacity) * truck.capacity;
-		if(remainder < field.MAX_ERROR)
+		if(remainder < Field.MAX_ERROR)
 			return;
 		Path chainOfPeaks = getChainOfPeaks(truck.getCurrentPosition(), remainder);
 		Path chainOfHoles = getChainOfHoles(chainOfPeaks.getLastCoordinates(), remainder);
 		truck.move(chainOfPeaks);
 		truck.move(chainOfHoles);
 	}
+	
+	/**
+	 * For each chain of peaks p[i] and for each chain of holes h[j], matrix[i][j] will contain 
+	 * the distance from the last coordinates of p[i] to the first coordinates of h[j].
+	 * 
+	 * @param chainsOfPeaks
+	 * @param chainsOfHoles
+	 * @return the matrix of distances.
+	 */
 	
 	private static double[][] buildMatrixOfDistances(ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles) {
 		double[][] matrix = new double[chainsOfPeaks.size()][chainsOfHoles.size()];
@@ -103,7 +129,16 @@ public class Solver {
 		return matrix;
 	}
 	
-
+	/**
+	 * For each chain c[i] and for each chain c[j] matrix[i][j] will contain:
+	 * - the distance from the last coordinates of c[i] to the first coordinates of c[j] if min(i, j) < threshold && max(i, j) >= threshold.
+	 * - INF otherwise
+	 * 
+	 * @param chains the nodes of the bipartite graph.
+	 * @param threshold is the position of the first chain which belongs to the second set.
+	 * @return the matrix of distances.
+	 */
+	
 	private static double[][] buildMatrixOfDistances(ArrayList <Path> chains, int threshold) {
 		/*
 		 * Bipartite graph
@@ -120,10 +155,26 @@ public class Solver {
 		return matrix;
 	}
 	
+	/**
+	 * Returns the angle executed by the truck (arrived to c2 from c1) to go to c3.
+	 * 
+	 * @param c1
+	 * @param c2
+	 * @param c3
+	 * @return the angle.
+	 */
 	
 	public static double getAngle(Coordinates c1, Coordinates c2, Coordinates c3) {
 		return c2.subtract(c1).getAngle(c3.subtract(c2));
 	}
+	
+	/**
+	 * Checks the angle. It should be between 0 and PI/2 (inclusive).
+	 * The "ACCEPTED_ERROR" is for the floating point approximation.
+	 * 
+	 * @param angle
+	 * @return True if the angle is acceptable. False otherwise.
+	 */
 	
 	public static boolean isOk(double angle) {
 		return angle <= Math.PI / 2 + ACCEPTED_ERROR;
@@ -149,6 +200,16 @@ public class Solver {
 	 * part of the field.
 	 */
 	
+	/**
+	 * Returns the stopover to add after c2 to fix the angle if a single stopover is enough 
+	 * to solve it. Returns null otherwise.
+	 * 
+	 * @param c1
+	 * @param c2
+	 * @param c3
+	 * @return the stopover (coordinates) to add after c2 or null.
+	 */
+	
 	private Coordinates singleStopover(Coordinates c1, Coordinates c2, Coordinates c3) {
 		final double LENGTH = Math.min(field.deltaX, field.deltaY) / 2;
 		double angle = getAngle(c1, c2, c3);
@@ -167,6 +228,15 @@ public class Solver {
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns two stopovers to add after c2 (in the given order) to fix the angle.
+	 * 
+	 * @param c1
+	 * @param c2
+	 * @param c3
+	 * @return two stopovers (coordinates) to add (in order) after c2.
+	 */
 	
 	private ArrayList <Coordinates> twoStopovers(Coordinates c1, Coordinates c2, Coordinates c3) {
 		final double LENGTH = Math.min(field.deltaX, field.deltaY) / 2;
@@ -191,6 +261,10 @@ public class Solver {
 		return null;
 	}
 	
+	/**
+	 * For each change it checks if it is acceptable and in case it fixes it.
+	 */
+	
 	private void fixPath() {
 		for(int i = 2; i < truck.path.length(); i ++) {
 			double angle = getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i));
@@ -209,6 +283,16 @@ public class Solver {
 		}
 	}
 	
+	/**
+	 * Finds the nearest chain to from (according to its first coordinates). 
+	 * The chains marked as "done" are discarded.
+	 * 
+	 * @param from
+	 * @param chains
+	 * @param done
+	 * @return the index of the nearest.
+	 */
+	
 	private static int getTheIndexOfTheNearest(Coordinates from, ArrayList <Path> chains, boolean[] done) {
 		int nearest = -1;
 		for(int i = 0; i < chains.size(); i ++)
@@ -221,14 +305,16 @@ public class Solver {
 		return nearest;
 	}
 	
-	/*
-	public static double[][] eraseLinks(int[] assignment, double[][] distances) {
-		final double INF = 1E6;
-		for(int i = 0; i < assignment.length; i ++)
-			distances[assignment[i]][i] = INF;
-		return distances;
-	}
-	*/
+	/**
+	 * Returns a lower bound for the length of an Hamiltonian cycle of minimum length 
+	 * by using an optimal solution for the assignment problem.
+	 * 
+	 * @param chainsOfPeaks
+	 * @param chainsOfHoles
+	 * @param assignmentPH an optimal assignment from chains of peaks to chains of holes.
+	 * @param assignmentHP an optimal assignment in the other direction.
+	 * @return the lower bound.
+	 */
 	
 	private static double getLowerBoundHC(ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles, int[] assignmentPH, int[] assignmentHP) {
 		boolean[] doneP = new boolean[chainsOfPeaks.size()];
@@ -245,6 +331,16 @@ public class Solver {
 		return lb;
 	}
 	
+	/**
+	 * Returns the cost of the Hamiltonian cycle we have obtained (by using our heuristic).
+	 * 
+	 * @param chainsOfPeaks
+	 * @param chainsOfHoles
+	 * @param first
+	 * @param p
+	 * @return the cost of the Hamiltonian cycle we have obtained.
+	 */
+	
 	private static double getCurrentHC(ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles, int first, Path p) {
 		double current = p.distance();
 		
@@ -258,6 +354,14 @@ public class Solver {
 		
 		return current;
 	}
+	
+	/**
+	 * Solves the problem by using LKH algorithm.
+	 * 
+	 * @return the path.
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	
 	public Path solveWithLKH() throws IOException, InterruptedException {
 		fixField();
@@ -275,6 +379,12 @@ public class Solver {
 		return truck.path;
 	}
 	
+	/**
+	 * Solves the problem by using our heuristic.
+	 * 
+	 * @return the path.
+	 */
+	
 	public Path solveWithNearestNeighbourStrategy() {
 		fixField();
 		ArrayList <Path> chainsOfPeaks = getAllChainsOfPeaks(truck.getCurrentPosition());
@@ -283,7 +393,6 @@ public class Solver {
 		if(chainsOfPeaks.size() > 0) {
 			int[] assignmentPH = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
 			int[] assignmentHP = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks)).execute();
-			//int[] assignmentHP = new HungarianAlgorithm(eraseLinks(assignmentPH, buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks))).execute();
 			boolean[] doneP = new boolean[chainsOfPeaks.size()];
 			
 			int first = truck.path.length();
