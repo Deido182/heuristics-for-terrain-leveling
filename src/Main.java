@@ -55,7 +55,7 @@ public class Main {
 				long start = System.currentTimeMillis();
 				
 				//Path path = new Solver(field, truck).solveWithLKH();
-				Path path = new Solver(field, truck).solveWithNearestNeighbourStrategy();
+				Path path = new Solver(field, truck).solveWithImprovedNearestNeighbourStrategy();
 				
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
@@ -108,7 +108,7 @@ public class Main {
 				long start = System.currentTimeMillis();
 				
 				//Path path = new Solver(field, truck).solveWithLKH();
-				Path path = new Solver(field, truck).solveWithNearestNeighbourStrategy();
+				Path path = new Solver(field, truck).solveWithImprovedNearestNeighbourStrategy();
 				
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);

@@ -384,7 +384,7 @@ public class Solver {
 	 * @return the path.
 	 */
 	
-	public Path solveWithNearestNeighbourStrategy() {
+	public Path solveWithImprovedNearestNeighbourStrategy() {
 		fixField();
 		ArrayList <Path> chainsOfPeaks = getAllChainsOfPeaks(truck.getCurrentPosition());
 		ArrayList <Path> chainsOfHoles = getAllChainsOfHoles(truck.getCurrentPosition());
