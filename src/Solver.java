@@ -355,6 +355,18 @@ public class Solver {
 	}
 	
 	/**
+	 * Swaps elements of the permutation until it reaches a local minimum.
+	 * 
+	 * @param permutation
+	 * @param chainsOfPeaks
+	 * @param chainsOfHoles
+	 */
+	
+	private static void improvePath(ArrayList <Integer> permutation, ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles) {
+		
+	}
+	
+	/**
 	 * Solves the problem by using LKH algorithm.
 	 * 
 	 * @return the path.
@@ -394,15 +406,19 @@ public class Solver {
 			int[] assignmentHP = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks)).execute();
 			boolean[] doneP = new boolean[chainsOfPeaks.size()];
 			
+			ArrayList <Integer> permutation = new ArrayList <> ();
+			
 			int first = truck.path.length();
 			int next = getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, doneP);
 			while(next != -1) {
 				doneP[next] = true;
-				truck.move(chainsOfPeaks.get(next));
-				truck.move(chainsOfHoles.get(assignmentPH[next]));
-				next = doneP[assignmentHP[assignmentPH[next]]] ? getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, doneP) :
+				permutation.add(next);
+				permutation.add(assignmentPH[next]);
+				next = doneP[assignmentHP[assignmentPH[next]]] ? getTheIndexOfTheNearest(chainsOfHoles.get(assignmentPH[next]).getLastCoordinates(), chainsOfPeaks, doneP) :
 						assignmentHP[assignmentPH[next]];
 			}
+			
+			improvePath(permutation, chainsOfPeaks, chainsOfHoles);
 			
 			double lowerBoundHC = getLowerBoundHC(chainsOfPeaks, chainsOfHoles, assignmentPH, assignmentHP);
 			double currentHC = getCurrentHC(chainsOfPeaks, chainsOfHoles, first, truck.path);
