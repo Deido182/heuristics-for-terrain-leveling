@@ -355,15 +355,44 @@ public class Solver {
 	}
 	
 	/**
-	 * Swaps elements of the permutation until it reaches a local minimum.
+	 * Tries every pair (chain of peaks, chain of peaks), (chain of holes, chain of holes) and 
+	 * swaps them if (and only if) it improves the path.
 	 * 
-	 * @param permutation
 	 * @param chainsOfPeaks
 	 * @param chainsOfHoles
 	 */
 	
-	private static void improvePath(ArrayList <Integer> permutation, ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles) {
-		
+	private static void improvePath(Path before, ArrayList <Path> chains) {
+		for(int i = 0; i < chains.size() - 1; i ++) {
+			for(int j = i + 1; j < chains.size(); j ++) {
+				if(i % 2 != j % 2) // we can't swap peaks with holes
+					continue;
+				
+				double cost = 0.0;
+				if(i == 0) {
+					cost -= before.getLastCoordinates().distance(chains.get(i).getFirstCoordinates());
+					cost += before.getLastCoordinates().distance(chains.get(j).getFirstCoordinates());
+				} else {
+					cost -= chains.get(i - 1).getLastCoordinates().distance(chains.get(i).getFirstCoordinates());
+					cost += chains.get(i - 1).getLastCoordinates().distance(chains.get(j).getFirstCoordinates());
+				}
+				cost -= chains.get(j - 1).getLastCoordinates().distance(chains.get(j).getFirstCoordinates());
+				cost += chains.get(j - 1).getLastCoordinates().distance(chains.get(i).getFirstCoordinates());
+				cost -= chains.get(i).getLastCoordinates().distance(chains.get(i + 1).getFirstCoordinates());
+				cost += chains.get(j).getLastCoordinates().distance(chains.get(i + 1).getFirstCoordinates());
+				if(j < chains.size() - 1) {
+					cost -= chains.get(j).getLastCoordinates().distance(chains.get(j + 1).getFirstCoordinates());
+					cost += chains.get(i).getLastCoordinates().distance(chains.get(j + 1).getFirstCoordinates());
+				}
+				
+				if(cost >= 0.0)
+					continue;
+				
+				Path chain = chains.get(i);
+				chains.set(i, chains.get(j));
+				chains.set(j, chain);
+			}
+		}
 	}
 	
 	/**
@@ -406,19 +435,21 @@ public class Solver {
 			int[] assignmentHP = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks)).execute();
 			boolean[] doneP = new boolean[chainsOfPeaks.size()];
 			
-			ArrayList <Integer> permutation = new ArrayList <> ();
+			ArrayList <Path> chains = new ArrayList <> ();
 			
 			int first = truck.path.length();
 			int next = getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, doneP);
 			while(next != -1) {
 				doneP[next] = true;
-				permutation.add(next);
-				permutation.add(assignmentPH[next]);
+				chains.add(chainsOfPeaks.get(next));
+				chains.add(chainsOfHoles.get(assignmentPH[next]));
 				next = doneP[assignmentHP[assignmentPH[next]]] ? getTheIndexOfTheNearest(chainsOfHoles.get(assignmentPH[next]).getLastCoordinates(), chainsOfPeaks, doneP) :
 						assignmentHP[assignmentPH[next]];
 			}
 			
-			improvePath(permutation, chainsOfPeaks, chainsOfHoles);
+			improvePath(truck.path, chains);
+			for(Path chain : chains)
+				truck.move(chain);
 			
 			double lowerBoundHC = getLowerBoundHC(chainsOfPeaks, chainsOfHoles, assignmentPH, assignmentHP);
 			double currentHC = getCurrentHC(chainsOfPeaks, chainsOfHoles, first, truck.path);
