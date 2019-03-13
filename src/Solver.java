@@ -358,6 +358,9 @@ public class Solver {
 	 * Tries every pair (chain of peaks, chain of peaks), (chain of holes, chain of holes) and 
 	 * swaps them if (and only if) it improves the path.
 	 * 
+	 * It does not arrive to local minimum because we prefer a guarantee about the time 
+	 * required. However going on "usually" does not produce a significant improvement.
+	 * 
 	 * @param chainsOfPeaks
 	 * @param chainsOfHoles
 	 */
