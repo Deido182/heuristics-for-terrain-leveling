@@ -25,8 +25,6 @@ public class Solver {
 		newTruck.move(newTruck.getCurrentPosition()); // just to add at least a movement
 		while(field.getQuantity(newTruck.getCurrentPosition()) < newTruck.capacity) {
 			Coordinates nextPeak = field.getTheNearestPeakDifferentFromThisOne(newTruck.getCurrentPosition(), newTruck.getCurrentPosition());
-			if(nextPeak == null)
-				break;
 			newTruck.move(nextPeak, field.getQuantity(newTruck.getCurrentPosition()));
 			field.update(newTruck.getLastMovement());
 		}
@@ -70,8 +68,6 @@ public class Solver {
 		field.increment(newTruck.getCurrentPosition(), newTruck.capacity);
 		while(field.getQuantity(newTruck.getCurrentPosition()) > 0) {
 			Coordinates nextHole = field.getTheNearestHole(newTruck.getCurrentPosition());
-			if(nextHole == null)
-				break;
 			newTruck.move(nextHole, field.getQuantity(newTruck.getCurrentPosition()));
 			field.update(newTruck.getLastMovement());
 		}
