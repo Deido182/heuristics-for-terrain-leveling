@@ -54,8 +54,8 @@ public class Main {
 				
 				long start = System.currentTimeMillis();
 				
-				//Path path = new Solver(field, truck).solveWithLKH();
-				Path path = new Solver(field, truck).solveWithImprovedNearestNeighbourStrategy();
+				//Path path = new LKH_Solver(field, truck).solve();
+				Path path = new ImprovedNearestNeighbourSolver(field, truck).solve();
 				
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
@@ -77,7 +77,7 @@ public class Main {
 					assert(truck.getMovement(i).to.equals(truck.getMovement(i + 1).from));
 
 				for(int i = 2; i < truck.path.length(); i ++)
-					assert(Solver.isOk(Solver.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
+					assert(Truck.isOk(Truck.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
 				
 				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
@@ -107,8 +107,8 @@ public class Main {
 				
 				long start = System.currentTimeMillis();
 				
-				//Path path = new Solver(field, truck).solveWithLKH();
-				Path path = new Solver(field, truck).solveWithImprovedNearestNeighbourStrategy();
+				//Path path = new LKH_Solver(field, truck).solve();
+				Path path = new ImprovedNearestNeighbourSolver(field, truck).solve();
 				
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
@@ -130,7 +130,7 @@ public class Main {
 					assert(truck.getMovement(i).to.equals(truck.getMovement(i + 1).from));
 
 				for(int i = 2; i < truck.path.length(); i ++)
-					assert(Solver.isOk(Solver.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
+					assert(Truck.isOk(Truck.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
 				
 				System.out.println("in" + inputCode + " / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
