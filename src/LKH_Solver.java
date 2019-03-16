@@ -5,11 +5,12 @@ public class LKH_Solver implements Solver {
 
 	Field field;
 	Truck truck;
-	static final double ACCEPTED_ERROR = 1E-6;
+	ChainsBuilder chainsBuilder;
 	
-	public LKH_Solver(Field field, Truck truck) {
+	public LKH_Solver(Field field, Truck truck, ChainsBuildersFactory factory) {
 		this.field = field;
 		this.truck = truck;
+		this.chainsBuilder = factory.getChainsBuilder(field, truck);
 	}
 	
 	/**
@@ -48,7 +49,6 @@ public class LKH_Solver implements Solver {
 	 */
 	
 	public Path solve() throws IOException, InterruptedException {
-		ChainsBuilder chainsBuilder = new NearestNeighbourChainsBuilder(field, truck);
 		chainsBuilder.fixField();
 		ArrayList <Path> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks(truck.getCurrentPosition());
 		ArrayList <Path> chainsOfHoles = chainsBuilder.getAllChainsOfHoles(truck.getCurrentPosition());

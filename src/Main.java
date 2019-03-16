@@ -53,9 +53,9 @@ public class Main {
 				Truck truck = new Truck(capacity, TRUCK_STARTING_POINT, INITIAL_CARGO);
 				
 				long start = System.currentTimeMillis();
-				
-				//Path path = new LKH_Solver(field, truck).solve();
-				Path path = new ImprovedNearestNeighbourSolver(field, truck).solve();
+
+				//Path path = new LKH_Solver(field, truck, new NearestNeighbourFactory()).solve();
+				Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
 				
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
@@ -107,8 +107,8 @@ public class Main {
 				
 				long start = System.currentTimeMillis();
 				
-				//Path path = new LKH_Solver(field, truck).solve();
-				Path path = new ImprovedNearestNeighbourSolver(field, truck).solve();
+				//Path path = new LKH_Solver(field, truck, new NearestNeighbourFactory()).solve();
+				Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
 				
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);

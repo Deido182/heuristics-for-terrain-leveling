@@ -1,13 +1,15 @@
 import java.util.ArrayList;
 
-public class ImprovedNearestNeighbourSolver implements Solver {
+public class OurSolver implements Solver {
 	
 	Field field;
 	Truck truck;
+	ChainsBuilder chainsBuilder;
 	
-	public ImprovedNearestNeighbourSolver(Field field, Truck truck) {
+	public OurSolver(Field field, Truck truck, ChainsBuildersFactory factory) {
 		this.field = field;
 		this.truck = truck;
+		this.chainsBuilder = factory.getChainsBuilder(field, truck);
 	}
 	
 	/**
@@ -106,7 +108,6 @@ public class ImprovedNearestNeighbourSolver implements Solver {
 	 */
 	
 	public Path solve() {
-		ChainsBuilder chainsBuilder = new NearestNeighbourChainsBuilder(field, truck);
 		chainsBuilder.fixField();
 		ArrayList <Path> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks(truck.getCurrentPosition());
 		ArrayList <Path> chainsOfHoles = chainsBuilder.getAllChainsOfHoles(truck.getCurrentPosition());
