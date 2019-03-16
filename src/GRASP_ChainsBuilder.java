@@ -16,8 +16,13 @@ public class GRASP_ChainsBuilder implements ChainsBuilder {
 	}
 	
 	public double getGRASP_Threshold(Coordinates pos) {
-		double min = pos.distance(field.getTheNearestOfTheSameTypeDifferent(pos));
-		double max = pos.distance(field.getTheMostDistantOfTheSameType(pos));
+		Coordinates nearest = field.getTheNearestOfTheSameTypeDifferent(pos);
+		if(nearest == null)
+			nearest = pos;
+		Coordinates mostDistant = field.getTheMostDistantOfTheSameType(pos);
+		
+		double min = pos.distance(nearest);
+		double max = pos.distance(mostDistant);
 		
 		return min + alpha * (max - min);
 	}
@@ -34,10 +39,11 @@ public class GRASP_ChainsBuilder implements ChainsBuilder {
 		Truck newTruck = new Truck(quantity, field.getTheNearestPeak(from), 0);
 		newTruck.move(newTruck.getCurrentPosition()); // just to add at least a movement
 		while(field.getQuantity(newTruck.getCurrentPosition()) < newTruck.capacity) {
+			Coordinates[] toAvoid = new Coordinates[choices + 1];
+			toAvoid[0] = newTruck.getCurrentPosition();
 			Coordinates[] nextPeaks = new Coordinates[choices];
-			nextPeaks[0] = field.getTheNearestPeakDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition());
-			nextPeaks[1] = field.getTheNearestPeakDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition(), nextPeaks[0]);
-			nextPeaks[2] = field.getTheNearestPeakDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition(), nextPeaks[0], nextPeaks[1]);
+			for(int i = 0; i < choices; i ++) 
+				toAvoid[i + 1] = nextPeaks[i] = field.getTheNearestPeakDifferentFromThese(newTruck.getCurrentPosition(), toAvoid);
 			double GRASP_Threshold = getGRASP_Threshold(newTruck.getCurrentPosition());
 			int ok = choices;
 			while(ok > 1) { // never less then 1
@@ -88,10 +94,11 @@ public class GRASP_ChainsBuilder implements ChainsBuilder {
 		Truck newTruck = new Truck(quantity, field.getTheNearestHole(from), quantity);
 		field.increment(newTruck.getCurrentPosition(), newTruck.capacity);
 		while(field.getQuantity(newTruck.getCurrentPosition()) > 0) {
+			Coordinates[] toAvoid = new Coordinates[choices + 1];
+			toAvoid[0] = newTruck.getCurrentPosition();
 			Coordinates[] nextHoles = new Coordinates[choices];
-			nextHoles[0] = field.getTheNearestHoleDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition());
-			nextHoles[1] = field.getTheNearestHoleDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition(), nextHoles[0]);
-			nextHoles[2] = field.getTheNearestHoleDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition(), nextHoles[0], nextHoles[1]);
+			for(int i = 0; i < choices; i ++)
+				toAvoid[i + 1] = nextHoles[i] = field.getTheNearestHoleDifferentFromThese(newTruck.getCurrentPosition(), toAvoid);
 			double GRASP_Threshold = getGRASP_Threshold(newTruck.getCurrentPosition());
 			int ok = choices;
 			while(ok > 1) { // never less then 1
