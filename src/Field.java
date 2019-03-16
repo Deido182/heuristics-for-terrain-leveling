@@ -1,6 +1,5 @@
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.TreeMap;
 
 public class Field {
 	
@@ -116,12 +115,65 @@ public class Field {
 		return getTheNearest(from, (Coordinates c) -> isAPeak(c));
 	}
 	
-	public Coordinates getTheNearestPeakDifferentFromThisOne(Coordinates from, Coordinates thisOne) {
-		long q = getQuantity(thisOne);
-		decrement(thisOne, q);
+	public Coordinates getTheNearestPeakDifferentFromThese(Coordinates from, Coordinates...these) {
+		long[] q = new long[these.length];
+		for(int i = 0; i < these.length; i ++) 
+			if(these[i] != null)
+				decrement(these[i], q[i] = getQuantity(these[i]));
 		Coordinates nearest = getTheNearestPeak(from);
-		increment(thisOne, q);
+		for(int i = 0; i < these.length; i ++) 
+			if(these[i] != null)
+				increment(these[i], q[i]);
 		return nearest;
+	}
+	
+	public Coordinates getTheNearestHoleDifferentFromThese(Coordinates from, Coordinates...these) {
+		long[] q = new long[these.length];
+		for(int i = 0; i < these.length; i ++) 
+			if(these[i] != null)
+				decrement(these[i], q[i] = getQuantity(these[i]));
+		Coordinates nearest = getTheNearestHole(from);
+		for(int i = 0; i < these.length; i ++) 
+			if(these[i] != null)
+				increment(these[i], q[i]);
+		return nearest;
+	}
+	
+	public Coordinates getTheMostDistant(Coordinates from, CellProperty p) {
+		Coordinates mostDistant = null;
+		for(Coordinates c : cells.keySet()) {
+			if(!p.is(c))
+				continue;
+			if(mostDistant == null)
+				mostDistant = c;
+			else if(from.distance(c) > from.distance(mostDistant))
+				mostDistant = c;
+		}
+		return mostDistant;
+	}
+	
+	public Coordinates getTheMostDistantHole(Coordinates from) {
+		return getTheMostDistant(from, (Coordinates c) -> isAnHole(c));
+	}
+	
+	public Coordinates getTheMostDistantPeak(Coordinates from) {
+		return getTheMostDistant(from, (Coordinates c) -> isAPeak(c));
+	}
+	
+	public Coordinates getTheNearestOfTheSameTypeDifferent(Coordinates from) {
+		if(isAnHole(from))
+			return getTheNearestHoleDifferentFromThese(from, from);
+		if(isAPeak(from))
+			return getTheNearestPeakDifferentFromThese(from, from);
+		return null;
+	}
+	
+	public Coordinates getTheMostDistantOfTheSameType(Coordinates from) {
+		if(isAnHole(from))
+			return getTheMostDistantHole(from);
+		if(isAPeak(from))
+			return getTheMostDistantPeak(from);
+		return null;
 	}
 	
 	public long terrainToMove() {

@@ -24,7 +24,7 @@ public class Solver {
 		Truck newTruck = new Truck(quantity, field.getTheNearestPeak(from), 0);
 		newTruck.move(newTruck.getCurrentPosition()); // just to add at least a movement
 		while(field.getQuantity(newTruck.getCurrentPosition()) < newTruck.capacity) {
-			Coordinates nextPeak = field.getTheNearestPeakDifferentFromThisOne(newTruck.getCurrentPosition(), newTruck.getCurrentPosition());
+			Coordinates nextPeak = field.getTheNearestPeakDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition());
 			newTruck.move(nextPeak, field.getQuantity(newTruck.getCurrentPosition()));
 			field.update(newTruck.getLastMovement());
 		}
