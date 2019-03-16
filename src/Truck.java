@@ -12,6 +12,15 @@ public class Truck {
 		path.addStopover(from, initialCargo);
 	}
 	
+	private Truck(long capacity, Path path) {
+		this.capacity = capacity;
+		this.path = path.clone();
+	}
+	
+	public Truck clone() {
+		return new Truck(capacity, path);
+	}
+	
 	public Coordinates getCurrentPosition() {
 		return path.getLastCoordinates();
 	}

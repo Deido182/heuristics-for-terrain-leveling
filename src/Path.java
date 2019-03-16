@@ -35,6 +35,10 @@ public class Path {
 		this.stopovers.addAll(stopovers);
 	}
 	
+	public Path clone() {
+		return new Path(stopovers);
+	}
+	
 	public int length() {
 		return stopovers.size();
 	}
