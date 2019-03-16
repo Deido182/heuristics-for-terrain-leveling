@@ -53,6 +53,16 @@ public class Field {
 		}
 	}
 	
+	private Field(HashMap <Coordinates, Long> cells, double deltaX, double deltaY) {
+		this.cells = (HashMap<Coordinates, Long>) cells.clone();
+		this.deltaX = deltaX;
+		this.deltaY = deltaY;
+	}
+	
+	public Field clone() {
+		return new Field(cells, deltaX, deltaY);
+	}
+	
 	public long getQuantity(Coordinates c) {
 		return cells.get(c);
 	}

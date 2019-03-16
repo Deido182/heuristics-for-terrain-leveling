@@ -5,8 +5,8 @@ public class GRASP_ChainsBuilder implements ChainsBuilder {
 	
 	Field field;
 	Truck truck;
-	private double alpha;
-	private int choices;
+	double alpha;
+	int choices;
 	
 	public GRASP_ChainsBuilder(Field field, Truck truck, double alpha, int choices) {
 		this.field = field;
