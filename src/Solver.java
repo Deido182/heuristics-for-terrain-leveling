@@ -13,22 +13,6 @@ public class Solver {
 	}
 	
 	/**
-	 * Moves the minimum quantity of terrain necessary to have 
-	 * "field.terrainToMove()" multiple of "truck.capacity".
-	 */
-	
-	private void fixFieldWithNearestNeighbour() {
-		long remainder = field.terrainToMove() % truck.capacity;
-		if(remainder == 0)
-			return;
-		ChainsBuilder chainsBuilder = new NearestNeighbourChainsBuilder(field, truck);
-		Path chainOfPeaks = chainsBuilder.getChainOfPeaks(truck.getCurrentPosition(), remainder);
-		Path chainOfHoles = chainsBuilder.getChainOfHoles(chainOfPeaks.getLastCoordinates(), remainder);
-		truck.move(chainOfPeaks);
-		truck.move(chainOfHoles);
-	}
-	
-	/**
 	 * For each chain of peaks p[i] and for each chain of holes h[j], matrix[i][j] will contain 
 	 * the distance from the last coordinates of p[i] to the first coordinates of h[j].
 	 * 
@@ -324,8 +308,8 @@ public class Solver {
 	 */
 	
 	public Path solveWithLKH() throws IOException, InterruptedException {
-		fixFieldWithNearestNeighbour();
 		ChainsBuilder chainsBuilder = new NearestNeighbourChainsBuilder(field, truck);
+		chainsBuilder.fixField();
 		ArrayList <Path> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks(truck.getCurrentPosition());
 		ArrayList <Path> chainsOfHoles = chainsBuilder.getAllChainsOfHoles(truck.getCurrentPosition());
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
@@ -347,8 +331,8 @@ public class Solver {
 	 */
 	
 	public Path solveWithImprovedNearestNeighbourStrategy() {
-		fixFieldWithNearestNeighbour();
 		ChainsBuilder chainsBuilder = new NearestNeighbourChainsBuilder(field, truck);
+		chainsBuilder.fixField();
 		ArrayList <Path> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks(truck.getCurrentPosition());
 		ArrayList <Path> chainsOfHoles = chainsBuilder.getAllChainsOfHoles(truck.getCurrentPosition());
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());

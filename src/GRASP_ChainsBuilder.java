@@ -130,4 +130,19 @@ public class GRASP_ChainsBuilder implements ChainsBuilder {
 		}
 		return chainsOfHoles;
 	}
+	
+	/**
+	 * Moves the minimum quantity of terrain necessary to have 
+	 * "field.terrainToMove()" multiple of "truck.capacity".
+	 */
+	
+	public void fixField() {
+		long remainder = field.terrainToMove() % truck.capacity;
+		if(remainder == 0)
+			return;
+		Path chainOfPeaks = getChainOfPeaks(truck.getCurrentPosition(), remainder);
+		Path chainOfHoles = getChainOfHoles(chainOfPeaks.getLastCoordinates(), remainder);
+		truck.move(chainOfPeaks);
+		truck.move(chainOfHoles);
+	}
 }

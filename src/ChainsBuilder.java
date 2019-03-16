@@ -5,4 +5,5 @@ public interface ChainsBuilder {
 	public ArrayList <Path> getAllChainsOfPeaks(Coordinates from);
 	public Path getChainOfHoles(Coordinates from, long quantity);
 	public ArrayList <Path> getAllChainsOfHoles(Coordinates from);
+	public void fixField();
 }

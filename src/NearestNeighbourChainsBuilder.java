@@ -25,4 +25,8 @@ public class NearestNeighbourChainsBuilder implements ChainsBuilder {
 	public ArrayList<Path> getAllChainsOfHoles(Coordinates from) {
 		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getAllChainsOfHoles(from);
 	}
+	
+	public void fixField() {
+		new GRASP_ChainsBuilder(field, truck, 0.0, 1).fixField();
+	}
 }
