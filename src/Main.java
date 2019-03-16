@@ -41,7 +41,7 @@ public class Main {
 		 * OFFICIAL
 		 */
 		
-		for(int inputCode = 1; inputCode <= 4; inputCode ++) {
+		for(int inputCode = 3; inputCode <= 3; inputCode ++) {
 			for(int j = 0; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				
@@ -95,7 +95,7 @@ public class Main {
 		
 		//new InputBuilder("Input\\in", 30, 30, new Coordinates(10.0, 10.0), 10.0, 7.0, 0.200).build(5);
 		
-		for(int inputCode = 1; inputCode <= 5; inputCode ++) {
+		for(int inputCode = 6; inputCode <= 5; inputCode ++) {
 			for(int j = 2; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				
