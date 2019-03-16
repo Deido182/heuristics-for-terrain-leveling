@@ -55,14 +55,15 @@ public class Main {
 				long start = System.currentTimeMillis();
 
 				//Path path = new LKH_Solver(field, truck, new NearestNeighbourFactory()).solve();
-				Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
-				
+				//Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
+				Path path = new GRASP_Solver(field, truck).solve();
+						
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
 				
 				long stop = System.currentTimeMillis();
 				
-				assert(field.isSmooth());
+				truck.path = path;
 				assert(!clone.isSmooth());
 				
 				for(Stopover s : path.stopovers) 
@@ -108,14 +109,15 @@ public class Main {
 				long start = System.currentTimeMillis();
 				
 				//Path path = new LKH_Solver(field, truck, new NearestNeighbourFactory()).solve();
-				Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
+				//Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
+				Path path = new GRASP_Solver(field, truck).solve();
 				
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
 				
 				long stop = System.currentTimeMillis();
 				
-				assert(field.isSmooth());
+				truck.path = path;
 				assert(!clone.isSmooth());
 				
 				for(Stopover s : path.stopovers) 

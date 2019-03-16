@@ -119,7 +119,7 @@ public class OurSolver implements Solver {
 			
 			ArrayList <Path> chains = new ArrayList <> ();
 			
-			int first = truck.path.length();
+			//int first = truck.path.length();
 			int next = getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, doneP);
 			while(next != -1) {
 				doneP[next] = true;
@@ -133,10 +133,10 @@ public class OurSolver implements Solver {
 			for(Path chain : chains)
 				truck.move(chain);
 			
-			double lowerBoundHC = getLowerBoundHC(chainsOfPeaks, chainsOfHoles, assignmentPH, assignmentHP);
-			double currentHC = getCurrentHC(chainsOfPeaks, chainsOfHoles, first, truck.path);
+			//double lowerBoundHC = getLowerBoundHC(chainsOfPeaks, chainsOfHoles, assignmentPH, assignmentHP);
+			//double currentHC = getCurrentHC(chainsOfPeaks, chainsOfHoles, first, truck.path);
 			
-			System.out.println("LOWER_BOUND_HC: " + lowerBoundHC + " CURRENT_HC: " + currentHC + " ERROR: " + (((currentHC - lowerBoundHC) / lowerBoundHC) * 100) + "%");
+			//System.out.println("LOWER_BOUND_HC: " + lowerBoundHC + " CURRENT_HC: " + currentHC + " ERROR: " + (((currentHC - lowerBoundHC) / lowerBoundHC) * 100) + "%");
 		}
 		truck.fixPath(Math.min(field.deltaX, field.deltaY) / 2);
 		return truck.path;
