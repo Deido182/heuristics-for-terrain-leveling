@@ -1,19 +1,25 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GRASP_ChainsBuilder implements ChainsBuilder {
 	
 	Field field;
 	Truck truck;
 	private double alpha;
+	private int choices;
 	
-	public GRASP_ChainsBuilder(Field field, Truck truck, double alpha) {
+	public GRASP_ChainsBuilder(Field field, Truck truck, double alpha, int choices) {
 		this.field = field;
 		this.truck = truck;
 		this.alpha = alpha;
+		this.choices = choices;
 	}
 	
 	public double getGRASP_Threshold(Coordinates pos) {
-		return 0.0;
+		double min = pos.distance(field.getTheNearestOfTheSameTypeDifferent(pos));
+		double max = pos.distance(field.getTheMostDistantOfTheSameType(pos));
+		
+		return min + alpha * (max - min);
 	}
 	
 	/**
@@ -28,8 +34,19 @@ public class GRASP_ChainsBuilder implements ChainsBuilder {
 		Truck newTruck = new Truck(quantity, field.getTheNearestPeak(from), 0);
 		newTruck.move(newTruck.getCurrentPosition()); // just to add at least a movement
 		while(field.getQuantity(newTruck.getCurrentPosition()) < newTruck.capacity) {
-			Coordinates nextPeak = field.getTheNearestPeakDifferentFromThisOne(newTruck.getCurrentPosition(), newTruck.getCurrentPosition());
-			newTruck.move(nextPeak, field.getQuantity(newTruck.getCurrentPosition()));
+			Coordinates[] nextPeaks = new Coordinates[choices];
+			nextPeaks[0] = field.getTheNearestPeakDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition());
+			nextPeaks[1] = field.getTheNearestPeakDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition(), nextPeaks[0]);
+			nextPeaks[2] = field.getTheNearestPeakDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition(), nextPeaks[0], nextPeaks[1]);
+			double GRASP_Threshold = getGRASP_Threshold(newTruck.getCurrentPosition());
+			int ok = choices;
+			while(ok > 1) { // never less then 1
+				if(nextPeaks[ok - 1] != null)
+					if(newTruck.getCurrentPosition().distance(nextPeaks[ok - 1]) <= GRASP_Threshold)
+						break;
+				ok --;
+			}
+			newTruck.move(nextPeaks[new Random().nextInt(ok)], field.getQuantity(newTruck.getCurrentPosition()));
 			field.update(newTruck.getLastMovement());
 		}
 		field.decrement(newTruck.getCurrentPosition(), newTruck.capacity);
@@ -71,8 +88,19 @@ public class GRASP_ChainsBuilder implements ChainsBuilder {
 		Truck newTruck = new Truck(quantity, field.getTheNearestHole(from), quantity);
 		field.increment(newTruck.getCurrentPosition(), newTruck.capacity);
 		while(field.getQuantity(newTruck.getCurrentPosition()) > 0) {
-			Coordinates nextHole = field.getTheNearestHole(newTruck.getCurrentPosition());
-			newTruck.move(nextHole, field.getQuantity(newTruck.getCurrentPosition()));
+			Coordinates[] nextHoles = new Coordinates[choices];
+			nextHoles[0] = field.getTheNearestHoleDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition());
+			nextHoles[1] = field.getTheNearestHoleDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition(), nextHoles[0]);
+			nextHoles[2] = field.getTheNearestHoleDifferentFromThese(newTruck.getCurrentPosition(), newTruck.getCurrentPosition(), nextHoles[0], nextHoles[1]);
+			double GRASP_Threshold = getGRASP_Threshold(newTruck.getCurrentPosition());
+			int ok = choices;
+			while(ok > 1) { // never less then 1
+				if(nextHoles[ok - 1] != null)
+					if(newTruck.getCurrentPosition().distance(nextHoles[ok - 1]) <= GRASP_Threshold)
+						break;
+				ok --;
+			}
+			newTruck.move(nextHoles[new Random().nextInt(ok)], field.getQuantity(newTruck.getCurrentPosition()));
 			field.update(newTruck.getLastMovement());
 		}
 		return newTruck.path;
