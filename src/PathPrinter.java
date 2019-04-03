@@ -14,6 +14,9 @@ import javax.swing.JFrame;
 
 
 public class PathPrinter extends JFrame {
+	public final int B = 1000;
+	public final int H = 1000;
+	
 	private class Printer extends JComponent {
 
 		Field field;
@@ -49,13 +52,13 @@ public class PathPrinter extends JFrame {
 					if(!coordinates.get(j).sameX(coordinates.get(j - 1)))
 						break;
 					g2D.draw(new Line2D.Double((coordinates.get(j - 1).x - field.deltaX / 2) * multiplierX + shiftX, 
-												(coordinates.get(j - 1).y - field.deltaY / 2) * multiplierY + shiftY, 
+												H - ((coordinates.get(j - 1).y - field.deltaY / 2) * multiplierY + shiftY), 
 												(coordinates.get(j).x - field.deltaX / 2) * multiplierX + shiftX, 
-												(coordinates.get(j).y + field.deltaY / 2) * multiplierY + shiftY));
+												H - ((coordinates.get(j).y + field.deltaY / 2) * multiplierY + shiftY)));
 					g2D.draw(new Line2D.Double((coordinates.get(j - 1).x + field.deltaX / 2) * multiplierX + shiftX, 
-												(coordinates.get(j - 1).y - field.deltaY / 2) * multiplierY + shiftY, 
+												H - ((coordinates.get(j - 1).y - field.deltaY / 2) * multiplierY + shiftY), 
 												(coordinates.get(j).x + field.deltaX / 2) * multiplierX + shiftX, 
-												(coordinates.get(j).y + field.deltaY / 2) * multiplierY + shiftY));
+												H - ((coordinates.get(j).y + field.deltaY / 2) * multiplierY + shiftY)));
 				}
 			}
 			
@@ -72,13 +75,13 @@ public class PathPrinter extends JFrame {
 					if(!coordinates.get(j).sameY(coordinates.get(j - 1)))
 						break;
 					g2D.draw(new Line2D.Double((coordinates.get(j - 1).x - field.deltaX / 2) * multiplierX + shiftX, 
-												(coordinates.get(j - 1).y - field.deltaY / 2) * multiplierY + shiftY, 
+												H - ((coordinates.get(j - 1).y - field.deltaY / 2) * multiplierY + shiftY), 
 												(coordinates.get(j).x + field.deltaX / 2) * multiplierX + shiftX, 
-												(coordinates.get(j).y - field.deltaY / 2) * multiplierY + shiftY));
+												H - ((coordinates.get(j).y - field.deltaY / 2) * multiplierY + shiftY)));
 					g2D.draw(new Line2D.Double((coordinates.get(j - 1).x - field.deltaX / 2) * multiplierX + shiftX, 
-												(coordinates.get(j - 1).y + field.deltaY / 2) * multiplierY + shiftY, 
+												H - ((coordinates.get(j - 1).y + field.deltaY / 2) * multiplierY + shiftY), 
 												(coordinates.get(j).x + field.deltaX / 2) * multiplierX + shiftX, 
-												(coordinates.get(j).y + field.deltaY / 2) * multiplierY + shiftY));
+												H - ((coordinates.get(j).y + field.deltaY / 2) * multiplierY + shiftY)));
 				}
 			}
 		}
@@ -107,9 +110,9 @@ public class PathPrinter extends JFrame {
 			for(int i = 0; i < hull.size(); i ++) {
 				int j = (i + 1) % hull.size();
 				g2D.draw(new Line2D.Double(hull.get(i).x * multiplierX + shiftX, 
-											hull.get(i).y * multiplierY + shiftY, 
+											H - (hull.get(i).y * multiplierY + shiftY), 
 											hull.get(j).x * multiplierX + shiftX, 
-											hull.get(j).y * multiplierY + shiftY));
+											H - (hull.get(j).y * multiplierY + shiftY)));
 			}
 		}
 		
@@ -124,9 +127,9 @@ public class PathPrinter extends JFrame {
 			
 			for(int i = 1; i < path.length(); i ++)
 				g2D.draw(new Line2D.Double(path.getCoordinates(i - 1).x * multiplierX + shiftX, 
-											path.getCoordinates(i - 1).y * multiplierY + shiftY, 
+											H - (path.getCoordinates(i - 1).y * multiplierY + shiftY), 
 											path.getCoordinates(i).x * multiplierX + shiftX, 
-											path.getCoordinates(i).y * multiplierY + shiftY));
+											H - (path.getCoordinates(i).y * multiplierY + shiftY)));
 		}
 		
 		@Override
@@ -137,9 +140,9 @@ public class PathPrinter extends JFrame {
 		}
 	}
 	
-	public PathPrinter() {
-		setSize(1000, 1000);
-		setTitle("Truck movements");
+	public PathPrinter(String title) {
+		setSize(B, H);
+		setTitle(title);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 	}
 	

@@ -109,8 +109,12 @@ public class Path {
 		return distance;
 	}
 	
+	public Path subPath(int firstToInclude, int firstToExclude) {
+		return new Path(stopovers.subList(firstToInclude, firstToExclude));
+	}
+	
 	public Path prefix(int firstToExclude) {
-		return new Path(stopovers.subList(0, firstToExclude));
+		return subPath(0, firstToExclude);
 	}
 	
 	@Override

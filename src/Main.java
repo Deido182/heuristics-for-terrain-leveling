@@ -41,8 +41,8 @@ public class Main {
 		 * OFFICIAL
 		 */
 		
-		for(int inputCode = 3; inputCode <= 3; inputCode ++) {
-			for(int j = 0; j < capacities.length; j ++) {
+		for(int inputCode = 1; inputCode <= 1; inputCode ++) {
+			for(int j = 2; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				
 				final String INPUT = "Input\\cellplot" + inputCode + "b.txt";
@@ -61,6 +61,10 @@ public class Main {
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
 				
+				for(int i = 0; i <= 3; i ++) {
+					System.out.println((int)(0.25 * i * path.length()) + " " + (int)(0.25 * (i + 1) * path.length()));
+					new PathPrinter(String.valueOf(i + 1)).print(field, path.subPath((int)(0.25 * i * path.length()), (int)(0.25 * (i + 1) * path.length())), 2.1, 2.1, 25.0, 25.0);
+				}
 				long stop = System.currentTimeMillis();
 				
 				truck.path = path;
