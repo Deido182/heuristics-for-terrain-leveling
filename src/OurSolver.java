@@ -128,7 +128,7 @@ public class OurSolver implements Solver {
 				next = doneP[assignmentHP[assignmentPH[next]]] ? getTheIndexOfTheNearest(chainsOfHoles.get(assignmentPH[next]).getLastCoordinates(), chainsOfPeaks, doneP) :
 						assignmentHP[assignmentPH[next]];
 			}
-			
+
 			truck.improveSequenceOfChains(chains);
 			for(Path chain : chains)
 				truck.move(chain);
@@ -138,27 +138,7 @@ public class OurSolver implements Solver {
 			
 			//System.out.println("LOWER_BOUND_HC: " + lowerBoundHC + " CURRENT_HC: " + currentHC + " ERROR: " + (((currentHC - lowerBoundHC) / lowerBoundHC) * 100) + "%");
 		}
-		truck.fixPath(Math.min(field.deltaX, field.deltaY) / 2);
+		truck.fixPath();
 		return truck.path;
 	}
-	
-	/*
-	 * With this LENGTH we do not need to check if the chosen stopover 
-	 * is contained into the field. Indeed we are assuming the field is 
-	 * a convex polygon. This means that for each c1, c2 into the field the segment 
-	 * which connects them has to be part of the field.
-	 * 
-	 * Let's consider the worst case can arise: getAngle(c1, c2, c3) = 135°
-	 * This means a primary turn of 45° followed by one of 90°. c2.distance(s2) = sqrt(2)LENGTH.
-	 * 
-	 * However...
-	 * 
-	 * c3  ?
-	 * c1 c2
-	 * 
-	 * The UP-RIGHT corner of c2 and c3 have to be connected by a segment which traverses the 
-	 * center of '?' cell (which contains s2 of course). 
-	 * Now because sqrt(2)LENGTH <= 2LENGTH <= c2.distance(?) we know that s2 has to be 
-	 * part of the field.
-	 */
 }

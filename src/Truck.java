@@ -91,8 +91,9 @@ public class Truck {
 	 * For each change it checks if it is acceptable and in case it fixes it.
 	 */
 	
-	public void fixPath(final double LENGTH) {
+	public void fixPath() {
 		for(int i = 2; i < path.length(); i ++) {
+			System.out.println(path.length() - i);
 			double absAlpha = getAngle(path.getCoordinates(i - 2), path.getCoordinates(i - 1), path.getCoordinates(i));
 			
 			if(angleOk(absAlpha))
@@ -111,16 +112,35 @@ public class Truck {
 			boolean clockwise = b.subtract(a).clockwise(c.subtract(a));
 			
 			double N = Math.ceil(2 * Math.PI / gamma);
-			double centerAngle = 2 * Math.PI / N;
+			double angle = 2 * Math.PI / N;
 			
-			double beta = clockwise ? -absAlpha + (Math.PI - centerAngle) : absAlpha - (Math.PI - centerAngle);
+			double beta = clockwise ? -absAlpha + (Math.PI - angle) : absAlpha - (Math.PI - angle);
 			
 			if(!angleOk(beta)) {
 				beta = -gamma;
-				centerAngle = -centerAngle;
+				angle = -angle;
 			}
 			
+			Vector2D dir = b.subtract(a).getVectorByAngle(beta, S);
+			Coordinates stopover = new Coordinates(b, dir);
+			path.addStopover(i, stopover, sc.quantityToBringIn);
 			
+			for(int j = i + 1; ; j ++) {
+				sa = path.stopovers.get(j - 2);
+				sb = path.stopovers.get(j - 1);
+				sc = path.stopovers.get(j);
+				
+				a = sa.coordinates;
+				b = sb.coordinates;
+				c = sc.coordinates;
+				
+				if(angleOk(getAngle(a, b, c)))
+					break;
+				
+				dir = b.subtract(a).getVectorByAngle(angle, S);
+				stopover = new Coordinates(b, dir);
+				path.addStopover(j, stopover, sc.quantityToBringIn);
+			}
 		}
 	}
 	
