@@ -71,7 +71,7 @@ public class Truck {
 	 */
 	
 	public boolean angleOk(double angle) {
-		return angle <= gamma + ACCEPTED_ERROR;
+		return Math.abs(angle) <= gamma + ACCEPTED_ERROR;
 	}
 	
 	/**
@@ -88,24 +88,38 @@ public class Truck {
 	}
 	
 	/**
-	 * 
-	 * @return
-	 */
-	
-	public Path buildPolygon() {
-		
-	}
-	
-	/**
 	 * For each change it checks if it is acceptable and in case it fixes it.
 	 */
 	
 	public void fixPath(final double LENGTH) {
 		for(int i = 2; i < path.length(); i ++) {
-			double angle = getAngle(path.getCoordinates(i - 2), path.getCoordinates(i - 1), path.getCoordinates(i));
+			double absAlpha = getAngle(path.getCoordinates(i - 2), path.getCoordinates(i - 1), path.getCoordinates(i));
 			
-			if(angleOk(angle))
+			if(angleOk(absAlpha))
 				continue;
+			
+			// Let's build a regular polygon
+			
+			Stopover sa = path.stopovers.get(i - 2);
+			Stopover sb = path.stopovers.get(i - 1);
+			Stopover sc = path.stopovers.get(i);
+			
+			Coordinates a = sa.coordinates;
+			Coordinates b = sb.coordinates;
+			Coordinates c = sc.coordinates;
+			
+			boolean clockwise = b.subtract(a).clockwise(c.subtract(a));
+			
+			double N = Math.ceil(2 * Math.PI / gamma);
+			double centerAngle = 2 * Math.PI / N;
+			
+			double beta = clockwise ? -absAlpha + (Math.PI - centerAngle) : absAlpha - (Math.PI - centerAngle);
+			
+			if(!angleOk(beta)) {
+				beta = -gamma;
+				centerAngle = -centerAngle;
+			}
+			
 			
 		}
 	}
