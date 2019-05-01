@@ -36,7 +36,7 @@ public class GRASP_ChainsBuilder implements ChainsBuilder {
 	 */
 	
 	public Path getChainOfPeaks(Coordinates from, long quantity) {
-		Truck newTruck = new Truck(quantity, field.getTheNearestPeak(from), 0);
+		Truck newTruck = new Truck(quantity, truck.gamma, truck.S, field.getTheNearestPeak(from), 0);
 		newTruck.move(newTruck.getCurrentPosition()); // just to add at least a movement
 		while(field.getQuantity(newTruck.getCurrentPosition()) < newTruck.capacity) {
 			Coordinates[] toAvoid = new Coordinates[choices + 1];
@@ -91,7 +91,7 @@ public class GRASP_ChainsBuilder implements ChainsBuilder {
 		 * to fill the chain of holes.
 		 */
 		
-		Truck newTruck = new Truck(quantity, field.getTheNearestHole(from), quantity);
+		Truck newTruck = new Truck(quantity, truck.gamma, truck.S, field.getTheNearestHole(from), quantity);
 		field.increment(newTruck.getCurrentPosition(), newTruck.capacity);
 		while(field.getQuantity(newTruck.getCurrentPosition()) > 0) {
 			Coordinates[] toAvoid = new Coordinates[choices + 1];

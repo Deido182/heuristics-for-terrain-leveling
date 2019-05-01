@@ -50,7 +50,11 @@ public class Main {
 				
 				Field field = new Field(new Scanner(new FileReader(new File(INPUT))));
 				Field clone = new Field(new Scanner(new FileReader(new File(INPUT)))); // just to be sure
-				Truck truck = new Truck(capacity, TRUCK_STARTING_POINT, INITIAL_CARGO);
+				
+				final double GAMMA = Math.PI / 4.0;
+				final double S = Math.min(field.deltaX, field.deltaY);
+				
+				Truck truck = new Truck(capacity, GAMMA, S, TRUCK_STARTING_POINT, INITIAL_CARGO);
 				
 				long start = System.currentTimeMillis();
 
@@ -104,7 +108,11 @@ public class Main {
 				
 				Field field = new Field(new Scanner(new FileReader(new File(INPUT))));
 				Field clone = new Field(new Scanner(new FileReader(new File(INPUT)))); // just to be sure
-				Truck truck = new Truck(capacity, TRUCK_STARTING_POINT, INITIAL_CARGO);
+
+				final double GAMMA = Math.PI / 4.0;
+				final double S = Math.min(field.deltaX, field.deltaY);
+				
+				Truck truck = new Truck(capacity, GAMMA, S, TRUCK_STARTING_POINT, INITIAL_CARGO);
 				
 				long start = System.currentTimeMillis();
 				

@@ -3,11 +3,15 @@ import java.util.ArrayList;
 public class Truck {
 	
 	long capacity;
+	double gamma;
+	double S;
 	Path path;
 	public static final double ACCEPTED_ERROR = 1E-5;
 	
-	public Truck(long capacity, Coordinates from, long initialCargo) {
+	public Truck(long capacity, double maxAngle, double sensibility, Coordinates from, long initialCargo) {
 		this.capacity = capacity;
+		this.gamma = maxAngle;
+		this.S = sensibility;
 		this.path = new Path();
 		path.addStopover(from, initialCargo);
 	}
@@ -90,14 +94,6 @@ public class Truck {
 			if(isOk(angle))
 				continue;
 			
-			Coordinates stopover = singleStopover(path.getCoordinates(i - 2), path.getCoordinates(i - 1), path.getCoordinates(i), LENGTH);
-			if(stopover != null) {
-				path.rerouteOne(i - 1, stopover);
-				continue;
-			}
-			
-			ArrayList <Coordinates> stopovers = twoStopovers(path.getCoordinates(i - 2), path.getCoordinates(i - 1), path.getCoordinates(i), LENGTH);
-			path.rerouteTwo(i - 1, stopovers.get(0), stopovers.get(1));
 		}
 	}
 	
