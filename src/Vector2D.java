@@ -39,7 +39,7 @@ public class Vector2D {
 	}
 	
 	public Vector2D rotate(double alpha) {
-		return new Vector2D(x * Math.cos(alpha) + y * Math.sin(alpha), -x * Math.sin(alpha) + y * Math.cos(alpha));
+		return new Vector2D(x * Math.cos(alpha) - y * Math.sin(alpha), x * Math.sin(alpha) + y * Math.cos(alpha));
 	}
 	
 	public double getAngle(Vector2D v) {

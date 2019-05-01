@@ -41,8 +41,8 @@ public class Main {
 		 * OFFICIAL
 		 */
 		
-		for(int inputCode = 1; inputCode <= 1; inputCode ++) {
-			for(int j = 2; j < capacities.length; j ++) {
+		for(int inputCode = 1; inputCode <= 4; inputCode ++) {
+			for(int j = 0; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				
 				final String INPUT = "Input\\cellplot" + inputCode + "b.txt";
@@ -55,8 +55,8 @@ public class Main {
 				long start = System.currentTimeMillis();
 
 				//Path path = new LKH_Solver(field, truck, new NearestNeighbourFactory()).solve();
-				//Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
-				Path path = new GRASP_Solver(field, truck).solve();
+				Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
+				//Path path = new GRASP_Solver(field, truck).solve();
 						
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
