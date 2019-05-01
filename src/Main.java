@@ -58,20 +58,16 @@ public class Main {
 				Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
 				//Path path = new GRASP_Solver(field, truck).solve();
 						
-				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
-				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
+				//new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
+				//new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0);
 				
-				for(int i = 0; i <= 3; i ++) {
-					System.out.println((int)(0.25 * i * path.length()) + " " + (int)(0.25 * (i + 1) * path.length()));
-					new PathPrinter(String.valueOf(i + 1)).print(field, path.subPath((int)(0.25 * i * path.length()), (int)(0.25 * (i + 1) * path.length())), 2.1, 2.1, 25.0, 25.0);
-				}
 				long stop = System.currentTimeMillis();
 				
 				truck.path = path;
 				assert(!clone.isSmooth());
 				
 				for(Stopover s : path.stopovers) 
-					assert(0.0 <= s.quantityToBringIn && s.quantityToBringIn <= capacity);
+					assert(0 <= s.quantityToBringIn && s.quantityToBringIn <= capacity);
 				
 				for(int i = 0; i < path.length() - 1; i ++)
 					clone.update(truck.getMovement(i));
@@ -99,7 +95,7 @@ public class Main {
 		
 		//new InputBuilder("Input\\in", 30, 30, new Coordinates(10.0, 10.0), 10.0, 7.0, 0.200).build(5);
 		
-		for(int inputCode = 6; inputCode <= 5; inputCode ++) {
+		for(int inputCode = 1; inputCode <= 5; inputCode ++) {
 			for(int j = 2; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				
@@ -113,10 +109,10 @@ public class Main {
 				long start = System.currentTimeMillis();
 				
 				//Path path = new LKH_Solver(field, truck, new NearestNeighbourFactory()).solve();
-				//Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
-				Path path = new GRASP_Solver(field, truck).solve();
+				Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
+				//Path path = new GRASP_Solver(field, truck).solve();
 				
-				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
+				new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
 				
 				long stop = System.currentTimeMillis();
@@ -125,7 +121,7 @@ public class Main {
 				assert(!clone.isSmooth());
 				
 				for(Stopover s : path.stopovers) 
-					assert(0.0 <= s.quantityToBringIn && s.quantityToBringIn <= capacity);
+					assert(0 <= s.quantityToBringIn && s.quantityToBringIn <= capacity);
 				
 				for(int i = 0; i < path.length() - 1; i ++)
 					clone.update(truck.getMovement(i));
