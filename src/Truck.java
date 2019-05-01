@@ -71,62 +71,12 @@ public class Truck {
 	}
 	
 	/**
-	 * Returns the stopover to add after c2 to fix the angle if a single stopover is enough 
-	 * to solve it. Returns null otherwise.
 	 * 
-	 * @param c1
-	 * @param c2
-	 * @param c3
-	 * @return the stopover (coordinates) to add after c2 or null.
+	 * @return
 	 */
 	
-	private Coordinates singleStopover(Coordinates c1, Coordinates c2, Coordinates c3, final double LENGTH) {
-		double angle = getAngle(c1, c2, c3);
-		if(angle > 0.75 * Math.PI)
-			return null;
-		Vector2D v = c3.subtract(c2);
-		for(Vector2D dir : v.getVectorsByAngle(angle - Math.PI / 2, LENGTH)) {
-			Coordinates s = new Coordinates(c2, dir);
-			
-			if(!isOk(getAngle(c1, c2, s))) // turn on the other side
-				continue;
-			if(!isOk(getAngle(c2, s, c3))) 
-				continue;
-			
-			return s;
-		}
-		return null;
-	}
-	
-	/**
-	 * Returns two stopovers to add after c2 (in the given order) to fix the angle.
-	 * 
-	 * @param c1
-	 * @param c2
-	 * @param c3
-	 * @return two stopovers (coordinates) to add (in order) after c2.
-	 */
-	
-	private ArrayList <Coordinates> twoStopovers(Coordinates c1, Coordinates c2, Coordinates c3, final double LENGTH) {
-		double angle = getAngle(c1, c2, c3);
-		Vector2D v = c3.subtract(c2);
-		for(Vector2D dir1 : v.getVectorsByAngle(angle - Math.PI / 2, LENGTH)) {
-			Coordinates s1 = new Coordinates(c2, dir1);
-			
-			if(!isOk(getAngle(c1, c2, s1))) // turn on the other side
-				continue;
-			
-			Coordinates s2 = new Coordinates(s1, v.setLengthTo(LENGTH));
-			
-			if(!isOk(getAngle(s1, s2, c3))) 
-				continue;
-			
-			ArrayList <Coordinates> stopovers = new ArrayList <> ();
-			stopovers.add(s1);
-			stopovers.add(s2);
-			return stopovers;
-		}
-		return null;
+	public Path buildPolygon() {
+		
 	}
 	
 	/**

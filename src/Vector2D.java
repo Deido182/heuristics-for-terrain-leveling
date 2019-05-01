@@ -58,19 +58,10 @@ public class Vector2D {
 		return Math.acos(cos);
 	}
 	
-	public ArrayList <Vector2D> getVectorsByAngle(double alpha, double length) {
-		Vector2D v1 = rotate(alpha).setLengthTo(length);
-		Vector2D v2 = rotate(-alpha).setLengthTo(length);
-		
-		ArrayList <Vector2D> vectors = new ArrayList <> ();
-		vectors.add(v1);
-		if(!v1.equals(v2))
-			vectors.add(v2);
-		
-		return vectors;
+	public Vector2D getVectorByAngle(double alpha, double length) {
+		return rotate(alpha).setLengthTo(length);
 	}
 	
-
 	public boolean hasX(double x) {
 		return Math.abs(this.x - x) < MAX_ERROR_COOR;
 	}
