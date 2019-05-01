@@ -82,7 +82,7 @@ public class Main {
 					assert(truck.getMovement(i).to.equals(truck.getMovement(i + 1).from));
 
 				for(int i = 2; i < truck.path.length(); i ++)
-					assert(Truck.isOk(Truck.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
+					assert(truck.angleOk(Truck.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
 				
 				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
@@ -140,7 +140,7 @@ public class Main {
 					assert(truck.getMovement(i).to.equals(truck.getMovement(i + 1).from));
 
 				for(int i = 2; i < truck.path.length(); i ++)
-					assert(Truck.isOk(Truck.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
+					assert(truck.angleOk(Truck.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
 				
 				System.out.println("in" + inputCode + " / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");

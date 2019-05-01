@@ -63,15 +63,28 @@ public class Truck {
 	}
 	
 	/**
-	 * Checks the angle. It should be between 0 and PI/2 (inclusive).
+	 * Checks the angle. It should be between 0 and gamma (inclusive).
 	 * The "ACCEPTED_ERROR" is for the floating point approximation.
 	 * 
 	 * @param angle
 	 * @return True if the angle is acceptable. False otherwise.
 	 */
 	
-	public static boolean isOk(double angle) {
-		return angle <= Math.PI / 2 + ACCEPTED_ERROR;
+	public boolean angleOk(double angle) {
+		return angle <= gamma + ACCEPTED_ERROR;
+	}
+	
+	/**
+	 * Checks the movement length. It should be >= S.
+	 * The "ACCEPTED_ERROR" is for the floating point approximation.
+	 * 
+	 * @param c1
+	 * @param c2
+	 * @return True if the length is acceptable. False otherwise.
+	 */
+	
+	public boolean movementOk(Coordinates c1, Coordinates c2) {
+		return c1.distance(c2) >= S - ACCEPTED_ERROR;
 	}
 	
 	/**
@@ -91,7 +104,7 @@ public class Truck {
 		for(int i = 2; i < path.length(); i ++) {
 			double angle = getAngle(path.getCoordinates(i - 2), path.getCoordinates(i - 1), path.getCoordinates(i));
 			
-			if(isOk(angle))
+			if(angleOk(angle))
 				continue;
 			
 		}
