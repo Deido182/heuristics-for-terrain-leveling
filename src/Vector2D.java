@@ -26,6 +26,14 @@ public class Vector2D {
 		return Math.sqrt(scalarProduct(this));
 	}
 	
+	public Vector2D multiply(double k) {
+		return new Vector2D(k * x, k * y);
+	}
+	
+	public Vector2D divide(double k) {
+		return multiply(1.0 / k);
+	}
+	
 	public Vector2D add(Vector2D v) {
 		return new Vector2D(x + v.x, y + v.y);
 	}
@@ -60,6 +68,11 @@ public class Vector2D {
 	
 	public Vector2D getVectorByAngle(double alpha, double length) {
 		return rotate(alpha).setLengthTo(length);
+	}
+	
+	public boolean clockwise(Vector2D v) {
+		Vector2D orth = getVectorByAngle(Math.PI / 2.0, 1.0);
+		return v.subtract(orth.multiply(-1.0)).euclideanNorm() <= v.subtract(orth).euclideanNorm();
 	}
 	
 	public boolean hasX(double x) {
