@@ -84,7 +84,13 @@ public class Main {
 				for(int i = 2; i < truck.path.length(); i ++)
 					assert(truck.angleOk(Truck.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
 				
-				for(int i = 1; i < truck.path.length(); i ++)
+				/*
+				 * From i = 2 because the first movement is from (0, 0) which is the starting point 
+				 * for the truck. It could be a point which does not belong to the field.
+				 * It is not important if this movement is < S.
+				 */
+				
+				for(int i = 2; i < truck.path.length(); i ++) 
 					assert(truck.movementOk(truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i)));
 				
 				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
@@ -102,7 +108,7 @@ public class Main {
 		
 		//new InputBuilder("Input\\in", 30, 30, new Coordinates(10.0, 10.0), 10.0, 7.0, 0.200).build(5);
 		
-		for(int inputCode = 1; inputCode <= 5; inputCode ++) {
+		for(int inputCode = 6; inputCode <= 5; inputCode ++) {
 			for(int j = 2; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				
@@ -144,8 +150,14 @@ public class Main {
 
 				for(int i = 2; i < truck.path.length(); i ++)
 					assert(truck.angleOk(Truck.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
-
-				for(int i = 1; i < truck.path.length(); i ++)
+				
+				/*
+				 * From i = 2 because the first movement is from (0, 0) which is the starting point 
+				 * for the truck. It could be a point which does not belong to the field.
+				 * It is not important if this movement is < S.
+				 */
+				
+				for(int i = 2; i < truck.path.length(); i ++) 
 					assert(truck.movementOk(truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i)));
 				
 				System.out.println("in" + inputCode + " / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");

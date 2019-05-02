@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 public class Vector2D {
 	

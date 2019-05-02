@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Scanner;
+
 import static java.lang.Math.pow;
 import static java.lang.Math.abs;
 import static java.lang.Math.PI;
@@ -165,13 +167,16 @@ public class Truck {
 				}
 				double delta = 4 * (pow(sum.scalarProduct(C), 2.0) 
 								- pow(sum.euclideanNorm(), 2.0) * (pow(C.euclideanNorm(), 2.0) - pow(S, 2.0)));
-				double L = (2 * sum.scalarProduct(C) - sqrt(delta)) / (2 * pow(sum.euclideanNorm(), 2.0));
+				double L1 = (2 * sum.scalarProduct(C) - sqrt(delta)) / (2 * pow(sum.euclideanNorm(), 2.0));
+				double L2 = (2 * sum.scalarProduct(C) + sqrt(delta)) / (2 * pow(sum.euclideanNorm(), 2.0));
+				double L = L1 >= S ? L1 : L2;
+				
 				for(int z = i; z < j; z ++) {
 					Coordinates from = path.getCoordinates(z - 1);
 					
 					Vector2D side = sides.get(z - i);
 					
-					path.stopovers.get(i).coordinates = new Coordinates(from, side.multiply(L));
+					path.stopovers.get(z).coordinates = new Coordinates(from, side.multiply(L));
 				}
 			}
 		}
