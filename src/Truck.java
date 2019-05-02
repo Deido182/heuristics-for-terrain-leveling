@@ -1,4 +1,9 @@
 import java.util.ArrayList;
+import static java.lang.Math.pow;
+import static java.lang.Math.abs;
+import static java.lang.Math.PI;
+import static java.lang.Math.ceil;
+import static java.lang.Math.sqrt;
 
 public class Truck {
 	
@@ -71,7 +76,7 @@ public class Truck {
 	 */
 	
 	public boolean angleOk(double angle) {
-		return Math.abs(angle) <= gamma + ACCEPTED_ERROR;
+		return abs(angle) <= gamma + ACCEPTED_ERROR;
 	}
 	
 	/**
@@ -108,12 +113,14 @@ public class Truck {
 			Coordinates b = sb.coordinates;
 			Coordinates c = sc.coordinates;
 			
+			final Vector2D C = c.subtract(b); // for the last phase
+			
 			boolean clockwise = b.subtract(a).clockwise(c.subtract(a));
 			
-			double N = Math.ceil(2 * Math.PI / gamma);
-			double angle = 2 * Math.PI / N;
+			double N = ceil(2 * PI / gamma);
+			double angle = 2 * PI / N;
 			
-			double beta = clockwise ? -absAlpha + (Math.PI - angle) : absAlpha - (Math.PI - angle);
+			double beta = clockwise ? -absAlpha + (PI - angle) : absAlpha - (PI - angle);
 			
 			angle *= clockwise ? -1 : 1;
 			
@@ -126,7 +133,8 @@ public class Truck {
 			Coordinates stopover = new Coordinates(b, dir);
 			path.addStopover(i, stopover, sc.quantityToBringIn);
 			
-			for(int j = i + 1; ; j ++) {
+			int j;
+			for(j = i + 1; ; j ++) {
 				sa = path.stopovers.get(j - 2);
 				sb = path.stopovers.get(j - 1);
 				sc = path.stopovers.get(j);
@@ -141,6 +149,30 @@ public class Truck {
 				dir = b.subtract(a).getVectorByAngle(angle, S);
 				stopover = new Coordinates(b, dir);
 				path.addStopover(j, stopover, sc.quantityToBringIn);
+			}
+			
+			if(!movementOk(b, c)) {
+				ArrayList <Vector2D> sides = new ArrayList <> ();
+				Vector2D sum = new Vector2D(0.0, 0.0);
+				for(int z = i; z < j; z ++) {
+					Coordinates from = path.getCoordinates(z - 1);
+					Coordinates to = path.getCoordinates(z);
+					
+					Vector2D side = to.subtract(from).divide(S);
+					
+					sides.add(side);
+					sum = sum.add(side);
+				}
+				double delta = 4 * (pow(sum.scalarProduct(C), 2.0) 
+								- pow(sum.euclideanNorm(), 2.0) * (pow(C.euclideanNorm(), 2.0) - pow(S, 2.0)));
+				double L = (2 * sum.scalarProduct(C) - sqrt(delta)) / (2 * pow(sum.euclideanNorm(), 2.0));
+				for(int z = i; z < j; z ++) {
+					Coordinates from = path.getCoordinates(z - 1);
+					
+					Vector2D side = sides.get(z - i);
+					
+					path.stopovers.get(i).coordinates = new Coordinates(from, side.multiply(L));
+				}
 			}
 		}
 	}
