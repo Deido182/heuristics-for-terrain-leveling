@@ -84,6 +84,9 @@ public class Main {
 				for(int i = 2; i < truck.path.length(); i ++)
 					assert(truck.angleOk(Truck.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
 				
+				for(int i = 1; i < truck.path.length(); i ++)
+					assert(truck.movementOk(truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i)));
+				
 				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
 				
@@ -120,7 +123,7 @@ public class Main {
 				Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
 				//Path path = new GRASP_Solver(field, truck).solve();
 				
-				new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
+				//new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
 				
 				long stop = System.currentTimeMillis();
@@ -141,6 +144,9 @@ public class Main {
 
 				for(int i = 2; i < truck.path.length(); i ++)
 					assert(truck.angleOk(Truck.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
+
+				for(int i = 1; i < truck.path.length(); i ++)
+					assert(truck.movementOk(truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i)));
 				
 				System.out.println("in" + inputCode + " / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
