@@ -127,7 +127,7 @@ public class Truck {
 			angle *= clockwise ? -1 : 1;
 			
 			if(!angleOk(beta)) {
-				beta = (clockwise ? 1 : -1) * gamma;
+				beta = (clockwise ? 1 : -1) * angle;
 				angle *= -1;
 			}
 			
