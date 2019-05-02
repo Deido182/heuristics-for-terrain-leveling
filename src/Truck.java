@@ -93,7 +93,6 @@ public class Truck {
 	
 	public void fixPath() {
 		for(int i = 2; i < path.length(); i ++) {
-			System.out.println(path.length() - i);
 			double absAlpha = getAngle(path.getCoordinates(i - 2), path.getCoordinates(i - 1), path.getCoordinates(i));
 			
 			if(angleOk(absAlpha))
@@ -116,9 +115,11 @@ public class Truck {
 			
 			double beta = clockwise ? -absAlpha + (Math.PI - angle) : absAlpha - (Math.PI - angle);
 			
+			angle *= clockwise ? -1 : 1;
+			
 			if(!angleOk(beta)) {
-				beta = -gamma;
-				angle = -angle;
+				beta = (clockwise ? 1 : -1) * gamma;
+				angle *= -1;
 			}
 			
 			Vector2D dir = b.subtract(a).getVectorByAngle(beta, S);
