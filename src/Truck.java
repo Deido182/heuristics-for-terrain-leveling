@@ -23,13 +23,15 @@ public class Truck {
 		path.addStopover(from, initialCargo);
 	}
 	
-	private Truck(long capacity, Path path) {
+	private Truck(long capacity, double maxAngle, double sensibility, Path path) {
 		this.capacity = capacity;
+		this.gamma = maxAngle;
+		this.S = sensibility;
 		this.path = path.clone();
 	}
 	
 	public Truck clone() {
-		return new Truck(capacity, path);
+		return new Truck(capacity, gamma, S, path);
 	}
 	
 	public Coordinates getCurrentPosition() {
