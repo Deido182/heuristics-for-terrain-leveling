@@ -59,8 +59,8 @@ public class Main {
 				long start = System.currentTimeMillis();
 
 				//Path path = new LKH_Solver(field, truck, new NearestNeighbourFactory()).solve();
-				Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
-				//Path path = new GRASP_Solver(field, truck).solve();
+				//Path path = new OurSolver(field, truck, new NearestNeighbourFactory()).solve();
+				Path path = new GRASP_Solver(field, truck).solve();
 						
 				//new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
 				//new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0);
@@ -108,7 +108,7 @@ public class Main {
 		
 		//new InputBuilder("Input\\in", 30, 30, new Coordinates(10.0, 10.0), 10.0, 7.0, 0.200).build(5);
 		
-		for(int inputCode = 1; inputCode <= 5; inputCode ++) {
+		for(int inputCode = 6; inputCode <= 5; inputCode ++) {
 			for(int j = 2; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				
