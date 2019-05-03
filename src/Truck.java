@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.abs;
@@ -97,6 +96,91 @@ public class Truck {
 	}
 	
 	/**
+	 * Given the position i of the coordinates for which the angle abc is not valid, 
+	 * fix the path and returns the new path ab...c
+	 * 
+	 * @param absAlpha
+	 * @param i
+	 * @return the path a -> c
+	 */
+	
+	public Path insertRegularPolygon(double absAlpha, int i) {
+		Stopover sa = path.stopovers.get(i - 2);
+		Stopover sb = path.stopovers.get(i - 1);
+		Stopover sc = path.stopovers.get(i);
+		
+		Coordinates a = sa.coordinates;
+		Coordinates b = sb.coordinates;
+		Coordinates c = sc.coordinates;
+		
+		final Vector2D C = c.subtract(b); // for the last phase
+		
+		boolean clockwise = b.subtract(a).clockwise(c.subtract(a));
+		
+		double N = ceil(2 * PI / gamma);
+		double angle = 2 * PI / N;
+		
+		double beta = clockwise ? -absAlpha + (PI - angle) : absAlpha - (PI - angle);
+		
+		angle *= clockwise ? -1 : 1;
+		
+		if(!angleOk(beta)) {
+			beta = (clockwise ? 1 : -1) * angle;
+			angle *= -1;
+		}
+		
+		Vector2D dir = b.subtract(a).getVectorByAngle(beta, S);
+		Coordinates stopover = new Coordinates(b, dir);
+		path.addStopover(i, stopover, sc.quantityToBringIn);
+		
+		int j;
+		for(j = i + 1; ; j ++) {
+			sa = path.stopovers.get(j - 2);
+			sb = path.stopovers.get(j - 1);
+			sc = path.stopovers.get(j);
+			
+			a = sa.coordinates;
+			b = sb.coordinates;
+			c = sc.coordinates;
+			
+			if(angleOk(getAngle(a, b, c)))
+				break;
+			
+			dir = b.subtract(a).getVectorByAngle(angle, S);
+			stopover = new Coordinates(b, dir);
+			path.addStopover(j, stopover, sc.quantityToBringIn);
+		}
+		
+		if(!movementOk(b, c)) {
+			ArrayList <Vector2D> sides = new ArrayList <> ();
+			Vector2D sum = new Vector2D(0.0, 0.0);
+			for(int z = i; z < j; z ++) {
+				Coordinates from = path.getCoordinates(z - 1);
+				Coordinates to = path.getCoordinates(z);
+				
+				Vector2D side = to.subtract(from).divide(S);
+				
+				sides.add(side);
+				sum = sum.add(side);
+			}
+			double delta = 4 * (pow(sum.scalarProduct(C), 2.0) 
+							- pow(sum.euclideanNorm(), 2.0) * (pow(C.euclideanNorm(), 2.0) - pow(S, 2.0)));
+			double L1 = (2 * sum.scalarProduct(C) - sqrt(delta)) / (2 * pow(sum.euclideanNorm(), 2.0));
+			double L2 = (2 * sum.scalarProduct(C) + sqrt(delta)) / (2 * pow(sum.euclideanNorm(), 2.0));
+			double L = L1 >= S ? L1 : L2;
+			
+			for(int z = i; z < j; z ++) {
+				Coordinates from = path.getCoordinates(z - 1);
+				
+				Vector2D side = sides.get(z - i);
+				
+				path.stopovers.get(z).coordinates = new Coordinates(from, side.multiply(L));
+			}
+		}
+		return path.subPath(i - 2, j + 1);
+	}
+	
+	/**
 	 * For each change it checks if it is acceptable and in case it fixes it.
 	 */
 	
@@ -109,78 +193,7 @@ public class Truck {
 			
 			// Let's build a regular polygon
 			
-			Stopover sa = path.stopovers.get(i - 2);
-			Stopover sb = path.stopovers.get(i - 1);
-			Stopover sc = path.stopovers.get(i);
-			
-			Coordinates a = sa.coordinates;
-			Coordinates b = sb.coordinates;
-			Coordinates c = sc.coordinates;
-			
-			final Vector2D C = c.subtract(b); // for the last phase
-			
-			boolean clockwise = b.subtract(a).clockwise(c.subtract(a));
-			
-			double N = ceil(2 * PI / gamma);
-			double angle = 2 * PI / N;
-			
-			double beta = clockwise ? -absAlpha + (PI - angle) : absAlpha - (PI - angle);
-			
-			angle *= clockwise ? -1 : 1;
-			
-			if(!angleOk(beta)) {
-				beta = (clockwise ? 1 : -1) * angle;
-				angle *= -1;
-			}
-			
-			Vector2D dir = b.subtract(a).getVectorByAngle(beta, S);
-			Coordinates stopover = new Coordinates(b, dir);
-			path.addStopover(i, stopover, sc.quantityToBringIn);
-			
-			int j;
-			for(j = i + 1; ; j ++) {
-				sa = path.stopovers.get(j - 2);
-				sb = path.stopovers.get(j - 1);
-				sc = path.stopovers.get(j);
-				
-				a = sa.coordinates;
-				b = sb.coordinates;
-				c = sc.coordinates;
-				
-				if(angleOk(getAngle(a, b, c)))
-					break;
-				
-				dir = b.subtract(a).getVectorByAngle(angle, S);
-				stopover = new Coordinates(b, dir);
-				path.addStopover(j, stopover, sc.quantityToBringIn);
-			}
-			
-			if(!movementOk(b, c)) {
-				ArrayList <Vector2D> sides = new ArrayList <> ();
-				Vector2D sum = new Vector2D(0.0, 0.0);
-				for(int z = i; z < j; z ++) {
-					Coordinates from = path.getCoordinates(z - 1);
-					Coordinates to = path.getCoordinates(z);
-					
-					Vector2D side = to.subtract(from).divide(S);
-					
-					sides.add(side);
-					sum = sum.add(side);
-				}
-				double delta = 4 * (pow(sum.scalarProduct(C), 2.0) 
-								- pow(sum.euclideanNorm(), 2.0) * (pow(C.euclideanNorm(), 2.0) - pow(S, 2.0)));
-				double L1 = (2 * sum.scalarProduct(C) - sqrt(delta)) / (2 * pow(sum.euclideanNorm(), 2.0));
-				double L2 = (2 * sum.scalarProduct(C) + sqrt(delta)) / (2 * pow(sum.euclideanNorm(), 2.0));
-				double L = L1 >= S ? L1 : L2;
-				
-				for(int z = i; z < j; z ++) {
-					Coordinates from = path.getCoordinates(z - 1);
-					
-					Vector2D side = sides.get(z - i);
-					
-					path.stopovers.get(z).coordinates = new Coordinates(from, side.multiply(L));
-				}
-			}
+			insertRegularPolygon(absAlpha, i);
 		}
 	}
 	
