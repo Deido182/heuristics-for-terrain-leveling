@@ -26,7 +26,7 @@ public class Coordinates extends Vector2D {
 		double tmp = (y + ((long)(x + 1) / 2));
 		return (int)(x + (tmp * tmp));
 	}
-	
+
 	public double distance(Coordinates c) {
 		return subtract(c).euclideanNorm();
 	}

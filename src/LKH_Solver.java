@@ -48,19 +48,24 @@ public class LKH_Solver implements Solver {
 	 * @throws InterruptedException
 	 */
 	
-	public Path solve() throws IOException, InterruptedException {
-		chainsBuilder.fixField();
-		ArrayList <Path> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks(truck.getCurrentPosition());
-		ArrayList <Path> chainsOfHoles = chainsBuilder.getAllChainsOfHoles(truck.getCurrentPosition());
-		assert(chainsOfPeaks.size() == chainsOfHoles.size());
-		if(chainsOfPeaks.size() > 0) {
-			ArrayList <Path> chains = new ArrayList <> ();
-			chains.addAll(chainsOfPeaks);
-			chains.addAll(chainsOfHoles);
-			for(int pi : LKH_Manager.getPermutation(buildMatrixOfDistances(chains, chainsOfPeaks.size())))
-				truck.move(chains.get(pi));
+	public Path solve() {
+		try {
+			chainsBuilder.fixField();
+			ArrayList <Path> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks(truck.getCurrentPosition());
+			ArrayList <Path> chainsOfHoles = chainsBuilder.getAllChainsOfHoles(truck.getCurrentPosition());
+			assert(chainsOfPeaks.size() == chainsOfHoles.size());
+			if(chainsOfPeaks.size() > 0) {
+				ArrayList <Path> chains = new ArrayList <> ();
+				chains.addAll(chainsOfPeaks);
+				chains.addAll(chainsOfHoles);
+				for(int pi : LKH_Manager.getPermutation(buildMatrixOfDistances(chains, chainsOfPeaks.size())))
+					truck.move(chains.get(pi));
+			}
+			truck.fixPath();
+			return truck.path;
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
-		truck.fixPath();
-		return truck.path;
+		return null;
 	}
 }

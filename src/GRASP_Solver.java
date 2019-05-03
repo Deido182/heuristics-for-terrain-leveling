@@ -13,7 +13,7 @@ public class GRASP_Solver implements Solver {
 		this.truck = truck;
 	}
 	
-	public Path solve() throws IOException, InterruptedException {
+	public Path solve() {
 		double alpha = 0.1;
 		OurSolver ourSolver = new OurSolver(field.clone(), truck.clone(), new GRASP_Factory());
 		((GRASP_ChainsBuilder)(ourSolver.chainsBuilder)).alpha = alpha;
