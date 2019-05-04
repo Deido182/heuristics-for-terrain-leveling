@@ -98,12 +98,36 @@ public class Path {
 		return distance;
 	}
 	
+	public double distance(Truck truck, Path p) {
+		Truck t = truck.clone();
+		t.path = this;
+		t.path.append(p);
+		
+		Stopover sa = t.path.stopovers.get(this.length() - 2);
+		Stopover sb = t.path.stopovers.get(this.length() - 1);
+		Stopover sc = t.path.stopovers.get(this.length());
+		
+		Coordinates a = sa.coordinates;
+		Coordinates b = sb.coordinates;
+		Coordinates c = sc.coordinates;
+		
+		double absAlpha = Truck.getAngle(a, b, c);
+		if(t.angleOk(absAlpha))
+			return b.distance(c); // No corrections needed
+		
+		return t.insertRegularPolygon(absAlpha, this.length()).suffix(1).distance();
+	}
+	
 	public Path subPath(int firstToInclude, int firstToExclude) {
 		return new Path(stopovers.subList(firstToInclude, firstToExclude));
 	}
 	
 	public Path prefix(int firstToExclude) {
 		return subPath(0, firstToExclude);
+	}
+	
+	public Path suffix(int firstToInclude) {
+		return subPath(firstToInclude, length());
 	}
 	
 	@Override
