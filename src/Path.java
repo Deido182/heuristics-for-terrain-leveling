@@ -70,17 +70,6 @@ public class Path {
 		addStopover(length(), c, q);
 	}
 	
-	public void rerouteOne(int after, Coordinates c) {
-		Stopover removed = removeStopover(after + 1);
-		addStopover(after + 1, c, removed.quantityToBringIn);
-		addStopover(after + 2, removed);
-	}
-	
-	public void rerouteTwo(int after, Coordinates c1, Coordinates c2) {
-		rerouteOne(after, c1);
-		rerouteOne(after + 1, c2);
-	}
-	
 	public void append(Path p) {
 		for(Stopover s : p.stopovers)
 			addStopover(s);
