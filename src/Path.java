@@ -30,6 +30,12 @@ public class Path {
 		stopovers = new ArrayList <> ();
 	}
 	
+	public Path(Coordinates...coordinates) {
+		this();
+		for(Coordinates c : coordinates)
+			stopovers.add(new Stopover(c, 0));
+	}
+	
 	public Path(List<Stopover> stopovers) {
 		this.stopovers = new ArrayList <> ();
 		this.stopovers.addAll(stopovers);
