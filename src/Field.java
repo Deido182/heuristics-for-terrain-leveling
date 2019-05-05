@@ -104,85 +104,85 @@ public class Field {
 		return getQuantity(c) > 0;
 	}
 	
-	public Coordinates getTheNearest(Coordinates from, CellProperty p) {
+	public Coordinates getTheNearest(Truck t, Path from, CellProperty p) {
 		Coordinates nearest = null;
 		for(Coordinates c : cells.keySet()) {
 			if(!p.is(c))
 				continue;
 			if(nearest == null)
 				nearest = c;
-			else if(from.distance(c) < from.distance(nearest))
+			else if(from.distance(t, c) < from.distance(t, nearest))
 				nearest = c;
 		}
 		return nearest;
 	}
 	
-	public Coordinates getTheNearestHole(Coordinates from) {
-		return getTheNearest(from, (Coordinates c) -> isAnHole(c));
+	public Coordinates getTheNearestHole(Truck t, Path from) {
+		return getTheNearest(t, from, (Coordinates c) -> isAnHole(c));
 	}
 	
-	public Coordinates getTheNearestPeak(Coordinates from) {
-		return getTheNearest(from, (Coordinates c) -> isAPeak(c));
+	public Coordinates getTheNearestPeak(Truck t, Path from) {
+		return getTheNearest(t, from, (Coordinates c) -> isAPeak(c));
 	}
 	
-	public Coordinates getTheNearestPeakDifferentFromThese(Coordinates from, Coordinates...these) {
+	public Coordinates getTheNearestPeakDifferentFromThese(Truck t, Path from, Coordinates...these) {
 		long[] q = new long[these.length];
 		for(int i = 0; i < these.length; i ++) 
 			if(these[i] != null)
 				decrement(these[i], q[i] = getQuantity(these[i]));
-		Coordinates nearest = getTheNearestPeak(from);
+		Coordinates nearest = getTheNearestPeak(t, from);
 		for(int i = 0; i < these.length; i ++) 
 			if(these[i] != null)
 				increment(these[i], q[i]);
 		return nearest;
 	}
 	
-	public Coordinates getTheNearestHoleDifferentFromThese(Coordinates from, Coordinates...these) {
+	public Coordinates getTheNearestHoleDifferentFromThese(Truck t, Path from, Coordinates...these) {
 		long[] q = new long[these.length];
 		for(int i = 0; i < these.length; i ++) 
 			if(these[i] != null)
 				decrement(these[i], q[i] = getQuantity(these[i]));
-		Coordinates nearest = getTheNearestHole(from);
+		Coordinates nearest = getTheNearestHole(t, from);
 		for(int i = 0; i < these.length; i ++) 
 			if(these[i] != null)
 				increment(these[i], q[i]);
 		return nearest;
 	}
 	
-	public Coordinates getTheMostDistant(Coordinates from, CellProperty p) {
+	public Coordinates getTheMostDistant(Truck t, Path from, CellProperty p) {
 		Coordinates mostDistant = null;
 		for(Coordinates c : cells.keySet()) {
 			if(!p.is(c))
 				continue;
 			if(mostDistant == null)
 				mostDistant = c;
-			else if(from.distance(c) > from.distance(mostDistant))
+			else if(from.distance(t, c) > from.distance(t, mostDistant))
 				mostDistant = c;
 		}
 		return mostDistant;
 	}
 	
-	public Coordinates getTheMostDistantHole(Coordinates from) {
-		return getTheMostDistant(from, (Coordinates c) -> isAnHole(c));
+	public Coordinates getTheMostDistantHole(Truck t, Path from) {
+		return getTheMostDistant(t, from, (Coordinates c) -> isAnHole(c));
 	}
 	
-	public Coordinates getTheMostDistantPeak(Coordinates from) {
-		return getTheMostDistant(from, (Coordinates c) -> isAPeak(c));
+	public Coordinates getTheMostDistantPeak(Truck t, Path from) {
+		return getTheMostDistant(t, from, (Coordinates c) -> isAPeak(c));
 	}
 	
-	public Coordinates getTheNearestOfTheSameTypeDifferent(Coordinates from) {
-		if(isAnHole(from))
-			return getTheNearestHoleDifferentFromThese(from, from);
-		if(isAPeak(from))
-			return getTheNearestPeakDifferentFromThese(from, from);
+	public Coordinates getTheNearestOfTheSameTypeDifferent(Truck t, Path from) {
+		if(isAnHole(from.getLastCoordinates()))
+			return getTheNearestHoleDifferentFromThese(t, from, from.getLastCoordinates());
+		if(isAPeak(from.getLastCoordinates()))
+			return getTheNearestPeakDifferentFromThese(t, from, from.getLastCoordinates());
 		return null;
 	}
 	
-	public Coordinates getTheMostDistantOfTheSameType(Coordinates from) {
-		if(isAnHole(from))
-			return getTheMostDistantHole(from);
-		if(isAPeak(from))
-			return getTheMostDistantPeak(from);
+	public Coordinates getTheMostDistantOfTheSameType(Truck t, Path from) {
+		if(isAnHole(from.getLastCoordinates()))
+			return getTheMostDistantHole(t, from);
+		if(isAPeak(from.getLastCoordinates()))
+			return getTheMostDistantPeak(t, from);
 		return null;
 	}
 	

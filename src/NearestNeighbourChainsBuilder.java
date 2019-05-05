@@ -10,19 +10,19 @@ public class NearestNeighbourChainsBuilder implements ChainsBuilder {
 		this.truck = truck;
 	}
 	
-	public Path getChainOfPeaks(Coordinates from, long quantity) {
+	public Path getChainOfPeaks(Path from, long quantity) {
 		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getChainOfPeaks(from, quantity);
 	}
 
-	public ArrayList<Path> getAllChainsOfPeaks(Coordinates from) {
+	public ArrayList<Path> getAllChainsOfPeaks(Path from) {
 		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getAllChainsOfPeaks(from);
 	}
 
-	public Path getChainOfHoles(Coordinates from, long quantity) {
+	public Path getChainOfHoles(Path from, long quantity) {
 		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getChainOfHoles(from, quantity);
 	}
 
-	public ArrayList<Path> getAllChainsOfHoles(Coordinates from) {
+	public ArrayList<Path> getAllChainsOfHoles(Path from) {
 		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getAllChainsOfHoles(from);
 	}
 	

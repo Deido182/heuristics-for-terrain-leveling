@@ -76,9 +76,10 @@ public class Path {
 		addStopover(length(), c, q);
 	}
 	
-	public void append(Path p) {
+	public Path append(Path p) {
 		for(Stopover s : p.stopovers)
 			addStopover(s);
+		return this;
 	}
 	
 	public Coordinates getCoordinates(int i) {
@@ -105,9 +106,14 @@ public class Path {
 	}
 	
 	public double distance(Truck truck, Path p) {
+		if(getLastCoordinates() == p.getFirstCoordinates())
+			return 0.0;
+		if(length() == 1)
+			return getLastCoordinates().distance(p.getFirstCoordinates());
+		
 		Truck t = truck.clone();
-		t.path = this;
-		t.path.append(p);
+		t.path = this.clone();
+		t.path.append(p.clone());
 		
 		Stopover sa = t.path.stopovers.get(this.length() - 2);
 		Stopover sb = t.path.stopovers.get(this.length() - 1);
@@ -122,6 +128,10 @@ public class Path {
 			return b.distance(c); // No corrections needed
 		
 		return t.insertRegularPolygon(absAlpha, this.length()).suffix(1).distance();
+	}
+	
+	public double distance(Truck truck, Coordinates c) {
+		return distance(truck, new Path(c));
 	}
 	
 	public Path subPath(int firstToInclude, int firstToExclude) {

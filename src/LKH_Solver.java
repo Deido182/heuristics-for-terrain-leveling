@@ -51,8 +51,8 @@ public class LKH_Solver implements Solver {
 	public Path solve() {
 		try {
 			chainsBuilder.fixField();
-			ArrayList <Path> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks(truck.getCurrentPosition());
-			ArrayList <Path> chainsOfHoles = chainsBuilder.getAllChainsOfHoles(truck.getCurrentPosition());
+			ArrayList <Path> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks(truck.path);
+			ArrayList <Path> chainsOfHoles = chainsBuilder.getAllChainsOfHoles(truck.path);
 			assert(chainsOfPeaks.size() == chainsOfHoles.size());
 			if(chainsOfPeaks.size() > 0) {
 				ArrayList <Path> chains = new ArrayList <> ();

@@ -21,11 +21,11 @@ public class OurSolver implements Solver {
 	 * @return the matrix of distances.
 	 */
 	
-	private static double[][] buildMatrixOfDistances(ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles) {
+	private double[][] buildMatrixOfDistances(ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles) {
 		double[][] matrix = new double[chainsOfPeaks.size()][chainsOfHoles.size()];
 		for(int i = 0; i < chainsOfPeaks.size(); i ++) 
 			for(int j = 0; j < chainsOfHoles.size(); j ++)
-				matrix[i][j] = chainsOfPeaks.get(i).getLastCoordinates().distance(chainsOfHoles.get(j).getFirstCoordinates());
+				matrix[i][j] = chainsOfPeaks.get(i).distance(truck, chainsOfHoles.get(j));
 		return matrix;
 	}
 	
@@ -39,66 +39,16 @@ public class OurSolver implements Solver {
 	 * @return the index of the nearest.
 	 */
 	
-	private static int getTheIndexOfTheNearest(Coordinates from, ArrayList <Path> chains, boolean[] done) {
+	private int getTheIndexOfTheNearest(Path from, ArrayList <Path> chains, boolean[] done) {
 		int nearest = -1;
 		for(int i = 0; i < chains.size(); i ++)
 			if(!done[i]) {
 				if(nearest == -1)
 					nearest = i;
-				else if(from.distance(chains.get(i).getFirstCoordinates()) < from.distance(chains.get(nearest).getFirstCoordinates()))
+				else if(from.distance(truck, chains.get(i)) < from.distance(truck, chains.get(nearest)))
 					nearest = i;
 			}
 		return nearest;
-	}
-	
-	/**
-	 * Returns a lower bound for the length of an Hamiltonian cycle of minimum length 
-	 * by using an optimal solution for the assignment problem.
-	 * 
-	 * @param chainsOfPeaks
-	 * @param chainsOfHoles
-	 * @param assignmentPH an optimal assignment from chains of peaks to chains of holes.
-	 * @param assignmentHP an optimal assignment in the other direction.
-	 * @return the lower bound.
-	 */
-	
-	private static double getLowerBoundHC(ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles, int[] assignmentPH, int[] assignmentHP) {
-		boolean[] doneP = new boolean[chainsOfPeaks.size()];
-		double lb = 0.0;
-		for(int i = 0; i < chainsOfPeaks.size(); i ++) {
-			int j = i;
-			while(!doneP[j]) {
-				doneP[j] = true;
-				lb += chainsOfPeaks.get(j).getLastCoordinates().distance(chainsOfHoles.get(assignmentPH[j]).getFirstCoordinates());
-				lb += chainsOfHoles.get(assignmentPH[j]).getLastCoordinates().distance(chainsOfPeaks.get(assignmentHP[assignmentPH[j]]).getFirstCoordinates());
-				j = assignmentHP[assignmentPH[j]];
-			}
-		}
-		return lb;
-	}
-	
-	/**
-	 * Returns the cost of the Hamiltonian cycle we have obtained (by using our heuristic).
-	 * 
-	 * @param chainsOfPeaks
-	 * @param chainsOfHoles
-	 * @param first
-	 * @param p
-	 * @return the cost of the Hamiltonian cycle we have obtained.
-	 */
-	
-	private static double getCurrentHC(ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles, int first, Path p) {
-		double current = p.distance();
-		
-		current -= p.prefix(first + 1).distance();
-		for(Path chain : chainsOfPeaks)
-			current -= chain.distance();
-		for(Path chain : chainsOfHoles)
-			current -= chain.distance();
-		
-		current += p.getLastCoordinates().distance(p.getCoordinates(first));
-		
-		return current;
 	}
 	
 	/**
@@ -109,8 +59,8 @@ public class OurSolver implements Solver {
 	
 	public Path solve() {
 		chainsBuilder.fixField();
-		ArrayList <Path> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks(truck.getCurrentPosition());
-		ArrayList <Path> chainsOfHoles = chainsBuilder.getAllChainsOfHoles(truck.getCurrentPosition());
+		ArrayList <Path> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks(truck.path);
+		ArrayList <Path> chainsOfHoles = chainsBuilder.getAllChainsOfHoles(truck.path);
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
 		if(chainsOfPeaks.size() > 0) {
 			int[] assignmentPH = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
@@ -119,24 +69,18 @@ public class OurSolver implements Solver {
 			
 			ArrayList <Path> chains = new ArrayList <> ();
 			
-			//int first = truck.path.length();
-			int next = getTheIndexOfTheNearest(truck.getCurrentPosition(), chainsOfPeaks, doneP);
+			int next = getTheIndexOfTheNearest(truck.path, chainsOfPeaks, doneP);
 			while(next != -1) {
 				doneP[next] = true;
 				chains.add(chainsOfPeaks.get(next));
 				chains.add(chainsOfHoles.get(assignmentPH[next]));
-				next = doneP[assignmentHP[assignmentPH[next]]] ? getTheIndexOfTheNearest(chainsOfHoles.get(assignmentPH[next]).getLastCoordinates(), chainsOfPeaks, doneP) :
+				next = doneP[assignmentHP[assignmentPH[next]]] ? getTheIndexOfTheNearest(chainsOfHoles.get(assignmentPH[next]), chainsOfPeaks, doneP) :
 						assignmentHP[assignmentPH[next]];
 			}
 
 			truck.improveSequenceOfChains(chains);
 			for(Path chain : chains)
 				truck.move(chain);
-			
-			//double lowerBoundHC = getLowerBoundHC(chainsOfPeaks, chainsOfHoles, assignmentPH, assignmentHP);
-			//double currentHC = getCurrentHC(chainsOfPeaks, chainsOfHoles, first, truck.path);
-			
-			//System.out.println("LOWER_BOUND_HC: " + lowerBoundHC + " CURRENT_HC: " + currentHC + " ERROR: " + (((currentHC - lowerBoundHC) / lowerBoundHC) * 100) + "%");
 		}
 		truck.fixPath();
 		return truck.path;

@@ -1,9 +1,9 @@
 import java.util.ArrayList;
 
 public interface ChainsBuilder {
-	public Path getChainOfPeaks(Coordinates from, long quantity);
-	public ArrayList <Path> getAllChainsOfPeaks(Coordinates from);
-	public Path getChainOfHoles(Coordinates from, long quantity);
-	public ArrayList <Path> getAllChainsOfHoles(Coordinates from);
+	public Path getChainOfPeaks(Path from, long quantity);
+	public ArrayList <Path> getAllChainsOfPeaks(Path from);
+	public Path getChainOfHoles(Path from, long quantity);
+	public ArrayList <Path> getAllChainsOfHoles(Path from);
 	public void fixField();
 }
