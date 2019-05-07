@@ -1,11 +1,10 @@
-import java.io.IOException;
 
 public class GRASP_Solver implements Solver {
 	
 	Field field;
 	Truck truck;
-	final int TIMES1 = 20;
-	final int TIMES2 = 100;
+	final int TIMES1 = 5;
+	final int TIMES2 = 50;
 	final double THRESHOLD = 1E-5;
 	
 	public GRASP_Solver(Field field, Truck truck) {
@@ -21,13 +20,13 @@ public class GRASP_Solver implements Solver {
 		Path bestPath = ourSolver.solve();
 		
 		while(alpha > THRESHOLD) {
-			System.out.println(alpha + " " + bestPath.distance());
+			System.out.println(alpha + " " + bestPath.length());
 			for(int i = 0; i < TIMES1; i ++) {
 				ourSolver = new OurSolver(field.clone(), truck.clone(), new GRASP_Factory());
 				((GRASP_ChainsBuilder)(ourSolver.chainsBuilder)).alpha = alpha;
 				Path currPath = ourSolver.solve();
 				
-				if(currPath.distance() < bestPath.distance()) {
+				if(currPath.length() < bestPath.length()) {
 					bestPath = currPath;
 					bestAlpha = alpha;
 				}
@@ -40,13 +39,13 @@ public class GRASP_Solver implements Solver {
 			((GRASP_ChainsBuilder)(ourSolver.chainsBuilder)).alpha = bestAlpha;
 			Path currPath = ourSolver.solve();
 			
-			if(currPath.distance() < bestPath.distance()) 
+			if(currPath.length() < bestPath.length()) 
 				bestPath = currPath;
 		}
 		
 		Path NN_Path = new OurSolver(field.clone(), truck.clone(), new NearestNeighbourFactory()).solve();
 		
-		if(NN_Path.distance() < bestPath.distance()) 
+		if(NN_Path.length() < bestPath.length()) 
 			bestPath = NN_Path;
 		
 		return bestPath;

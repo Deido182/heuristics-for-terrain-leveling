@@ -42,7 +42,7 @@ public class Main {
 		 */
 		
 		for(int inputCode = 1; inputCode <= 4; inputCode ++) {
-			for(int j = 0; j < capacities.length; j ++) {
+			for(int j = 2; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				
 				final String INPUT = "Input\\cellplot" + inputCode + "b.txt";
@@ -52,7 +52,7 @@ public class Main {
 				Field clone = new Field(new Scanner(new FileReader(new File(INPUT)))); // just to be sure
 				
 				final double GAMMA = Math.PI / 4.0;
-				final double S = Math.min(field.deltaX, field.deltaY);
+				final double S = Math.min(field.deltaX, field.deltaY) / 2.0;
 				
 				Truck truck = new Truck(capacity, GAMMA, S, TRUCK_STARTING_POINT, INITIAL_CARGO);
 				
@@ -63,7 +63,7 @@ public class Main {
 				//Path path = new GRASP_Solver(field, truck).solve();
 						
 				//new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
-				//new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0);
+				new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0);
 				
 				long stop = System.currentTimeMillis();
 				
@@ -93,7 +93,7 @@ public class Main {
 				for(int i = 2; i < truck.path.size(); i ++) 
 					assert(truck.movementOk(truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i)));
 				
-				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.size() + "\nDistance: " + path.distance() + "m");
+				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.size() + "\nDistance: " + path.length() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
 				
 				print(path, OUTPUT);
@@ -160,7 +160,7 @@ public class Main {
 				for(int i = 2; i < truck.path.size(); i ++) 
 					assert(truck.movementOk(truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i)));
 				
-				System.out.println("in" + inputCode + " / capacity = " + capacity + ":\nMovements: " + path.size() + "\nDistance: " + path.distance() + "m");
+				System.out.println("in" + inputCode + " / capacity = " + capacity + ":\nMovements: " + path.size() + "\nDistance: " + path.length() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
 				
 				print(path, OUTPUT);

@@ -97,11 +97,11 @@ public class Path {
 		return stopovers.get(i).quantityToBringIn;
 	}
 	
-	public double distance() {
-		double distance = 0.0;
+	public double length() {
+		double length = 0.0;
 		for(int i = 1; i < size(); i ++)
-			distance += getCoordinates(i - 1).distance(getCoordinates(i));
-		return distance;
+			length += getCoordinates(i - 1).distance(getCoordinates(i));
+		return length;
 	}
 	
 	public Path subPath(int firstToInclude, int firstToExclude) {

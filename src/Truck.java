@@ -219,7 +219,7 @@ public class Truck {
 		if(t.angleOk(absAlpha))
 			return b.distance(c); // No corrections needed
 		
-		return t.insertRegularPolygon(absAlpha, path.size()).suffix(1).distance();
+		return t.insertRegularPolygon(absAlpha, path.size()).suffix(1).length();
 	}
 	
 	public double distance(Coordinates c) {
@@ -269,6 +269,10 @@ public class Truck {
 			}
 		}
 	}
+
+	public static interface CellProperty {
+		public boolean is(Coordinates c);
+	}
 	
 	public Coordinates getTheNearest(Field f, CellProperty p) {
 		Coordinates nearest = null;
@@ -283,10 +287,6 @@ public class Truck {
 		return nearest;
 	}
 
-	public static interface CellProperty {
-		public boolean is(Coordinates c);
-	}
-	
 	public Coordinates getTheNearestHole(Field f) {
 		return getTheNearest(f, (Coordinates c) -> f.isAnHole(c));
 	}
