@@ -158,7 +158,7 @@ public class Truck {
 				Coordinates from = path.getCoordinates(z - 1);
 				Coordinates to = path.getCoordinates(z);
 				
-				Vector2D side = to.subtract(from).divide(S);
+				Vector2D side = to.subtract(from).setLengthTo(1.0);
 				
 				sides.add(side);
 				sum = sum.add(side);
@@ -174,7 +174,7 @@ public class Truck {
 				
 				Vector2D side = sides.get(z - i);
 				
-				path.stopovers.get(z).coordinates = new Coordinates(from, side.multiply(L));
+				path.stopovers.get(z).coordinates = new Coordinates(from, side.setLengthTo(L));
 			}
 		}
 		return path.subPath(i - 2, j + 1);

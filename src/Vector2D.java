@@ -42,7 +42,7 @@ public class Vector2D {
 	}
 	
 	public Vector2D setLengthTo(double length) {
-		return new Vector2D(x / euclideanNorm() * length, y / euclideanNorm() * length);
+		return new Vector2D(x, y).divide(euclideanNorm()).multiply(length);
 	}
 	
 	public Vector2D rotate(double alpha) {
