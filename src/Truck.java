@@ -54,7 +54,7 @@ public class Truck {
 	}
 	
 	public Movement getLastMovement() {
-		return getMovement(path.length() - 2);
+		return getMovement(path.size() - 2);
 	}
 	
 	/**
@@ -185,7 +185,7 @@ public class Truck {
 	 */
 	
 	public void fixPath() {
-		for(int i = 2; i < path.length(); i ++) {
+		for(int i = 2; i < path.size(); i ++) {
 			double absAlpha = getAngle(path.getCoordinates(i - 2), path.getCoordinates(i - 1), path.getCoordinates(i));
 			
 			if(angleOk(absAlpha))
@@ -197,7 +197,35 @@ public class Truck {
 		}
 	}
 	
-
+	public double distance(Path p) {
+		if(path.getLastCoordinates().equals(p.getFirstCoordinates()))
+			return 0.0;
+		if(path.size() == 1)
+			return path.getLastCoordinates().distance(p.getFirstCoordinates());
+		
+		Truck t = clone();
+		t.path = path.clone();
+		t.path.append(p.clone());
+		
+		Stopover sa = t.path.stopovers.get(path.size() - 2);
+		Stopover sb = t.path.stopovers.get(path.size() - 1);
+		Stopover sc = t.path.stopovers.get(path.size());
+		
+		Coordinates a = sa.coordinates;
+		Coordinates b = sb.coordinates;
+		Coordinates c = sc.coordinates;
+		
+		double absAlpha = Truck.getAngle(a, b, c);
+		if(t.angleOk(absAlpha))
+			return b.distance(c); // No corrections needed
+		
+		return t.insertRegularPolygon(absAlpha, path.size()).suffix(1).distance();
+	}
+	
+	public double distance(Coordinates c) {
+		return distance(new Path(c));
+	}
+	
 	/**
 	 * Tries every pair (chain of peaks, chain of peaks), (chain of holes, chain of holes) and 
 	 * swaps them if (and only if) it improves the path.
@@ -209,7 +237,7 @@ public class Truck {
 	 * @param chainsOfHoles
 	 */
 	
-	public void improveSequenceOfChains(ArrayList <Path> chains) {
+	public void improveSequenceOfChains(ArrayList <Truck> chains) {
 		for(int i = 0; i < chains.size() - 1; i ++) {
 			for(int j = i + 1; j < chains.size(); j ++) {
 				if(i % 2 != j % 2) // we can't swap peaks with holes
@@ -217,28 +245,114 @@ public class Truck {
 				
 				double cost = 0.0;
 				if(i == 0) {
-					cost -= path.getLastCoordinates().distance(chains.get(i).getFirstCoordinates());
-					cost += path.getLastCoordinates().distance(chains.get(j).getFirstCoordinates());
+					cost -= distance(chains.get(i).path);
+					cost += distance(chains.get(j).path);
 				} else {
-					cost -= chains.get(i - 1).getLastCoordinates().distance(chains.get(i).getFirstCoordinates());
-					cost += chains.get(i - 1).getLastCoordinates().distance(chains.get(j).getFirstCoordinates());
+					cost -= chains.get(i - 1).distance(chains.get(i).path);
+					cost += chains.get(i - 1).distance(chains.get(j).path);
 				}
-				cost -= chains.get(j - 1).getLastCoordinates().distance(chains.get(j).getFirstCoordinates());
-				cost += chains.get(j - 1).getLastCoordinates().distance(chains.get(i).getFirstCoordinates());
-				cost -= chains.get(i).getLastCoordinates().distance(chains.get(i + 1).getFirstCoordinates());
-				cost += chains.get(j).getLastCoordinates().distance(chains.get(i + 1).getFirstCoordinates());
+				cost -= chains.get(j - 1).distance(chains.get(j).path);
+				cost += chains.get(j - 1).distance(chains.get(i).path);
+				cost -= chains.get(i).distance(chains.get(i + 1).path);
+				cost += chains.get(j).distance(chains.get(i + 1).path);
 				if(j < chains.size() - 1) {
-					cost -= chains.get(j).getLastCoordinates().distance(chains.get(j + 1).getFirstCoordinates());
-					cost += chains.get(i).getLastCoordinates().distance(chains.get(j + 1).getFirstCoordinates());
+					cost -= chains.get(j).distance(chains.get(j + 1).path);
+					cost += chains.get(i).distance(chains.get(j + 1).path);
 				}
 				
 				if(cost >= 0.0)
 					continue;
 				
-				Path chain = chains.get(i);
+				Truck chain = chains.get(i);
 				chains.set(i, chains.get(j));
 				chains.set(j, chain);
 			}
 		}
+	}
+	
+	public Coordinates getTheNearest(Field f, CellProperty p) {
+		Coordinates nearest = null;
+		for(Coordinates c : f.cells.keySet()) {
+			if(!p.is(c))
+				continue;
+			if(nearest == null)
+				nearest = c;
+			else if(distance(c) < distance(nearest))
+				nearest = c;
+		}
+		return nearest;
+	}
+
+	public static interface CellProperty {
+		public boolean is(Coordinates c);
+	}
+	
+	public Coordinates getTheNearestHole(Field f) {
+		return getTheNearest(f, (Coordinates c) -> f.isAnHole(c));
+	}
+	
+	public Coordinates getTheNearestPeak(Field f) {
+		return getTheNearest(f, (Coordinates c) -> f.isAPeak(c));
+	}
+	
+	public Coordinates getTheNearestPeakDifferentFromThese(Field f, Coordinates...these) {
+		long[] q = new long[these.length];
+		for(int i = 0; i < these.length; i ++) 
+			if(these[i] != null)
+				f.decrement(these[i], q[i] = f.getQuantity(these[i]));
+		Coordinates nearest = getTheNearestPeak(f);
+		for(int i = 0; i < these.length; i ++) 
+			if(these[i] != null)
+				f.increment(these[i], q[i]);
+		return nearest;
+	}
+	
+	public Coordinates getTheNearestHoleDifferentFromThese(Field f, Coordinates...these) {
+		long[] q = new long[these.length];
+		for(int i = 0; i < these.length; i ++) 
+			if(these[i] != null)
+				f.decrement(these[i], q[i] = f.getQuantity(these[i]));
+		Coordinates nearest = getTheNearestHole(f);
+		for(int i = 0; i < these.length; i ++) 
+			if(these[i] != null)
+				f.increment(these[i], q[i]);
+		return nearest;
+	}
+	
+	public Coordinates getTheMostDistant(Field f, CellProperty p) {
+		Coordinates mostDistant = null;
+		for(Coordinates c : f.cells.keySet()) {
+			if(!p.is(c))
+				continue;
+			if(mostDistant == null)
+				mostDistant = c;
+			else if(distance(c) > distance(mostDistant))
+				mostDistant = c;
+		}
+		return mostDistant;
+	}
+	
+	public Coordinates getTheMostDistantHole(Field f) {
+		return getTheMostDistant(f, (Coordinates c) -> f.isAnHole(c));
+	}
+	
+	public Coordinates getTheMostDistantPeak(Field f) {
+		return getTheMostDistant(f, (Coordinates c) -> f.isAPeak(c));
+	}
+	
+	public Coordinates getTheNearestOfTheSameTypeDifferent(Field f) {
+		if(f.isAnHole(path.getLastCoordinates()))
+			return getTheNearestHoleDifferentFromThese(f, path.getLastCoordinates());
+		if(f.isAPeak(path.getLastCoordinates()))
+			return getTheNearestPeakDifferentFromThese(f, path.getLastCoordinates());
+		return null;
+	}
+	
+	public Coordinates getTheMostDistantOfTheSameType(Field f) {
+		if(f.isAnHole(path.getLastCoordinates()))
+			return getTheMostDistantHole(f);
+		if(f.isAPeak(path.getLastCoordinates()))
+			return getTheMostDistantPeak(f);
+		return null;
 	}
 }

@@ -21,11 +21,11 @@ public class OurSolver implements Solver {
 	 * @return the matrix of distances.
 	 */
 	
-	private double[][] buildMatrixOfDistances(ArrayList <Path> chainsOfPeaks, ArrayList <Path> chainsOfHoles) {
+	private double[][] buildMatrixOfDistances(ArrayList <Truck> chainsOfPeaks, ArrayList <Truck> chainsOfHoles) {
 		double[][] matrix = new double[chainsOfPeaks.size()][chainsOfHoles.size()];
 		for(int i = 0; i < chainsOfPeaks.size(); i ++) 
 			for(int j = 0; j < chainsOfHoles.size(); j ++)
-				matrix[i][j] = chainsOfPeaks.get(i).distance(truck, chainsOfHoles.get(j));
+				matrix[i][j] = chainsOfPeaks.get(i).distance(chainsOfHoles.get(j).path);
 		return matrix;
 	}
 	
@@ -39,13 +39,13 @@ public class OurSolver implements Solver {
 	 * @return the index of the nearest.
 	 */
 	
-	private int getTheIndexOfTheNearest(Path from, ArrayList <Path> chains, boolean[] done) {
+	private int getTheIndexOfTheNearest(Truck lastTruck, ArrayList <Truck> chains, boolean[] done) {
 		int nearest = -1;
 		for(int i = 0; i < chains.size(); i ++)
 			if(!done[i]) {
 				if(nearest == -1)
 					nearest = i;
-				else if(from.distance(truck, chains.get(i)) < from.distance(truck, chains.get(nearest)))
+				else if(lastTruck.distance(chains.get(i).path) < lastTruck.distance(chains.get(nearest).path))
 					nearest = i;
 			}
 		return nearest;
@@ -59,17 +59,17 @@ public class OurSolver implements Solver {
 	
 	public Path solve() {
 		chainsBuilder.fixField();
-		ArrayList <Path> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks(truck.path);
-		ArrayList <Path> chainsOfHoles = chainsBuilder.getAllChainsOfHoles(truck.path);
+		ArrayList <Truck> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks();
+		ArrayList <Truck> chainsOfHoles = chainsBuilder.getAllChainsOfHoles();
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
 		if(chainsOfPeaks.size() > 0) {
 			int[] assignmentPH = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
 			int[] assignmentHP = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfHoles, chainsOfPeaks)).execute();
 			boolean[] doneP = new boolean[chainsOfPeaks.size()];
 			
-			ArrayList <Path> chains = new ArrayList <> ();
+			ArrayList <Truck> chains = new ArrayList <> ();
 			
-			int next = getTheIndexOfTheNearest(truck.path, chainsOfPeaks, doneP);
+			int next = getTheIndexOfTheNearest(truck, chainsOfPeaks, doneP);
 			while(next != -1) {
 				doneP[next] = true;
 				chains.add(chainsOfPeaks.get(next));
@@ -79,8 +79,8 @@ public class OurSolver implements Solver {
 			}
 
 			truck.improveSequenceOfChains(chains);
-			for(Path chain : chains)
-				truck.move(chain);
+			for(Truck chain : chains)
+				truck.move(chain.path);
 		}
 		truck.fixPath();
 		return truck.path;

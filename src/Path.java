@@ -45,7 +45,7 @@ public class Path {
 		return new Path(stopovers);
 	}
 	
-	public int length() {
+	public int size() {
 		return stopovers.size();
 	}
 	
@@ -53,19 +53,18 @@ public class Path {
 		return stopovers.remove(i);
 	}
 	
-	
 	private void addStopover(int i, Stopover s) {
 		if(i > 0)
 			if(getCoordinates(i - 1).equals(s.coordinates))
 				return;
-		if(i < length())
+		if(i < size())
 			if(s.coordinates.equals(getCoordinates(i)))
 				return;
 		stopovers.add(i, s);
 	}
 	
 	private void addStopover(Stopover s) {
-		addStopover(length(), s);
+		addStopover(size(), s);
 	}
 	
 	public void addStopover(int i, Coordinates c, long q) {
@@ -73,7 +72,7 @@ public class Path {
 	}
 	
 	public void addStopover(Coordinates c, long q) {
-		addStopover(length(), c, q);
+		addStopover(size(), c, q);
 	}
 	
 	public Path append(Path p) {
@@ -87,7 +86,7 @@ public class Path {
 	}
 	
 	public Coordinates getLastCoordinates() {
-		return getCoordinates(length() - 1);
+		return getCoordinates(size() - 1);
 	}
 	
 	public Coordinates getFirstCoordinates() {
@@ -100,38 +99,9 @@ public class Path {
 	
 	public double distance() {
 		double distance = 0.0;
-		for(int i = 1; i < length(); i ++)
+		for(int i = 1; i < size(); i ++)
 			distance += getCoordinates(i - 1).distance(getCoordinates(i));
 		return distance;
-	}
-	
-	public double distance(Truck truck, Path p) {
-		if(getLastCoordinates() == p.getFirstCoordinates())
-			return 0.0;
-		if(length() == 1)
-			return getLastCoordinates().distance(p.getFirstCoordinates());
-		
-		Truck t = truck.clone();
-		t.path = this.clone();
-		t.path.append(p.clone());
-		
-		Stopover sa = t.path.stopovers.get(this.length() - 2);
-		Stopover sb = t.path.stopovers.get(this.length() - 1);
-		Stopover sc = t.path.stopovers.get(this.length());
-		
-		Coordinates a = sa.coordinates;
-		Coordinates b = sb.coordinates;
-		Coordinates c = sc.coordinates;
-		
-		double absAlpha = Truck.getAngle(a, b, c);
-		if(t.angleOk(absAlpha))
-			return b.distance(c); // No corrections needed
-		
-		return t.insertRegularPolygon(absAlpha, this.length()).suffix(1).distance();
-	}
-	
-	public double distance(Truck truck, Coordinates c) {
-		return distance(truck, new Path(c));
 	}
 	
 	public Path subPath(int firstToInclude, int firstToExclude) {
@@ -143,7 +113,7 @@ public class Path {
 	}
 	
 	public Path suffix(int firstToInclude) {
-		return subPath(firstToInclude, length());
+		return subPath(firstToInclude, size());
 	}
 	
 	@Override

@@ -125,7 +125,7 @@ public class PathPrinter extends JFrame {
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2D.setPaint(Color.BLACK);
 			
-			for(int i = 1; i < path.length(); i ++)
+			for(int i = 1; i < path.size(); i ++)
 				g2D.draw(new Line2D.Double(path.getCoordinates(i - 1).x * multiplierX + shiftX, 
 											H - (path.getCoordinates(i - 1).y * multiplierY + shiftY), 
 											path.getCoordinates(i).x * multiplierX + shiftX, 

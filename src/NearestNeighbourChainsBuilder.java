@@ -10,20 +10,20 @@ public class NearestNeighbourChainsBuilder implements ChainsBuilder {
 		this.truck = truck;
 	}
 	
-	public Path getChainOfPeaks(Path from, long quantity) {
-		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getChainOfPeaks(from, quantity);
+	public Truck getChainOfPeaks(Truck lastTruck, long quantity) {
+		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getChainOfPeaks(lastTruck, quantity);
 	}
 
-	public ArrayList<Path> getAllChainsOfPeaks(Path from) {
-		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getAllChainsOfPeaks(from);
+	public ArrayList<Truck> getAllChainsOfPeaks() {
+		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getAllChainsOfPeaks();
 	}
 
-	public Path getChainOfHoles(Path from, long quantity) {
-		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getChainOfHoles(from, quantity);
+	public Truck getChainOfHoles(Truck lastTruck, long quantity) {
+		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getChainOfHoles(lastTruck, quantity);
 	}
 
-	public ArrayList<Path> getAllChainsOfHoles(Path from) {
-		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getAllChainsOfHoles(from);
+	public ArrayList<Truck> getAllChainsOfHoles() {
+		return new GRASP_ChainsBuilder(field, truck, 0.0, 1).getAllChainsOfHoles();
 	}
 	
 	public void fixField() {

@@ -92,98 +92,12 @@ public class Field {
 		return true;
 	}
 	
-	public static interface CellProperty {
-		public boolean is(Coordinates c);
-	}
-	
 	public boolean isAnHole(Coordinates c) {
 		return getQuantity(c) < 0;
 	}
 	
 	public boolean isAPeak(Coordinates c) {
 		return getQuantity(c) > 0;
-	}
-	
-	public Coordinates getTheNearest(Truck t, Path from, CellProperty p) {
-		Coordinates nearest = null;
-		for(Coordinates c : cells.keySet()) {
-			if(!p.is(c))
-				continue;
-			if(nearest == null)
-				nearest = c;
-			else if(from.distance(t, c) < from.distance(t, nearest))
-				nearest = c;
-		}
-		return nearest;
-	}
-	
-	public Coordinates getTheNearestHole(Truck t, Path from) {
-		return getTheNearest(t, from, (Coordinates c) -> isAnHole(c));
-	}
-	
-	public Coordinates getTheNearestPeak(Truck t, Path from) {
-		return getTheNearest(t, from, (Coordinates c) -> isAPeak(c));
-	}
-	
-	public Coordinates getTheNearestPeakDifferentFromThese(Truck t, Path from, Coordinates...these) {
-		long[] q = new long[these.length];
-		for(int i = 0; i < these.length; i ++) 
-			if(these[i] != null)
-				decrement(these[i], q[i] = getQuantity(these[i]));
-		Coordinates nearest = getTheNearestPeak(t, from);
-		for(int i = 0; i < these.length; i ++) 
-			if(these[i] != null)
-				increment(these[i], q[i]);
-		return nearest;
-	}
-	
-	public Coordinates getTheNearestHoleDifferentFromThese(Truck t, Path from, Coordinates...these) {
-		long[] q = new long[these.length];
-		for(int i = 0; i < these.length; i ++) 
-			if(these[i] != null)
-				decrement(these[i], q[i] = getQuantity(these[i]));
-		Coordinates nearest = getTheNearestHole(t, from);
-		for(int i = 0; i < these.length; i ++) 
-			if(these[i] != null)
-				increment(these[i], q[i]);
-		return nearest;
-	}
-	
-	public Coordinates getTheMostDistant(Truck t, Path from, CellProperty p) {
-		Coordinates mostDistant = null;
-		for(Coordinates c : cells.keySet()) {
-			if(!p.is(c))
-				continue;
-			if(mostDistant == null)
-				mostDistant = c;
-			else if(from.distance(t, c) > from.distance(t, mostDistant))
-				mostDistant = c;
-		}
-		return mostDistant;
-	}
-	
-	public Coordinates getTheMostDistantHole(Truck t, Path from) {
-		return getTheMostDistant(t, from, (Coordinates c) -> isAnHole(c));
-	}
-	
-	public Coordinates getTheMostDistantPeak(Truck t, Path from) {
-		return getTheMostDistant(t, from, (Coordinates c) -> isAPeak(c));
-	}
-	
-	public Coordinates getTheNearestOfTheSameTypeDifferent(Truck t, Path from) {
-		if(isAnHole(from.getLastCoordinates()))
-			return getTheNearestHoleDifferentFromThese(t, from, from.getLastCoordinates());
-		if(isAPeak(from.getLastCoordinates()))
-			return getTheNearestPeakDifferentFromThese(t, from, from.getLastCoordinates());
-		return null;
-	}
-	
-	public Coordinates getTheMostDistantOfTheSameType(Truck t, Path from) {
-		if(isAnHole(from.getLastCoordinates()))
-			return getTheMostDistantHole(t, from);
-		if(isAPeak(from.getLastCoordinates()))
-			return getTheMostDistantPeak(t, from);
-		return null;
 	}
 	
 	public long terrainToMove() {

@@ -63,7 +63,7 @@ public class Main {
 				//Path path = new GRASP_Solver(field, truck).solve();
 						
 				//new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
-				new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0);
+				//new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0);
 				
 				long stop = System.currentTimeMillis();
 				
@@ -73,15 +73,15 @@ public class Main {
 				for(Stopover s : path.stopovers) 
 					assert(0 <= s.quantityToBringIn && s.quantityToBringIn <= capacity);
 				
-				for(int i = 0; i < path.length() - 1; i ++)
+				for(int i = 0; i < path.size() - 1; i ++)
 					clone.update(truck.getMovement(i));
 				
 				assert(clone.isSmooth());
 				
-				for(int i = 0; i < path.length() - 2; i ++)
+				for(int i = 0; i < path.size() - 2; i ++)
 					assert(truck.getMovement(i).to.equals(truck.getMovement(i + 1).from));
 
-				for(int i = 2; i < truck.path.length(); i ++)
+				for(int i = 2; i < truck.path.size(); i ++)
 					assert(truck.angleOk(Truck.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
 				
 				/*
@@ -90,10 +90,10 @@ public class Main {
 				 * It is not important if this movement is < S.
 				 */
 				
-				for(int i = 2; i < truck.path.length(); i ++) 
+				for(int i = 2; i < truck.path.size(); i ++) 
 					assert(truck.movementOk(truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i)));
 				
-				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
+				System.out.println("cellplot" + inputCode + "b / capacity = " + capacity + ":\nMovements: " + path.size() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
 				
 				print(path, OUTPUT);
@@ -140,15 +140,15 @@ public class Main {
 				for(Stopover s : path.stopovers) 
 					assert(0 <= s.quantityToBringIn && s.quantityToBringIn <= capacity);
 				
-				for(int i = 0; i < path.length() - 1; i ++)
+				for(int i = 0; i < path.size() - 1; i ++)
 					clone.update(truck.getMovement(i));
 				
 				assert(clone.isSmooth());
 				
-				for(int i = 0; i < path.length() - 2; i ++)
+				for(int i = 0; i < path.size() - 2; i ++)
 					assert(truck.getMovement(i).to.equals(truck.getMovement(i + 1).from));
 
-				for(int i = 2; i < truck.path.length(); i ++)
+				for(int i = 2; i < truck.path.size(); i ++)
 					assert(truck.angleOk(Truck.getAngle(truck.path.getCoordinates(i - 2), truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i))));
 				
 				/*
@@ -157,10 +157,10 @@ public class Main {
 				 * It is not important if this movement is < S.
 				 */
 				
-				for(int i = 2; i < truck.path.length(); i ++) 
+				for(int i = 2; i < truck.path.size(); i ++) 
 					assert(truck.movementOk(truck.path.getCoordinates(i - 1), truck.path.getCoordinates(i)));
 				
-				System.out.println("in" + inputCode + " / capacity = " + capacity + ":\nMovements: " + path.length() + "\nDistance: " + path.distance() + "m");
+				System.out.println("in" + inputCode + " / capacity = " + capacity + ":\nMovements: " + path.size() + "\nDistance: " + path.distance() + "m");
 				System.out.println("Time: " + (stop - start) + "ms\n");
 				
 				print(path, OUTPUT);

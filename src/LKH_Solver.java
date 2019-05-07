@@ -23,7 +23,7 @@ public class LKH_Solver implements Solver {
 	 * @return the matrix of distances.
 	 */
 	
-	private double[][] buildMatrixOfDistances(ArrayList <Path> chains, int threshold) {
+	private double[][] buildMatrixOfDistances(ArrayList <Truck> chains, int threshold) {
 		/*
 		 * Bipartite graph
 		 */
@@ -32,10 +32,10 @@ public class LKH_Solver implements Solver {
 		double[][] matrix = new double[chains.size()][chains.size()];
 		for(int i = 0; i < threshold; i ++) 
 			for(int j = 0; j < chains.size(); j ++)
-				matrix[i][j] = j >= threshold ? chains.get(i).distance(truck, chains.get(j)) : INF;
+				matrix[i][j] = j >= threshold ? chains.get(i).distance(chains.get(j).path) : INF;
 		for(int i = threshold; i < chains.size(); i ++) 
 			for(int j = 0; j < chains.size(); j ++)
-				matrix[i][j] = j < threshold ? chains.get(i).distance(truck, chains.get(j)) : INF;
+				matrix[i][j] = j < threshold ? chains.get(i).distance(chains.get(j).path) : INF;
 		return matrix;
 	}
 	
@@ -51,15 +51,15 @@ public class LKH_Solver implements Solver {
 	public Path solve() {
 		try {
 			chainsBuilder.fixField();
-			ArrayList <Path> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks(truck.path);
-			ArrayList <Path> chainsOfHoles = chainsBuilder.getAllChainsOfHoles(truck.path);
+			ArrayList <Truck> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks();
+			ArrayList <Truck> chainsOfHoles = chainsBuilder.getAllChainsOfHoles();
 			assert(chainsOfPeaks.size() == chainsOfHoles.size());
 			if(chainsOfPeaks.size() > 0) {
-				ArrayList <Path> chains = new ArrayList <> ();
+				ArrayList <Truck> chains = new ArrayList <> ();
 				chains.addAll(chainsOfPeaks);
 				chains.addAll(chainsOfHoles);
 				for(int pi : LKH_Manager.getPermutation(buildMatrixOfDistances(chains, chainsOfPeaks.size())))
-					truck.move(chains.get(pi));
+					truck.move(chains.get(pi).path);
 			}
 			truck.fixPath();
 			return truck.path;
