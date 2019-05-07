@@ -23,7 +23,7 @@ public class LKH_Solver implements Solver {
 	 * @return the matrix of distances.
 	 */
 	
-	private static double[][] buildMatrixOfDistances(ArrayList <Path> chains, int threshold) {
+	private double[][] buildMatrixOfDistances(ArrayList <Path> chains, int threshold) {
 		/*
 		 * Bipartite graph
 		 */
@@ -32,10 +32,10 @@ public class LKH_Solver implements Solver {
 		double[][] matrix = new double[chains.size()][chains.size()];
 		for(int i = 0; i < threshold; i ++) 
 			for(int j = 0; j < chains.size(); j ++)
-				matrix[i][j] = j >= threshold ? chains.get(i).getLastCoordinates().distance(chains.get(j).getFirstCoordinates()) : INF;
+				matrix[i][j] = j >= threshold ? chains.get(i).distance(truck, chains.get(j)) : INF;
 		for(int i = threshold; i < chains.size(); i ++) 
 			for(int j = 0; j < chains.size(); j ++)
-				matrix[i][j] = j < threshold ? chains.get(i).getLastCoordinates().distance(chains.get(j).getFirstCoordinates()) : INF;
+				matrix[i][j] = j < threshold ? chains.get(i).distance(truck, chains.get(j)) : INF;
 		return matrix;
 	}
 	
