@@ -139,9 +139,7 @@ public class GRASP_ChainsBuilder implements ChainsBuilder {
 		long remainder = field.terrainToMove() % truckModel.capacity;
 		if(remainder == 0)
 			return;
-		Truck chainOfPeaks = getChainOfPeaks(truckModel, remainder);
-		Truck chainOfHoles = getChainOfHoles(chainOfPeaks, remainder);
-		truckModel.move(chainOfPeaks.path);
-		truckModel.move(chainOfHoles.path);
+		truckModel.move(getChainOfPeaks(truckModel, remainder).path);
+		truckModel.move(getChainOfHoles(truckModel, remainder).path);
 	}
 }
