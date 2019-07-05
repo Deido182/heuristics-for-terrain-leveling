@@ -36,7 +36,7 @@ public class InputBuilder {
 	}
 	
 	private int randomSign() {
-		return (int)(Math.random() * 2) - 1;
+		return (int)(Math.random() * 2) == 0 ? -1 : 1;
 	}
 	
 	public void build(int n) throws IOException {

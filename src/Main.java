@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -106,9 +107,9 @@ public class Main {
 		 * NEW
 		 */
 		
-		new InputBuilder("Input\\in", 6, 6, new Coordinates(400.0, 400.0), 30.0, 20.0, 0.01).build(1);
+		new InputBuilder("Input\\in", 5, 5, new Coordinates(400.0, 400.0), 30.0, 20.0, 0.02).build(1);
 		
-		for(int inputCode = 10; inputCode <= 10; inputCode ++) {
+		for(int inputCode = 1; inputCode <= 1; inputCode ++) {
 			for(int j = 2; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				
@@ -130,7 +131,7 @@ public class Main {
 				//Path path = new GRASP_Solver(field, truck).solve();
 				
 				//new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
-				new PathPrinter("").print(field, path, 2.1, 2.1, 100.0, 200.0);
+				new PathPrinter("").print(field, path, 2.1, 2.1, 100.0, 200.0, Color.BLACK);
 				
 				long stop = System.currentTimeMillis();
 				
