@@ -41,7 +41,7 @@ public class Main {
 		 * OFFICIAL
 		 */
 		
-		for(int inputCode = 1; inputCode <= 4; inputCode ++) {
+		for(int inputCode = 5; inputCode <= 4; inputCode ++) {
 			for(int j = 0; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				
@@ -52,7 +52,7 @@ public class Main {
 				Field clone = new Field(new Scanner(new FileReader(new File(INPUT)))); // just to be sure
 				
 				final double GAMMA = Math.PI / 4.0;
-				final double S = Math.min(field.deltaX, field.deltaY) / 2.0;
+				final double S = Math.min(field.deltaX, field.deltaY);
 				
 				Truck truck = new Truck(capacity, GAMMA, S, TRUCK_STARTING_POINT, INITIAL_CARGO);
 				
@@ -106,9 +106,9 @@ public class Main {
 		 * NEW
 		 */
 		
-		//new InputBuilder("Input\\in", 30, 30, new Coordinates(10.0, 10.0), 10.0, 7.0, 0.200).build(5);
+		new InputBuilder("Input\\in", 6, 6, new Coordinates(400.0, 400.0), 30.0, 20.0, 0.01).build(1);
 		
-		for(int inputCode = 6; inputCode <= 5; inputCode ++) {
+		for(int inputCode = 10; inputCode <= 10; inputCode ++) {
 			for(int j = 2; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				
@@ -130,7 +130,7 @@ public class Main {
 				//Path path = new GRASP_Solver(field, truck).solve();
 				
 				//new PathPrinter("").print(field, path, 2.1, 2.1, 25.0, 25.0, "PathPrinted\\PATH_cellplot" + inputCode + "b_" + capacity + "_.png");
-				//new PathPrinter().print(field, path, 2.1, 2.1, 25.0, 25.0);
+				new PathPrinter("").print(field, path, 2.1, 2.1, 100.0, 200.0);
 				
 				long stop = System.currentTimeMillis();
 				

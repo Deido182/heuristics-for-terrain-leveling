@@ -2,7 +2,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -22,14 +24,16 @@ public class PathPrinter extends JFrame {
 		Field field;
 		Path path;
 		double multiplierX, multiplierY, shiftX, shiftY;
+		Color color;
 		
-		public Printer(Field field, Path path, double multiplierX, double multiplierY, double shiftX, double shiftY) {
+		public Printer(Field field, Path path, double multiplierX, double multiplierY, double shiftX, double shiftY, Color color) {
 			this.field = field;
 			this.path = path;
 			this.multiplierX = multiplierX;
 			this.multiplierY = multiplierY;
 			this.shiftX = shiftX;
 			this.shiftY = shiftY;
+			this.color = color;
 		}
 		
 		public void grid(Graphics2D g2D) {
@@ -123,7 +127,12 @@ public class PathPrinter extends JFrame {
 		
 		public void path(Graphics2D g2D) {
 			g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			g2D.setPaint(Color.BLACK);
+			g2D.setPaint(color);
+			
+			if(path.size() == 1) {
+				g2D.draw((Shape) new Point2D.Double(path.getCoordinates(0).x, path.getCoordinates(0).y));
+				return;
+			}
 			
 			for(int i = 1; i < path.size(); i ++)
 				g2D.draw(new Line2D.Double(path.getCoordinates(i - 1).x * multiplierX + shiftX, 
@@ -146,13 +155,23 @@ public class PathPrinter extends JFrame {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 	}
 	
-	public void print(Field field, Path path, double multiplierX, double multiplierY, double shiftX, double shiftY) {
+	public void print(Field field, Path path, double multiplierX, double multiplierY, double shiftX, double shiftY, Color color) {
 		setVisible(true);
-		add(new Printer(field, path, multiplierX, multiplierY, shiftX, shiftY));
+		add(new Printer(field, path, multiplierX, multiplierY, shiftX, shiftY, color));
 	}
 	
-	public void print(Field field, Path path, double multiplierX, double multiplierY, double shiftX, double shiftY, String fileName) throws IOException {
-		print(field, path, multiplierX, multiplierY, shiftX, shiftY);
+	public void print(Field field, Path path, double multiplierX, double multiplierY, double shiftX, double shiftY, String fileName, Color color) throws IOException {
+		print(field, path, multiplierX, multiplierY, shiftX, shiftY, color);
+		BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2d = img.createGraphics();
+		printAll(g2d);
+		g2d.dispose();
+		ImageIO.write(img, "png", new File(fileName));
+	}
+	
+	public void printChains(Field field, ArrayList <Path> chains, double multiplierX, double multiplierY, double shiftX, double shiftY, String fileName, Color color) throws IOException {
+		for(Path chain : chains)
+			print(field, chain, multiplierX, multiplierY, shiftX, shiftY, color);
 		BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = img.createGraphics();
 		printAll(g2d);
