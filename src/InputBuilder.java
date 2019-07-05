@@ -46,7 +46,7 @@ public class InputBuilder {
 			out.println(rows * columns);
 			for(int i = 0; i < rows; i ++)
 				for(int j = 0; j < columns; j ++) 
-					out.println(getX(i) + " " + getY(j) + " " + (randomSign() * maxValue));	
+					out.println(getX(i) + " " + getY(j) + " " + (randomSign() * Math.random() * maxValue));	
 			out.close();
 		}
 	}
