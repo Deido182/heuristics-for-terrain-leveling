@@ -1,3 +1,5 @@
+import java.awt.Color;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class OurSolver implements Solver {
@@ -59,8 +61,21 @@ public class OurSolver implements Solver {
 	
 	public Path solve() {
 		chainsBuilder.fixField();
+		new PathPrinter("").print(field, truck.path, 2.1, 2.1, 200.0, 200.0, Color.BLACK);
 		ArrayList <Truck> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks();
+		try {
+			new PathPrinter("").printChains(field, chainsOfPeaks, 2.1, 2.1, 200.0, 200.0, "chainsOfPeaks.png", Color.BLACK);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		ArrayList <Truck> chainsOfHoles = chainsBuilder.getAllChainsOfHoles();
+		try {
+			new PathPrinter("").printChains(field, chainsOfHoles, 2.1, 2.1, 200.0, 200.0, "chainsOfHoles.png", Color.BLACK);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
 		if(chainsOfPeaks.size() > 0) {
 			int[] assignmentPH = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
@@ -78,7 +93,7 @@ public class OurSolver implements Solver {
 						assignmentHP[assignmentPH[next]];
 			}
 
-			truck.improveSequenceOfChains(chains);
+			//truck.improveSequenceOfChains(chains);
 			for(Truck chain : chains)
 				truck.move(chain.path);
 		}
