@@ -94,7 +94,7 @@ public class OurSolver implements Solver {
 						assignmentHP[assignmentPH[next]];
 			}
 
-			//truck.improveSequenceOfChains(chains);
+			truck.improveSequenceOfChains(chains);
 			for(Truck chain : chains)
 				truck.move(chain.path);
 		}
