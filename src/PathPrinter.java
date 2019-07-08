@@ -169,9 +169,10 @@ public class PathPrinter extends JFrame {
 		ImageIO.write(img, "png", new File(fileName));
 	}
 	
-	public void printChains(Field field, ArrayList <Truck> chains, double multiplierX, double multiplierY, double shiftX, double shiftY, String fileName, Color color) throws IOException {
+	public void printChains(Field field, ArrayList <Truck> chains, double multiplierX, double multiplierY, double shiftX, double shiftY, String fileName, Color... color) throws IOException {
+		int i = 0;
 		for(Truck t : chains)
-			print(field, t.path, multiplierX, multiplierY, shiftX, shiftY, color);
+			print(field, t.path, multiplierX, multiplierY, shiftX, shiftY, color[(i ++) % color.length]);
 		BufferedImage img = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = img.createGraphics();
 		printAll(g2d);

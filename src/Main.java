@@ -107,7 +107,7 @@ public class Main {
 		 * NEW
 		 */
 		
-		new InputBuilder("Input\\in", 4, 4, new Coordinates(400.0, 400.0), 40.0, 40.0, capacities[2] / (4.0 * Field.PRECISION)).build(1);
+		new InputBuilder("Input\\in", 4, 4, new Coordinates(400.0, 400.0), 40.0, 40.0, ((double)capacities[2]) / Field.PRECISION).build(1);
 		
 		for(int inputCode = 1; inputCode <= 1; inputCode ++) {
 			for(int j = 2; j < capacities.length; j ++) {
