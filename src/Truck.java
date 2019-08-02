@@ -200,26 +200,7 @@ public class Truck {
 	public double distance(Path p) {
 		if(path.getLastCoordinates().equals(p.getFirstCoordinates()))
 			return 0.0;
-		if(path.size() == 1)
-			return path.getLastCoordinates().distance(p.getFirstCoordinates());
-		
-		Truck t = clone();
-		t.path = path.clone();
-		t.path.append(p.clone());
-		
-		Stopover sa = t.path.stopovers.get(path.size() - 2);
-		Stopover sb = t.path.stopovers.get(path.size() - 1);
-		Stopover sc = t.path.stopovers.get(path.size());
-		
-		Coordinates a = sa.coordinates;
-		Coordinates b = sb.coordinates;
-		Coordinates c = sc.coordinates;
-		
-		double absAlpha = Truck.getAngle(a, b, c);
-		if(t.angleOk(absAlpha))
-			return b.distance(c); // No corrections needed
-		
-		return t.insertRegularPolygon(absAlpha, path.size()).suffix(1).length();
+		return path.getLastCoordinates().distance(p.getFirstCoordinates());
 	}
 	
 	public double distance(Coordinates c) {
