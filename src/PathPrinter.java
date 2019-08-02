@@ -130,7 +130,8 @@ public class PathPrinter extends JFrame {
 			g2D.setPaint(color);
 			
 			if(path.size() == 1) {
-				g2D.draw((Shape) new Point2D.Double(path.getCoordinates(0).x, path.getCoordinates(0).y));
+				g2D.draw((Shape) new Line2D.Double(path.getCoordinates(0).x, path.getCoordinates(0).y, 
+													path.getCoordinates(0).x, path.getCoordinates(0).y));
 				return;
 			}
 			

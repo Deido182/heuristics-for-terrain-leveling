@@ -61,9 +61,13 @@ public class OurSolver implements Solver {
 	
 	public Path solve() {
 		chainsBuilder.fixField();
-		new PathPrinter("").print(field, truck.path, 2.1, 2.1, 200.0, 200.0, Color.black);
+		try {
+			new PathPrinter("").print(field, truck.path, 2.1, 2.1, 200.0, 200.0, "FixField.png", Color.black);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		ArrayList <Truck> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks();
-		System.out.println(chainsOfPeaks.size());
 		try {
 			new PathPrinter("").printChains(field, chainsOfPeaks, 2.1, 2.1, 200.0, 200.0, "chainsOfPeaks.png", Color.BLACK, Color.GREEN);
 		} catch (IOException e) {
