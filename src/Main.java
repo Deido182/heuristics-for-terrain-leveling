@@ -42,7 +42,7 @@ public class Main {
 		 * OFFICIAL
 		 */
 		
-		for(int inputCode = 5; inputCode <= 4; inputCode ++) {
+		for(int inputCode = 1; inputCode <= 4; inputCode ++) {
 			for(int j = 0; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				
@@ -109,7 +109,7 @@ public class Main {
 		
 		//new InputBuilder("Input\\in", 4, 4, new Coordinates(400.0, 400.0), 40.0, 40.0, ((double)capacities[2]) / Field.PRECISION).build(1);
 		
-		for(int inputCode = 1; inputCode <= 1; inputCode ++) {
+		for(int inputCode = 2; inputCode <= 1; inputCode ++) {
 			for(int j = 2; j < capacities.length; j ++) {
 				long capacity = capacities[j];
 				

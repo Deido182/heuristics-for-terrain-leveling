@@ -61,26 +61,26 @@ public class OurSolver implements Solver {
 	
 	public Path solve() {
 		chainsBuilder.fixField();
-		try {
-			new PathPrinter("").print(field, truck.path, 2.1, 2.1, 200.0, 200.0, "FixField.png", Color.black);
-		} catch (IOException e1) {
+		//try {
+		//	new PathPrinter("").print(field, truck.path, 2.1, 2.1, 200.0, 200.0, "FixField.png", Color.black);
+		//} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		//	e1.printStackTrace();
+		//}
 		ArrayList <Truck> chainsOfPeaks = chainsBuilder.getAllChainsOfPeaks();
-		try {
-			new PathPrinter("").printChains(field, chainsOfPeaks, 2.1, 2.1, 200.0, 200.0, "chainsOfPeaks.png", Color.BLACK, Color.GREEN);
-		} catch (IOException e) {
+		//try {
+		//	new PathPrinter("").printChains(field, chainsOfPeaks, 2.1, 2.1, 200.0, 200.0, "chainsOfPeaks.png", Color.BLACK, Color.GREEN);
+		//} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//	e.printStackTrace();
+		//}
 		ArrayList <Truck> chainsOfHoles = chainsBuilder.getAllChainsOfHoles();
-		try {
-			new PathPrinter("").printChains(field, chainsOfHoles, 2.1, 2.1, 200.0, 200.0, "chainsOfHoles.png", Color.BLACK, Color.GREEN);
-		} catch (IOException e) {
+		//try {
+		//	new PathPrinter("").printChains(field, chainsOfHoles, 2.1, 2.1, 200.0, 200.0, "chainsOfHoles.png", Color.BLACK, Color.GREEN);
+		//} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//	e.printStackTrace();
+		//}
 		assert(chainsOfPeaks.size() == chainsOfHoles.size());
 		if(chainsOfPeaks.size() > 0) {
 			int[] assignmentPH = new HungarianAlgorithm(buildMatrixOfDistances(chainsOfPeaks, chainsOfHoles)).execute();
